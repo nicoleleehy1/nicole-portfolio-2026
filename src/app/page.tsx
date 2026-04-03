@@ -51,7 +51,7 @@ export default function Portfolio() {
   return (
     <>
       {/* <style>{CSS}</style> */}
-      <div style={{ background: "", minHeight: "100vh" }}>
+      <div style={{ minHeight: "100vh" }}>
 
         {/* ── STICKY NAV ── */}
         <nav style={{
@@ -81,7 +81,7 @@ export default function Portfolio() {
           }}>
 
           {/* ── HERO ── */}
-          <div style={{ position: "relative", background: "transparent" }}>
+          <div style={{ position: "relative" }}>
 
             {/* Subtle Grid lines */}
             <div style={{
@@ -239,7 +239,14 @@ export default function Portfolio() {
                     ) : (
                       <div className="entry-co">{e.co}</div>
                     )}
-                    <div className="entry-desc">{e.desc}</div>
+                    <div className="entry-desc">
+                      {e.desc.split('\n').map((line, j) => (
+                        <div key={j} style={{ display: "flex", alignItems: "flex-start", gap: "0.5rem" }}>
+                          <div className="now-dot" style={{ marginTop: "0.7em", flexShrink: 0 }} />
+                          <span>{line.trim()}</span>
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 </div>
               ))}
@@ -290,7 +297,13 @@ export default function Portfolio() {
                 </a>
                 </div>
                 <p style={{ fontFamily: "var(--mono)", fontSize: "0.68rem", color: "#5e5c54", lineHeight: 1.7, marginTop: "0.6rem" }}>
-                  NLP pipeline parsing PDFs into Neo4j knowledge graphs — 200+ nodes/doc, &lt;2s query latency. React + D3.js with 8 synchronized visualization modes. SM-2 spaced repetition with LLM flashcard generation.
+                  → Built an NLP pipeline parsing PDFs into structured knowledge graphs, extracting 200+ concept nodes and typed relationships per document into a Neo4j graph database.
+                </p>
+                <p style={{ fontFamily: "var(--mono)", fontSize: "0.68rem", color: "#5e5c54", lineHeight: 1.7, marginTop: "0.3rem" }}>
+                  → Engineered a React + D3.js frontend rendering 8 synchronized visualization modes (force-directed graph, kanban, timeline, mind map, etc.) with real-time bidirectional edits across all views.
+                </p>
+                <p style={{ fontFamily: "var(--mono)", fontSize: "0.68rem", color: "#5e5c54", lineHeight: 1.7, marginTop: "0.3rem" }}>
+                  → Integrated SM-2 spaced repetition scheduling with LLM-generated flashcards and cloze deletions via Anthropic API, and Exa.ai for semantic web search enrichment.
                 </p>
                 <p style={{ fontFamily: "var(--mono)", fontSize: "0.62rem", color: "var(--muted)", marginTop: "0.6rem", letterSpacing: "0.03em" }}>
                   Python · TypeScript · React · Neo4j · Anthropic API · spaCy · D3.js
@@ -350,9 +363,9 @@ export default function Portfolio() {
               <div style={{ flex: "1 1 260px" }}>
                 <p className="label fade-up d1" style={{ marginBottom: "2rem" }}>Skills</p>
                 <div className="skills-line">
-                  Java · Python · Go · C/C++ · TypeScript · Rust · SQL
+                  Java · Python · Go · C/C++ · TypeScript · SQL
                   <br />
-                  React · Next.js · Node · FastAPI · PostgreSQL · Redis
+                  React · Next.js · Node · Express · FastAPI · PostgreSQL · Docker
                   <br />
                   AWS · Docker · PyTorch · TensorFlow · OpenCV
                 </div>
