@@ -1,273 +1,7 @@
 "use client"
 import { useState, useEffect, useRef } from "react";
-import "./portfolio.css"
 import { experience, research, skills } from "./metadata";
-
-const CSS = `
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=DM+Mono:ital,wght@0,300;0,400;1,300&display=swap');
- 
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
- 
-:root {
-  --bg: #f7f4f0;
-  --ink: #1a1a18;
-  --muted: #9a9589;
-  --rule: #ddd8d0;
-  --accent: #6b7fa3;
-  --accent-warm: #c17f5a;
-  --serif: 'Cormorant Garamond', Georgia, serif;
-  --mono: 'DM Mono', 'Courier New', monospace;
-}
- 
-body { background: var(--bg); color: var(--ink); }
- 
-@keyframes fadeUp {
-  from { opacity: 0; transform: translateY(20px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to   { opacity: 1; }
-}
-@keyframes blink {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0; }
-}
-@keyframes marquee {
-  from { transform: translateX(0); }
-  to   { transform: translateX(-50%); }
-}
-@keyframes underlineIn {
-  from { transform: scaleX(0); }
-  to   { transform: scaleX(1); }
-}
- 
-.fade-up { opacity: 0; animation: fadeUp 0.8s cubic-bezier(0.22,1,0.36,1) forwards; }
-.d1 { animation-delay: 0.05s; }
-.d2 { animation-delay: 0.2s; }
-.d3 { animation-delay: 0.35s; }
-.d4 { animation-delay: 0.5s; }
-.d5 { animation-delay: 0.65s; }
-.d6 { animation-delay: 0.8s; }
-.d7 { animation-delay: 0.95s; }
- 
-/* Typography */
-.serif { font-family: var(--serif); }
-.mono  { font-family: var(--mono); }
- 
-/* Nav */
-.nav-link {
-  font-family: var(--mono);
-  font-size: 0.65rem;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--muted);
-  text-decoration: none;
-  transition: color 0.2s;
-  padding: 0.15rem 0;
-  position: relative;
-}
-.nav-link::after {
-  content: '';
-  position: absolute;
-  bottom: 0; left: 0;
-  width: 100%; height: 1px;
-  background: var(--accent);
-  transform: scaleX(0);
-  transform-origin: left;
-  transition: transform 0.25s ease;
-}
-.nav-link:hover { color: var(--ink); }
-.nav-link:hover::after { transform: scaleX(1); }
- 
-/* Soft link */
-.soft-link {
-  color: inherit;
-  text-decoration: none;
-  border-bottom: 1px solid var(--rule);
-  transition: border-color 0.2s, color 0.2s;
-}
-.soft-link:hover { border-color: var(--accent); color: var(--accent); }
- 
-/* Hairline */
-.rule { border: none; border-top: 1px solid var(--rule); }
- 
-/* Section label */
-.label {
-  font-family: var(--mono);
-  font-size: 0.58rem;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: var(--muted);
-}
- 
-/* Ticker tape */
-.ticker-wrap {
-  overflow: hidden;
-  border-top: 1px solid var(--rule);
-  border-bottom: 1px solid var(--rule);
-  padding: 0.5rem 0;
-}
-.ticker-inner {
-  display: flex;
-  width: max-content;
-  animation: marquee 28s linear infinite;
-}
-.ticker-inner:hover { animation-play-state: paused; }
-.ticker-item {
-  font-family: var(--mono);
-  font-size: 0.65rem;
-  letter-spacing: 0.08em;
-  color: var(--muted);
-  white-space: nowrap;
-  padding: 0 1.5rem;
-}
-.ticker-dot {
-  color: var(--accent);
-  margin: 0 0.25rem;
-}
- 
-/* Entry row */
-.entry {
-  display: grid;
-  grid-template-columns: 108px 1fr;
-  gap: 1.5rem;
-  padding: 1.25rem 0;
-  border-bottom: 1px solid var(--rule);
-}
-.entry:last-child { border-bottom: none; }
-.entry-date {
-  font-family: var(--mono);
-  font-size: 0.65rem;
-  color: var(--muted);
-  padding-top: 3px;
-  line-height: 1.5;
-}
-.entry-role {
-  font-family: var(--serif);
-  font-size: 1.1rem;
-  font-weight: 600;
-  line-height: 1.2;
-}
-.entry-co {
-  font-family: var(--mono);
-  font-size: 0.65rem;
-  color: var(--accent);
-  letter-spacing: 0.05em;
-  margin-top: 0.15rem;
-}
-.entry-co-link {
-  font-family: var(--mono);
-  font-size: 0.65rem;
-  color: var(--accent);
-  letter-spacing: 0.05em;
-  margin-top: 0.15rem;
-  text-decoration: underline;
-}
-.entry-desc {
-  font-family: var(--mono);
-  font-size: 0.68rem;
-  color: #5e5c54;
-  line-height: 1.7;
-  margin-top: 0.3rem;
-}
- 
-/* Fun hover card */
-.fun-card {
-  border: 1px solid var(--rule);
-  border-radius: 2px;
-  padding: 1.25rem 1.5rem;
-  transition: border-color 0.25s, background 0.25s;
-  cursor: default;
-}
-.fun-card:hover {
-  border-color: var(--accent);
-  background: rgba(107,127,163,0.04);
-}
- 
-/* Cursor blink */
-.cursor {
-  display: inline-block;
-  width: 2px;
-  height: 1em;
-  background: var(--accent);
-  margin-left: 3px;
-  vertical-align: text-bottom;
-  animation: blink 1.1s step-end infinite;
-}
- 
-/* Skills flowing */
-.skill-pill {
-  font-family: var(--mono);
-  font-size: 0.62rem;
-  color: var(--muted);
-  letter-spacing: 0.04em;
-  display: inline-block;
-}
-.skill-dot { color: var(--rule); margin: 0 0.4rem; }
-
-.stack-tags {
-  font-family: 'DM Mono', monospace;
-  font-size: 0.68rem;
-  color: #9a9589;
-  margin-top: 0.5rem;
-  letter-spacing: 0.03em;
-}
-
-.skills-line {
-  font-family: 'DM Mono', monospace;
-  font-size: 0.7rem;
-  color: #5a5850;
-  line-height: 1.9;
-  letter-spacing: 0.03em;
-}
-
-.edu-degree {
-  font-family: 'Cormorant Garamond', Georgia, serif;
-  font-size: 1.05rem;
-  font-weight: 600;
-}
-
-.edu-meta {
-  font-family: 'DM Mono', monospace;
-  font-size: 0.7rem;
-  color: #9a9589;
-  margin-top: 0.25rem;
-  line-height: 1.6;
- 
-/* Footer */
-.footer-txt {
-  font-family: var(--mono);
-  font-size: 0.58rem;
-  letter-spacing: 0.14em;
-  color: var(--muted);
-  text-align: center;
-  padding: 2rem 0 1.5rem;
-}
- 
-/* Currently block */
-.now-line {
-  display: flex;
-  align-items: baseline;
-  gap: 0.6rem;
-  margin-bottom: 0.5rem;
-}
-.now-dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: #7ec8a0;
-  flex-shrink: 0;
-  position: relative;
-  top: -1px;
-}
- 
-/* Mobile */
-@media (max-width: 520px) {
-  .entry { grid-template-columns: 1fr; gap: 0.35rem; }
-  .entry-date { font-size: 0.6rem; }
-  .edu-skills-row { flex-direction: column !important; }
-}`
+import { AnimatedSphere } from "../components/animated-sphere";
 
 
 // Typing animation hook
@@ -316,8 +50,8 @@ export default function Portfolio() {
 
   return (
     <>
-      <style>{CSS}</style>
-      <div style={{ background: "var(--bg)", minHeight: "100vh" }}>
+      {/* <style>{CSS}</style> */}
+      <div style={{ background: "", minHeight: "100vh" }}>
 
         {/* ── STICKY NAV ── */}
         <nav style={{
@@ -339,65 +73,122 @@ export default function Portfolio() {
           </div>
         </nav>
 
-        <main style={{ maxWidth: 720, margin: "0 auto", padding: "0 clamp(1.25rem,6vw,3rem)" }}>
+        <main style={{ 
+            maxWidth: 870, 
+            margin: "0 auto", 
+            padding: "0 clamp(1.25rem,6vw,3rem)",
+            position: "relative"  // ← add this
+          }}>
 
           {/* ── HERO ── */}
-          <section style={{ padding: "5rem 0 4rem" }}>
-            <div className={`fade-up d1`}>
-              <p className="label" style={{ marginBottom: "1.5rem" }}>
-                Berkeley, California
-              </p>
-              <h1 style={{
-                fontFamily: "var(--serif)",
-                fontSize: "clamp(4rem,9vw,6rem)",
-                fontWeight: 300,
-                letterSpacing: "-0.02em",
-                lineHeight: 0.95,
-                marginBottom: "1.5rem",
-              }}>
-                Hello! I'm<br />
-                <em style={{ fontStyle: "italic" }}>Nicole.</em>
-              </h1>
-            </div>
+          <div style={{ position: "relative", background: "transparent" }}>
 
-            <div className={`fade-up d2`}>
-              <p style={{
-                fontFamily: "var(--mono)",
-                fontSize: "clamp(0.72rem,2vw,0.82rem)",
-                color: "var(--muted)",
-                lineHeight: 1.7,
-                marginBottom: "0.5rem",
-              }}>
-                Electrical Engineering and Computer Science + Bioengineering @ UC Berkeley — currently{" "}
-                <span style={{ color: "var(--ink)" }}>{typed}</span>
-                <span className="cursor" />
-              </p>
-            </div>
-
-            <div className={`fade-up d3`} style={{ marginTop: "2rem", display: "flex", flexWrap: "wrap", gap: "0.3rem 1.5rem" }}>
-              {[
-                { label: "email", href: "mailto:nicole.lee@berkeley.edu" },
-                { label: "linkedin", href: "https://linkedin.com/in/nicolehylee/" },
-                { label: "github", href: "https://github.com/nicoleleehy1" },
-                { label: "resume", href: "/Nicole-Lee_Resume_April_2026.pdf"},
-              ].map(l => (
-                <a key={l.label} 
-                  href={l.href} 
-                  target={l.href.startsWith("http") ? "_blank" : undefined} 
-                  rel="noreferrer"
-                  className="soft-link"
-                  style={{ fontFamily: "var(--mono)", fontSize: "0.68rem", letterSpacing: "0.05em" }}>
-                  {l.label}
-                </a>
+            {/* Subtle Grid lines */}
+            <div style={{
+              position: "absolute",
+              top: 0,
+              bottom: 0,
+              left: "50%",
+              transform: "translateX(-50%)",
+              width: "100vw",
+              pointerEvents: "none",
+              opacity: 0.05,
+              zIndex: -1,
+            }}>
+              {[...Array(8)].map((_, i) => (
+                <div key={`h-${i}`} style={{
+                  position: "absolute",
+                  height: "1px",
+                  left: 0, right: 0,
+                  top: `${12.5 * (i + 1)}%`,
+                  backgroundColor: "var(--ink)",
+                }} />
               ))}
+              {[...Array(12)].map((_, i) => (
+                <div key={`v-${i}`} style={{
+                  position: "absolute",
+                  width: "1px",
+                  top: 0, bottom: 0,
+                  left: `${8.33 * (i + 1)}%`,
+                  backgroundColor: "var(--ink)",
+                }} />
+              ))}
+            </div>
+          <section style={{ padding: "5rem 0 4rem", position: "relative", zIndex: 1 }}>
+
+            <div style={{ display: "grid", gridTemplateColumns: "1fr auto", gap: "2rem", alignItems: "center" }}>
+              {/* LEFT: text */}
+              <div>
+                <div className={`fade-up d1`}>
+                  <p className="label" style={{ marginBottom: "1.5rem" }}>
+                    Berkeley, California
+                  </p>
+                  <h1 style={{
+                    fontFamily: "var(--serif)",
+                    fontSize: "clamp(4rem,9vw,6rem)",
+                    fontWeight: 300,
+                    letterSpacing: "-0.02em",
+                    lineHeight: 0.95,
+                    marginBottom: "1.5rem",
+                  }}>
+                    Hello! I'm<br />
+                    <em style={{ fontStyle: "italic" }}>Nicole.</em>
+                  </h1>
+                </div>
+
+                <div className={`fade-up d2`}>
+                  <p style={{
+                    fontFamily: "var(--mono)",
+                    fontSize: "clamp(0.72rem,2vw,0.82rem)",
+                    color: "var(--muted)",
+                    lineHeight: 1.7,
+                    marginBottom: "0.5rem",
+                  }}>
+                    Electrical Engineering and Computer Science + Bioengineering <span style={{ color: "var(--ink)" }}>UC Berkeley</span> 
+                    <br /> — currently{" "}
+                    <span style={{ color: "var(--accent)" }}>{typed}</span>
+                    <span className="cursor" />
+                  </p>
+                </div>
+
+                <div className={`fade-up d3`} style={{ marginTop: "1.5rem", display: "flex", flexWrap: "wrap", gap: "0.3rem 1.5rem" }}>
+                {[
+                  { label: "email", href: "mailto:nicole.lee@berkeley.edu" },
+                  { label: "linkedin", href: "https://linkedin.com/in/nicolehylee/" },
+                  { label: "github", href: "https://github.com/nicoleleehy1" },
+                  { label: "resume", href: "/Nicole-Lee_Resume_April_2026.pdf"},
+                ].map(l => (
+                  <a key={l.label} 
+                    href={l.href} 
+                    target={l.href.startsWith("http") ? "_blank" : undefined} 
+                    rel="noreferrer"
+                    className="soft-link"
+                    style={{ fontFamily: "var(--mono)", fontSize: "0.68rem", letterSpacing: "0.05em" }}>
+                    {l.label}
+                  </a>
+                ))}
+              </div>
+              </div>
+
+              {/* RIGHT: sphere */}
+              <div style={{ 
+                width: "360px", 
+                height: "370px", 
+                overflow: "hidden", 
+                flexShrink: 0 }}>
+                <AnimatedSphere />
+              </div>
+
             </div>
 
             {/* Currently block */}
             <div className={`fade-up d4`} style={{
+              position: "relative",
               marginTop: "3rem",
               padding: "1.25rem 1.5rem",
               borderLeft: "2px solid var(--accent)",
               background: "rgba(107,127,163,0.04)",
+              zIndex: 2,
             }}>
               <p className="label" style={{ marginBottom: "0.75rem" }}>Currently</p>
               {[
@@ -414,6 +205,7 @@ export default function Portfolio() {
               ))}
             </div>
           </section>
+        </div>
 
           <hr className="rule fade-up d4" />
 
