@@ -156,7 +156,7 @@ export default function Portfolio() {
                   { label: "email", href: "mailto:nicole.lee@berkeley.edu" },
                   { label: "linkedin", href: "https://linkedin.com/in/nicolehylee/" },
                   { label: "github", href: "https://github.com/nicoleleehy1" },
-                  { label: "resume", href: "/Nicole_Lee_Resume_April_2026.pdf"},
+                  { label: "resume", href: "/Nicole_Lee_Resume.pdf"},
                 ].map(l => (
                   <a key={l.label} 
                     href={l.href} 
