@@ -192,9 +192,9 @@ export default function Portfolio() {
             }}>
               <p className="label" style={{ marginBottom: "0.75rem" }}>Currently</p>
               {[
-                "Teaching full-stack development @ UC Berkeley",
-                "Director @ Cal Hacks (world's largest collegiate hackathon)",
-                "Open to internship roles for Summer 2026",
+                "Software Quality Engineer Intern @ Apple",
+                "Director @ Cal Hacks (Largest Collegiate Hackathon in the World)",
+                "TA for Full-Stack Development @ UC Berkeley",
               ].map((line, i) => (
                 <div key={i} className="now-line">
                   <div className="now-dot" />
