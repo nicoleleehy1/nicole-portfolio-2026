@@ -1,4 +1,4 @@
-
+export const RESUME_URL = "/Nicole_Lee_Resume_Oct_2026.pdf";
 export const skills = [
   "Java","Python","Go","C/C++","TypeScript","Rust","SQL",
   "React","Next.js","Node","FastAPI","PostgreSQL","Redis",
@@ -7,42 +7,97 @@ export const skills = [
 
 export const experience = [
   {
+    date: "May – Aug '26",
+    role: "Software Engineer Intern",
+    co: "Apple ",
+    link: "https://www.apple.com/",
+    summary: "MCP evaluation & optimization platform",
+    desc: [
+      "Built a full MCP evaluation platform across 450+ servers, saving $700,000+/year by generating 200+ schema-aware ground truth queries per run and automating live tool calls to cut per-eval time 18x (6+ hrs → 20 mins).",
+      "Architected a fault-tolerant tracing proxy intercepting live MCP traffic with response normalization and persistent PostgreSQL state, collapsing 100+ correlated failures into <10 root causes and cutting triage 40%.",
+      "Engineered hybrid scoring with deterministic tool-call/JSON diffing + LLM-as-judges; extracted Langfuse traces + A/B runs to analyze routing failures and recommend tool description/routing changes optimizing accuracy, latency & cost.",
+    ],
+  },
+  {
     date: "Aug – Dec '25",
-    role: "Forward Deployed Engineer",
+    role: "Forward Deployed Engineer Intern",
     co: "Wedge (YC S25)",
-    desc: "Forward deployed engineering consultant building a clinician dashboard for LA General Medical Center.",
+    summary: "Clinician analytics platform for LA General Medical Center",
+    desc: [
+      "Built a clinician analytics platform for LA General Medical Center (600-bed Level I trauma center) using React, TypeScript, and GraphQL, surfacing EHR and scheduling across 30K+ annual discharges to improve bed turnover.",
+      "Architected 20+ reusable frontend components and REST data pipelines for FHIR/HL7 EHR data, adding client-side caching, conflict detection, and utilization scoring to support low-latency analytics under concurrent workloads.",
+    ],
   },
   {
     date: "Jun – Aug '25",
     role: "Software Engineer Intern",
-    co: "Anchor Logics (Backed by Berkeley Skydeck)",
-    desc: `Built an end-to-end (0→1) telemetry platform, Propriologics, (Next.js, TypeScript, Node/Express, AWS S3) to stream and visualize 3D kinematic motion data from IoT sensor vests, supporting 50+ patients (ALS, Parkinson’s) with personalized vest. weight adjustments to improve movement stability.
-    Built video motion analysis pipeline (OpenPose, YOLOv12, DeepSORT, OpenCV), reduced clinical review time by 80%.
-    Engineered high-throughput caching and storage layer using AWS S3, Redis, and PostgreSQL to manage 1,000+ CV models and clinical datasets, reducing data load latency by 60%.
-    Implemented end-to-end Stripe checkout flows and integrated AWS S3 for secure and automated digital product delivery, enhancing payment processing efficiency.`,
+    co: "Anchor Logics",
+    summary: "Real-time IoT telemetry & computer vision for ALS/Parkinson's patients",
+    desc: [
+      "Led 5 engineers to ship a real-time telemetry platform that analyzes 3D IMU data streamed from IoT vests used by 50+ ALS/Parkinson's patients, surfacing data visualizations, timeline scrubbers, and playback controls.",
+      "Built CV and data infrastructure with YOLOv12, OpenPose, DeepSORT, AWS S3, Redis, and PostgreSQL, improving keypoint consistency 25%, cutting occlusion loss 35%, and supporting 2,000+ models with sub-100ms retrieval.",
+    ],
+  },
+  {
+    date: "Aug '24 – Present",
+    role: "Director",
+    co: "Cal Hacks",
+    link: "https://calhacks.io/",
+    summary: "Engineering & sponsorships for the largest collegiate hackathon",
+    desc: [
+      "Built and deployed 3 production websites including live hacker portal, judging system, and public site (React, TypeScript, Supabase, PostgreSQL) and published an iOS app (C, Swift), serving 4,000+ hackers and 60+ sponsors.",
+      "Built an automated sponsorship pipeline reaching 2,000+ companies and 14,000+ contacts, raising $1,250,000+.",
+    ],
   },
   {
     date: "Apr – Jun '25",
     role: "Software Engineer Intern",
-    co: "Digpath.ai (Backed by Berkeley Skydeck)",
-    desc: `Developed serverless analytics dashboard using AWS Amplify, Lambda, and DynamoDB to track pathology image ingestion, storage usage, and case volume across large medical imaging pipelines.
-    Built SageMaker-based cell segmentation tool using Meta SAM model, automating pathology annotation & analysis.
-    Optimized React frontend through code splitting, lazy loading, and render profiling — reducing page load time by 20% and improving responsiveness across medical imaging workflows.`,
+    co: "Digpath.ai",
+    summary: "Pathology cell segmentation & serverless analytics",
+    desc: [
+      "Deployed a SageMaker + Meta SAM cell segmentation pipeline with GPU-accelerated inference across 500+ whole-slide pathology images (70GB dataset); reduced manual annotation turnaround from days to under 2 hours per case.",
+      "Optimized a serverless platform (AWS Amplify, Lambda, DynamoDB) tracking pathology image ingestion, storage, and case volume.",
+    ],
   },
   {
-    date: "Aug '24 - PRESENT",
-    role: "Director",
-    co: "Cal Hacks",
-    link: "https://calhacks.io/",
-    desc: `Organizing the world's biggest collegiate hackathon is equal parts exhilarating and chaos. 4,000 hackers, 36 hours, zero sleep. 
-    Engineered an end-to-end sponsorship pipeline reaching 2,000+ companies (14,000+ contacts), directly contributing to USD$900,000+ in sponsorship revenue.`,
-  },
-  {
-    date: "Nov '25 - PRESENT",
+    date: "Nov '25 – Present",
     role: "Teaching Assistant",
     co: "UC Berkeley · Full Stack Development",
     link: "https://fullstackdecal.com/",
-    desc: "Lead lectures, curriculum delivery, and office hours for 100+ students per semester across frontend (React, Next.js, UI/UX), backend (Node.js, Express, Flask, Django, REST APIs, authentication), databases (MongoDB, SQL, ORMs, Firebase), and DevOps.",
+    summary: "Teaching full stack web development to 100+ students",
+    desc: [
+      "Lead lectures, curriculum delivery, and office hours for 100+ students per semester across frontend (React, Next.js, UI/UX), backend (Node.js, Express, Flask, Django, REST APIs, authentication), databases (MongoDB, SQL, ORMs, Firebase), and DevOps.",
+    ],
+  },
+];
+
+export const projects = [
+  {
+    name: "Synapse AI",
+    event: "HackMIT 2025",
+    link: "https://github.com/nicoleleehy1/synapse",
+    desc: [
+      "Built an NLP pipeline parsing PDFs into structured knowledge graphs, extracting 200+ concept nodes and typed relationships per document into a Neo4j graph database.",
+      "Engineered a React + D3.js frontend rendering 8 synchronized visualization modes (force-directed graph, kanban, timeline, mind map, etc.) with real-time bidirectional edits across all views.",
+      "Integrated SM-2 spaced repetition scheduling with LLM-generated flashcards and cloze deletions via Anthropic API, and Exa.ai for semantic web search enrichment.",
+    ],
+    stack: "Python · TypeScript · React · Neo4j · Anthropic API · spaCy · D3.js",
+  },
+  {
+    name: "ASL Live Translator",
+    event: "TreeHacks 2025",
+    desc: [
+      "Real-time ASL letter recognition converting sign language to speech and live captions for nonverbal users.",
+    ],
+    stack: "Python · React · OpenCV · MediaPipe · TensorFlow.js",
+  },
+  {
+    name: "Insurmate",
+    event: "Bolt Hacks 2025",
+    desc: [
+      "AI insurance agent — document parsing, policy comparison, and natural language Q&A over coverage details.",
+    ],
+    stack: "React · TensorFlow.js · LangChain",
   },
 ];
 

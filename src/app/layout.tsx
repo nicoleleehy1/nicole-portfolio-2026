@@ -1,19 +1,13 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import { Cormorant_Garamond, DM_Mono } from 'next/font/google';
+import { Inter } from 'next/font/google';
+import { Nav } from "../components/nav";
+import { Footer } from "../components/footer";
 
-const cormorant = Cormorant_Garamond({
+const inter = Inter({
   subsets: ['latin'],
-  weight: ['300', '400', '500', '600'],
-  style: ['normal', 'italic'],
-  variable: '--font-cormorant',
-});
-
-const dmMono = DM_Mono({
-  subsets: ['latin'],
-  weight: ['300', '400'],
-  style: ['normal', 'italic'],
-  variable: '--font-dm-mono',
+  weight: ['400', '500', '600', '700'],
+  variable: '--font-inter',
 });
 
 export default function RootLayout({
@@ -22,13 +16,25 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${cormorant.variable} ${dmMono.variable}`}>
-      <body>{children}</body>
+    <html lang="en" className={inter.variable}>
+      <body>
+        <div style={{ minHeight: "100vh" }}>
+          <main className="container">
+            <Nav />
+            {children}
+            <hr className="rule" />
+            <Footer />
+          </main>
+        </div>
+      </body>
     </html>
   );
 }
 
 export const metadata: Metadata = {
-  title: "Nicole's Portfolio",
+  title: {
+    default: "Nicole Lee",
+    template: "%s · Nicole Lee",
+  },
   description: "Nicole Lee 2026 Portfolio",
 };
