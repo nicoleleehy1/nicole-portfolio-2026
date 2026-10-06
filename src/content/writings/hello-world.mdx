@@ -1,0 +1,43 @@
+---
+title: "Hello, world"
+date: 2026-10-05
+summary: "A template post showing everything a writing can do. Copy this file to start a new one."
+kind: "Note"
+draft: true
+---
+
+This is a **draft**: it shows up when you run `npm run dev`, and stays hidden on the live site
+until you delete the `draft: true` line above.
+
+## Starting a new post
+
+1. Copy this file and rename it. The filename becomes the URL, so `my-post.mdx` lives at `/writings/my-post`.
+2. Edit the front matter at the top (title, date, summary, kind).
+3. Write below it in Markdown, then `git push`.
+
+## What you can use
+
+Regular paragraphs, *italics*, **bold**, `inline code`, and [links](https://nextjs.org/docs).
+
+> Block quotes for pulling out an idea.
+
+- Bulleted lists
+- with as many items as you need
+
+| Tables     | work too |
+| ---------- | -------- |
+| like this  | one      |
+
+Put images in `public/writings/<post-name>/` and reference them like this:
+
+![Alt text describing the image](/portfolio-image.jpg)
+
+```python
+# Code blocks keep their formatting
+def hello():
+    return "world"
+```
+
+Because this is MDX, you can also write HTML or React right in the post:
+
+<p className="center">A centered line, written as HTML.</p>

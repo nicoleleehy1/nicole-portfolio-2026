@@ -24,7 +24,7 @@ export default function HomePage() {
             </p>
 
             <p className="muted"> 
-              Previously, I optimized MCP eval tools at <a href="https://www.apple.com/" target="_blank" rel="noreferrer" className="link">Apple</a>, CV pipelines for ALS patients, 
+              Previously, I optimized MCP eval tools at <a href="https://www.apple.com/" target="_blank" rel="noreferrer" className="link">Apple</a>, built CV pipelines for ALS patients, 
               and cell segmentation for pathology images. I also conducted ML research at <a href="https://albalab.ucsf.edu/" target="_blank" rel="noreferrer" className="link">UCSF’s Memory and Aging Center</a>.              
             </p>
             

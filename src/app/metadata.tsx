@@ -71,7 +71,47 @@ export const experience = [
   },
 ];
 
-export const projects = [
+export type Project = {
+  name: string;
+  event: string;
+  desc: string[];
+  stack: string;
+  link?: string;
+  // Optional cover photo in /public; a generated texture is used otherwise.
+  image?: string;
+  // Optional award shown as a ribbon on the cover, e.g. "1st Place · HackMIT".
+  award?: string;
+};
+
+export const projects: Project[] = [
+  {
+    name: "CodeMRI",
+    event: "Personal Project",
+    link: "https://github.com/nicoleleehy1/CodeMRI",
+    desc: [
+      "A static-analysis + context compiler for coding agents, parsing repository-wide ASTs into persistent architecture and symbol graphs with call/import dependencies, source navigation, and change-impact analysis.",
+      "Compiles change-scoped context, reducing repository-reading tokens by 83% and enabling graph-guided code modifications.",
+    ],
+    stack: "Python · TypeScript · Tree-sitter · FastAPI",
+  },
+  {
+    name: "Flusk",
+    event: "Personal Project",
+    link: "https://web-production-5c042.up.railway.app/",
+    desc: [
+      "A Java LSM-tree storage engine with a full write path (WAL, MemTable, SSTable, 4-tier compaction with tombstone GC, Bloom filters and sparse indexing), exposed through 7 REST endpoints for low-latency reads/writes.",
+    ],
+    stack: "Java 17 · Maven · Guava · Snappy · JUnit 5 · Railway",
+  },
+  {
+    name: "Stoich",
+    event: "Personal Project",
+    link: "https://stoich.vercel.app/",
+    desc: [
+      "A chemistry research tool built on a multi-LLM pipeline and cross-paper vector search, reducing atom-index hallucinations from 67% to under 15%; renders synchronized reaction graphs, equation and mechanism views, annotations, and 3D molecular structures.",
+    ],
+    stack: "Next.js · TypeScript · MongoDB Atlas · RDKit-JS · 3Dmol.js · D3.js",
+  },
   {
     name: "Synapse AI",
     event: "HackMIT 2025",
@@ -113,5 +153,22 @@ export const research = [
     role: "Researcher",
     co: "University of Hong Kong",
     desc: "R-based COVID-19 mobility/admissions correlation tool over 20K+ data points. Computational CRISPR/Nanopore sequencing analysis.",
+  },
+];
+
+// Archived essays converted from Google Docs; each body is src/content/writings/<slug>.html.
+// New posts are .mdx files in that folder and don't need an entry here.
+export const essays = [
+  // {
+  //   slug: "puer-tea-lipase",
+  //   title: "How does the change in concentrations (0.00%, 3.00%, 9.00%, 12.00%, 15.00%, 18.00%) of Pu’er tea affect the mean rate of lipase-catalysed triglyceride hydrolysis (min⁻¹) at 37°C as determined by the rate of decrease in pH of milk (sourced by Bos taurus) before and after incubation with lipase (sourced by Sus domesticus) and Pu’er tea for 90 minutes?",
+  //   kind: "Biology Internal Assessment",
+  //   question: undefined,
+  // },
+  {
+    slug: "burnout-epigenetics",
+    title: "The interaction between environmental stressors and predisposed genes in explaining the etiology of Burnout Stress Syndrome",
+    kind: "Extended Essay · World Studies (Biology & Psychology)",
+    question: "How do environmental stressors affect the epigenetic mechanisms acting on the Serotonin Transporter Gene and Glucocorticoid Receptor Gene on the etiology of Burnout Stress Syndrome in Scandinavian physicians?",
   },
 ];

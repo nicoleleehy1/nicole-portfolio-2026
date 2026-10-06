@@ -266,29 +266,297 @@ ul, ol {
 }
 
 /* Project entries */
-.project {
-  padding: 1.5rem 0;
-  border-bottom: 1px solid var(--rule);
+/* Project grid: grayscale dot-screen covers that turn to ASCII on hover */
+.project-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.5rem;
 }
-.project:last-child { border-bottom: none; }
-.project-title {
-  font-family: var(--display);
-  font-weight: 600;
-  font-size: 1.05rem;
+.project-card {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--rule);
+}
+.project-cover-wrap { position: relative; }
+.cover {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  background: var(--bg);
+  border-bottom: 1px solid var(--rule);
+  container-type: inline-size;
+}
+.cover-media {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  filter: grayscale(1) contrast(1.15);
+  transition: opacity 0.35s ease;
+}
+/* Fine dot screen, light and dark dots offset from each other */
+.cover-dots {
+  position: absolute;
+  inset: 0;
+  background-image:
+    radial-gradient(circle, rgba(0, 0, 0, 0.35) 0.6px, transparent 0.9px),
+    radial-gradient(circle, rgba(255, 255, 255, 0.35) 0.6px, transparent 0.9px);
+  background-size: 3px 3px;
+  background-position: 0 0, 1.5px 1.5px;
+  transition: opacity 0.35s ease;
+}
+.cover-grain {
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.5 0 0 0 0 0.5 0 0 0 0 0.5 0 0 0 0.6 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  mix-blend-mode: overlay;
+  opacity: 0.6;
+  transition: opacity 0.35s ease;
+}
+.cover-ascii {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  /* 72 columns at ~0.6em per glyph fill the cover's width */
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: calc(100cqw / 43.2);
+  line-height: 1.2;
+  white-space: pre;
+  color: var(--ink);
+  background: var(--bg);
+  opacity: 0;
+  transition: opacity 0.35s ease;
+  user-select: none;
+}
+.project-card:hover .cover-ascii { opacity: 1; }
+.project-card:hover .cover-media,
+.project-card:hover .cover-dots,
+.project-card:hover .cover-grain { opacity: 0; }
+.ribbon {
+  position: absolute;
+  top: 0;
+  left: 1rem;
+  max-height: 85%;
+  padding: 0.9rem 0.45rem 1.4rem;
+  writing-mode: vertical-rl;
+  background: var(--ink);
+  color: var(--bg);
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  clip-path: polygon(0 0, 100% 0, 100% calc(100% - 0.6rem), 50% 100%, 0 calc(100% - 0.6rem));
+  z-index: 1;
+}
+.project-info {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  padding: 1rem 1rem 1.25rem;
 }
 .project-meta {
+  display: flex;
+  justify-content: space-between;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+.project-name {
+  font-family: var(--display);
+  font-size: 1.3rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+  margin-top: 0.5rem;
+}
+.project-blurb {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.8rem;
+  line-height: 1.55;
+  color: var(--muted);
+  margin-top: 0.4rem;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.project-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-top: 0.9rem;
+}
+.project-tag {
+  padding: 0.1rem 0.5rem;
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.68rem;
+  text-transform: uppercase;
+}
+.project-code {
+  align-self: flex-start;
+  margin-top: auto;
+  padding-top: 1rem;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  text-decoration: underline;
+  text-decoration-color: var(--faint);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 4px;
+  color: var(--ink);
+}
+.project-code:hover { color: var(--muted); }
+.project-code.private {
+  color: var(--faint);
+  text-decoration: none;
+}
+
+/* Writings list */
+.writing-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  padding: 1rem 0;
+  text-decoration: none;
+  color: var(--ink);
+}
+.writing-item:hover .writing-summary {
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+.writing-title { color: var(--muted); }
+.writing-kind {
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+.writing-title {
+  font-family: var(--display);
+  font-weight: 600;
+  line-height: 1.45;
+  transition: color 0.15s ease;
+}
+
+/* Single writing */
+.back-link {
   font-size: 0.85rem;
   color: var(--muted);
-  margin-top: 0.1rem;
+  text-decoration: none;
 }
-.project-desc {
-  margin-top: 0.6rem;
+.back-link:hover { color: var(--ink); }
+.writing-heading {
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: clamp(1.25rem, 3vw, 1.6rem);
+  letter-spacing: -0.02em;
+  line-height: 1.3;
+  margin: 0.35rem 0 1rem;
 }
-.project-stack {
-  font-size: 0.85rem;
+.writing-question {
+  font-size: 0.95rem;
   color: var(--muted);
-  margin-top: 0.6rem;
+  padding-left: 1rem;
+  border-left: 2px solid var(--rule);
+  margin-bottom: 1rem;
 }
+.prose {
+  font-size: 0.95rem;
+  line-height: 1.75;
+  margin-top: 2rem;
+}
+.prose > * + * { margin-top: 1rem; }
+.prose h2,
+.prose h3,
+.prose h4 {
+  font-family: var(--display);
+  letter-spacing: -0.01em;
+  line-height: 1.3;
+}
+.prose h2 { font-size: 1.3rem; font-weight: 700; margin-top: 2.75rem; }
+.prose h3 { font-size: 1.05rem; font-weight: 600; margin-top: 2rem; }
+.prose h4 { font-size: 0.95rem; font-weight: 600; margin-top: 1.5rem; }
+.prose img {
+  display: block;
+  max-width: 100%;
+  max-height: 36rem;
+  width: auto;
+  height: auto;
+  margin: 1.5rem auto;
+}
+.prose p.center { text-align: center; }
+.prose a {
+  text-decoration: underline;
+  text-decoration-color: var(--faint);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 2px;
+  word-break: break-word;
+}
+.prose ul,
+.prose ol { padding-left: 1.5rem; }
+.prose ul { list-style: disc; }
+.prose ol { list-style: decimal; }
+.prose li + li { margin-top: 0.35rem; }
+.prose .level-1 { padding-left: 3rem; }
+.prose .level-2 { padding-left: 4.5rem; }
+.prose sup,
+.prose sub { font-size: 0.7em; line-height: 0; }
+.prose blockquote {
+  padding-left: 1rem;
+  border-left: 2px solid var(--rule);
+  color: var(--muted);
+}
+.prose code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.85em;
+  padding: 0.1em 0.3em;
+  border-radius: 4px;
+  background: #f4f3f1;
+}
+.prose pre {
+  overflow-x: auto;
+  padding: 1rem;
+  border-radius: 6px;
+  background: #f4f3f1;
+  font-size: 0.85rem;
+  line-height: 1.6;
+}
+.prose pre code {
+  padding: 0;
+  background: none;
+  font-size: inherit;
+}
+.prose th {
+  border: 1px solid var(--rule);
+  padding: 0.5rem 0.6rem;
+  text-align: left;
+  font-weight: 600;
+}
+.table-wrap {
+  overflow-x: auto;
+  margin: 1.5rem 0;
+}
+.prose table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.8rem;
+  line-height: 1.5;
+}
+.prose td {
+  border: 1px solid var(--rule);
+  padding: 0.5rem 0.6rem;
+  vertical-align: top;
+  min-width: 4rem;
+}
+.prose td > * + * { margin-top: 0.4rem; }
+.prose td h2,
+.prose td h3,
+.prose td h4 { font-size: 0.8rem; margin-top: 0; }
+.prose td img { margin: 0.5rem auto; }
 
 /* Education / skills */
 .edu-degree {
@@ -311,6 +579,7 @@ ul, ol {
 /* Mobile */
 @media (max-width: 560px) {
   .hero-grid { grid-template-columns: 1fr; }
+  .project-grid { grid-template-columns: 1fr; }
   .portrait { order: -1; width: 140px; height: 200px; }
   .entry { grid-template-columns: 1fr; gap: 0.35rem; }
   .xp-head { flex-direction: column; gap: 0; }

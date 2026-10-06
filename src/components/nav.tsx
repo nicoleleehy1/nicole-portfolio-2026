@@ -7,6 +7,7 @@ const navItems = [
   { label: "Experience", href: "/experience" },
   { label: "Research", href: "/research" },
   { label: "Projects", href: "/projects" },
+  { label: "Writings", href: "/writings" },
 ];
 
 export function Nav() {
@@ -19,7 +20,7 @@ export function Nav() {
           <Link
             key={item.href}
             href={item.href}
-            className={`nav-link${pathname === item.href ? " active" : ""}`}
+            className={`nav-link${pathname === item.href || pathname.startsWith(`${item.href}/`) ? " active" : ""}`}
           >
             {item.label}
           </Link>
