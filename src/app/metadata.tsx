@@ -1,3 +1,5 @@
+import type { XpEntry } from "../components/xp-list";
+
 export const RESUME_URL = "/Nicole_Lee_Resume_Oct_2026.pdf";
 export const skills = [
   "Java","Python","Go","C/C++","TypeScript","Rust","SQL",
@@ -60,6 +62,18 @@ export const experience = [
     ],
   },
   {
+    date: "Aug '24 – Feb '25",
+    role: "ML Researcher",
+    co: "University of California, San Francisco",
+    link: "https://neuroailab.ucsf.edu/blog/2025/11/12/mac-rag-system",
+    summary: "MAC RAG: retrieval-augmented generation over neurodegenerative disease research",
+    desc: [
+      "Built MAC RAG, a retrieval-augmented generation system grounding GPT-4 Turbo answers in 2,000+ neurodegenerative disease papers from UCSF's Memory and Aging Center faculty, with full citations (author, year, journal, PMID) for every response.",
+      "Engineered the retrieval pipeline: overlapping 1,000-character chunking, 384-dim all-MiniLM-L6-v2 sentence embeddings, and exact nearest-neighbor search over a FAISS index, tuning top-k retrieval (k=10) for answer quality.",
+      "Deployed a Gradio interface on Hugging Face Spaces surfacing answers alongside supporting passages, used by clinicians at a Clinical Pathology Conference to reference diagnostic criteria and treatment approaches.",
+    ],
+  },
+  {
     date: "Nov '25 – Present",
     role: "Teaching Assistant",
     co: "UC Berkeley · Full Stack Development",
@@ -71,43 +85,34 @@ export const experience = [
   },
   {
     date: "Aug '22 – '23",
-    role: "Computational Biology & Biochemistry Intern",
+    role: "Bioinformatics Intern",
     co: "HKU School of Biomedical Sciences",
-    summary: "COVID-19 mobility analysis, cancer genomics & DNA sequencing",
+    summary: "COVID-19 epidemiological modeling, cancer genomics & Nanopore sequencing",
     desc: [
-      "Taught myself R and led a COVID-19 cross-correlation project outlining mobility trends during the pandemic (2022).",
-      "Shadowed Dr Jason Wong and a PhD student in cancer genomics research, assisting with Nanopore sequencing.",
-      "Ran my own DNA extraction and sequencing project and helped design a wet-lab course for the faculty (2023).",
+      "Developed an R-based time-series analysis pipeline cross-correlating community mobility data with COVID-19 case and hospital admission trends across 20K+ data points, quantifying lagged relationships between mobility shifts and transmission during the pandemic.",
+      "Supported cancer genomics research in Dr Jason Wong's lab, assisting with Oxford Nanopore long-read sequencing workflows, from library preparation to basecalling and downstream variant analysis.",
+      "Led an independent DNA extraction and sequencing study (2023), carrying samples through extraction, quality control, Nanopore sequencing and computational analysis, and co-designed a hands-on wet-lab curriculum for the School of Biomedical Sciences.",
     ],
   },
-  {
-    date: "",
-    role: "Primary Researcher",
-    co: "HK PolyU Junior Researcher Mentorship Program",
-    summary: "E-habits and cardiovascular health of secondary school students",
-    desc: [
-      "Evaluated the e-habits and cardiovascular health of secondary school students in a cardiovascular exercise lab, using an ergometer, plethysmography and questionnaires.",
-    ],
-  },
-  {
-    date: "Aug '22",
-    role: "Medical Shadowing",
-    co: "Sharp Eye Clinic",
-    summary: "Semi-private ophthalmology clinic",
-    desc: [
-      "Shadowed Dr Kenneth Yau in a semi-private ophthalmology clinic and observed cataract surgeries in the surgical unit.",
-      "Received interview training and insight into medical issues affecting low-income patients.",
-    ],
-  },
-  {
-    date: "Aug '22",
-    role: "Medical Shadowing",
-    co: "Premier Medical Centre",
-    summary: "Paediatric cardiology unit",
-    desc: [
-      "Shadowed Dr Maurice Leung in the paediatric cardiology unit.",
-    ],
-  },
+  // {
+  //   date: "Aug '22",
+  //   role: "Medical Shadowing",
+  //   co: "Sharp Eye Clinic",
+  //   summary: "Semi-private ophthalmology clinic",
+  //   desc: [
+  //     "Shadowed Dr Kenneth Yau in a semi-private ophthalmology clinic and observed cataract surgeries in the surgical unit.",
+  //     "Received interview training and insight into medical issues affecting low-income patients.",
+  //   ],
+  // },
+  // {
+  //   date: "Aug '22",
+  //   role: "Medical Shadowing",
+  //   co: "Premier Medical Centre",
+  //   summary: "Paediatric cardiology unit",
+  //   desc: [
+  //     "Shadowed Dr Maurice Leung in the paediatric cardiology unit.",
+  //   ],
+  // },
 ];
 
 export type Leadership = {
@@ -399,18 +404,38 @@ export const projects: Project[] = [
   },
 ];
 
-export const research = [
+export const research: XpEntry[] = [
   {
     date: "Aug '24 – Feb '25",
     role: "ML Researcher",
     co: "University of California, San Francisco",
-    desc: "RAG pipeline over 2,000+ neurodegenerative disease papers using FAISS, LangChain, and Gradio.",
+    link: "https://neuroailab.ucsf.edu/blog/2025/11/12/mac-rag-system",
+    summary: "MAC RAG: retrieval-augmented generation over neurodegenerative disease research",
+    desc: [
+      "Built MAC RAG, a retrieval-augmented generation system grounding GPT-4 Turbo answers in 2,000+ neurodegenerative disease papers from UCSF's Memory and Aging Center faculty, with full citations (author, year, journal, PMID) for every response.",
+      "Engineered the retrieval pipeline: overlapping 1,000-character chunking, 384-dim all-MiniLM-L6-v2 sentence embeddings, and exact nearest-neighbor search over a FAISS index, tuning top-k retrieval (k=10) for answer quality.",
+      "Deployed a Gradio interface on Hugging Face Spaces surfacing answers alongside supporting passages, used by clinicians at a Clinical Pathology Conference to reference diagnostic criteria and treatment approaches.",
+    ],
   },
   {
     date: "Aug '23 – Sep '24",
     role: "Researcher",
     co: "University of Hong Kong",
-    desc: "R-based COVID-19 mobility/admissions correlation tool over 20K+ data points. Computational CRISPR/Nanopore sequencing analysis.",
+    summary: "COVID-19 epidemiological modeling, cancer genomics & Nanopore sequencing",
+    desc: [
+      "Developed an R-based time-series analysis pipeline cross-correlating community mobility data with COVID-19 case and hospital admission trends across 20K+ data points, quantifying lagged relationships between mobility shifts and transmission during the pandemic.",
+      "Supported cancer genomics research in Dr Jason Wong's lab, assisting with Oxford Nanopore long-read sequencing workflows, from library preparation to basecalling and downstream variant analysis.",
+      "Led an independent DNA extraction and sequencing study (2023), carrying samples through extraction, quality control, Nanopore sequencing and computational analysis, and co-designed a hands-on wet-lab curriculum for the School of Biomedical Sciences.",
+    ],
+  },
+  {
+    date: "",
+    role: "Primary Researcher",
+    co: "HK PolyU Junior Researcher Mentorship Program",
+    summary: "E-habits and cardiovascular health of secondary school students",
+    desc: [
+      "Evaluated the e-habits and cardiovascular health of secondary school students in a cardiovascular exercise lab, using an ergometer, plethysmography and questionnaires.",
+    ],
   },
 ];
 

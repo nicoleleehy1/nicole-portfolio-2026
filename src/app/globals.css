@@ -187,32 +187,11 @@ ul, ol {
 }
 .plain-list li:last-child { margin-bottom: 0; }
 
-/* Entry (experience / research rows) */
-.entry {
-  display: grid;
-  grid-template-columns: 130px 1fr;
-  gap: 1.5rem;
-  padding: 1.5rem 0;
-  border-bottom: 1px solid var(--rule);
-}
-.entry:last-child { border-bottom: none; }
-.entry-date {
-  font-size: 0.85rem;
-  color: var(--muted);
-  padding-top: 0.2rem;
-}
+/* Role name in expandable experience / research rows */
 .entry-role {
   font-family: var(--display);
   font-weight: 600;
   font-size: 1.05rem;
-}
-.entry-co {
-  font-size: 0.9rem;
-  color: var(--muted);
-  margin-top: 0.1rem;
-}
-.entry-desc {
-  margin-top: 0.6rem;
 }
 
 /* Experience (expandable rows) */
@@ -646,7 +625,6 @@ html:has(.peek[open]) { overflow: hidden; }
   .peek-content { padding: 1.5rem 1.25rem 2rem; }
   .peek-props { grid-template-columns: 5.5rem 1fr; }
   .portrait { order: -1; width: 140px; height: 200px; }
-  .entry { grid-template-columns: 1fr; gap: 0.35rem; }
   .xp-head { flex-direction: column; gap: 0; }
   .nav { flex-wrap: wrap; gap: 0.75rem 0; }
   .nav-links { gap: 0.9rem; flex-wrap: wrap; font-size: 0.85rem; }
