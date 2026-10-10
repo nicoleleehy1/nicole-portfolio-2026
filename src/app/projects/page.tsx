@@ -1,43 +1,30 @@
 import type { Metadata } from "next";
 import { projects } from "../metadata";
-import { ProjectCover } from "../../components/project-cover";
+import { Gallery, type GalleryItem } from "../../components/gallery";
 
 export const metadata: Metadata = { title: "Projects" };
+
+const items: GalleryItem[] = projects.map(p => ({
+  title: p.name,
+  subtitle: p.event,
+  category: p.event === "Personal Project" ? "Personal" : "Hackathons & Competitions",
+  image: p.image,
+  award: p.award,
+  props: [
+    { label: "Event", value: p.event },
+    ...(p.award ? [{ label: "Award", value: p.award }] : []),
+    { label: "Stack", value: p.stack },
+    p.link
+      ? { label: "Link", value: p.link.includes("github.com") ? "Code" : "Live", href: p.link }
+      : { label: "Link", value: "Private" },
+  ],
+  bullets: p.desc,
+}));
 
 export default function ProjectsPage() {
   return (
     <section style={{ padding: "2rem 0 3rem" }}>
-      <h1 className="page-title">Selected Projects</h1>
-      <div className="project-grid">
-        {projects.map((p, i) => (
-          <article key={p.name} className="project-card">
-            <div className="project-cover-wrap">
-              <ProjectCover seed={p.name} image={p.image} alt={p.name} />
-              {p.award && <span className="ribbon">{p.award}</span>}
-            </div>
-            <div className="project-info">
-              <div className="project-meta">
-                <span>{String(i + 1).padStart(2, "0")}</span>
-                <span>{p.event}</span>
-              </div>
-              <h2 className="project-name">{p.name}</h2>
-              <p className="project-blurb">{p.desc[0]}</p>
-              <div className="project-tags">
-                {p.stack.split(" · ").slice(0, 4).map(t => (
-                  <span key={t} className="project-tag">{t}</span>
-                ))}
-              </div>
-              {p.link ? (
-                <a href={p.link} target="_blank" rel="noreferrer" className="project-code">
-                  {p.link.includes("github.com") ? "Code" : "Live"} ↗
-                </a>
-              ) : (
-                <span className="project-code private">Private</span>
-              )}
-            </div>
-          </article>
-        ))}
-      </div>
+      <Gallery title="Selected Projects" items={items} filterLabel="Type" />
     </section>
   );
 }

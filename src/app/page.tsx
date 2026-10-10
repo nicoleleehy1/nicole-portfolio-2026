@@ -13,7 +13,7 @@ export default function HomePage() {
         <div className="hero-grid">
           <div className="hero-text">
             <p>
-              I&apos;m a student at UC Berkeley
+              I&apos;m a junior at UC Berkeley
               studying Electrical Engineering & Computer Science and
               Bioengineering, supported by $155K merit scholarship as a{" "}
               <a href="https://hkses.edb.gov.hk/en/index.html" target="_blank" rel="noreferrer" className="link">
@@ -23,14 +23,27 @@ export default function HomePage() {
               and recently exploring how models represent biological systems.
             </p>
 
+            {/* <p className="muted"> 
+              Previously, I optimized MCP eval tools at <a href="https://www.apple.com/" target="_blank" rel="noreferrer" className="link">Apple</a>, 
+              advanced clinical analytics at <a href="https://www.wedge.ai/" target="_blank" rel="noreferrer" className="link">Wedge</a>,
+              built CV pipelines for ALS patients at <a href="https://anchorlogics.com/" target="_blank" rel="noreferrer" className="link">Anchor Logics</a>, 
+              and cell segmentation for pathology images at <a href="https://www.digpath.ai/" target="_blank" rel="noreferrer" className="link">DigPath</a>. 
+              I also conducted ML research at <a href="https://albalab.ucsf.edu/" target="_blank" rel="noreferrer" className="link">UCSF’s Memory and Aging Center</a>.              
+            </p> */}
+
             <p className="muted"> 
-              Previously, I optimized MCP eval tools at <a href="https://www.apple.com/" target="_blank" rel="noreferrer" className="link">Apple</a>, built CV pipelines for ALS patients, 
-              and cell segmentation for pathology images. I also conducted ML research at <a href="https://albalab.ucsf.edu/" target="_blank" rel="noreferrer" className="link">UCSF’s Memory and Aging Center</a>.              
+
+
+              Previously, I optimized MCP eval tools at{" "}
+              <a href="https://www.apple.com/" target="_blank" rel="noreferrer" className="link">Apple</a>{" "} 
+              and conducted ML research at <a href="https://albalab.ucsf.edu/" target="_blank" rel="noreferrer" className="link">UCSF’s Memory and Aging Center</a>.
+              I was also involved in building CV pipelines for ALS patients and AI cell segmentation for pathology images.
             </p>
             
             <p className="muted"> 
-              I currently help organize the world&apos;s <a href="https://www.calhacks.io/" target="_blank" rel="noreferrer" className="link">largest collegiate hackathon</a> and lead Berkeley&apos;s <a href="https://www.notion.com/" target="_blank" rel="noreferrer" className="link">Notion</a> community. Before that, I introduced the <a href="https://www.scmp.com/news/hong-kong/society/article/3124432/fourteen-year-old-girl-takes-lead-organising-hong-kongs" target="_blank" rel="noreferrer" className="link">first global hackathon</a> to Hong Kong.
-              
+              Currently, I help organize the world&apos;s <a href="https://www.calhacks.io/" target="_blank" rel="noreferrer" className="link">largest collegiate hackathon</a>{" "} 
+              and lead Berkeley&apos;s <a href="https://www.notion.com/" target="_blank" rel="noreferrer" className="link">Notion</a> community. 
+              Before that, I introduced the <a href="https://www.scmp.com/news/hong-kong/society/article/3124432/fourteen-year-old-girl-takes-lead-organising-hong-kongs" target="_blank" rel="noreferrer" className="link">first global hackathon</a> to Hong Kong.
             </p>
 
             <SocialLinks />

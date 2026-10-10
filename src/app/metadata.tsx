@@ -69,6 +69,255 @@ export const experience = [
       "Lead lectures, curriculum delivery, and office hours for 100+ students per semester across frontend (React, Next.js, UI/UX), backend (Node.js, Express, Flask, Django, REST APIs, authentication), databases (MongoDB, SQL, ORMs, Firebase), and DevOps.",
     ],
   },
+  {
+    date: "Aug '22 – '23",
+    role: "Computational Biology & Biochemistry Intern",
+    co: "HKU School of Biomedical Sciences",
+    summary: "COVID-19 mobility analysis, cancer genomics & DNA sequencing",
+    desc: [
+      "Taught myself R and led a COVID-19 cross-correlation project outlining mobility trends during the pandemic (2022).",
+      "Shadowed Dr Jason Wong and a PhD student in cancer genomics research, assisting with Nanopore sequencing.",
+      "Ran my own DNA extraction and sequencing project and helped design a wet-lab course for the faculty (2023).",
+    ],
+  },
+  {
+    date: "",
+    role: "Primary Researcher",
+    co: "HK PolyU Junior Researcher Mentorship Program",
+    summary: "E-habits and cardiovascular health of secondary school students",
+    desc: [
+      "Evaluated the e-habits and cardiovascular health of secondary school students in a cardiovascular exercise lab, using an ergometer, plethysmography and questionnaires.",
+    ],
+  },
+  {
+    date: "Aug '22",
+    role: "Medical Shadowing",
+    co: "Sharp Eye Clinic",
+    summary: "Semi-private ophthalmology clinic",
+    desc: [
+      "Shadowed Dr Kenneth Yau in a semi-private ophthalmology clinic and observed cataract surgeries in the surgical unit.",
+      "Received interview training and insight into medical issues affecting low-income patients.",
+    ],
+  },
+  {
+    date: "Aug '22",
+    role: "Medical Shadowing",
+    co: "Premier Medical Centre",
+    summary: "Paediatric cardiology unit",
+    desc: [
+      "Shadowed Dr Maurice Leung in the paediatric cardiology unit.",
+    ],
+  },
+];
+
+export type Leadership = {
+  date: string;
+  role: string;
+  co: string;
+  summary: string;
+  desc: string[];
+  // Gallery filter group, from the "Relevance" column of the activities list.
+  category: string;
+  // Individual titles held within the organisation, most senior first.
+  roles?: { title: string; date: string }[];
+  link?: string;
+  // Optional cover photo in /public, e.g. "/leadership/teensinai.jpg"; a generated texture is used otherwise.
+  image?: string;
+};
+
+export const leadership: Leadership[] = [
+  {
+    date: "Aug '24 – Present",
+    role: "Director",
+    co: "Cal Hacks",
+    category: "Technology",
+    link: "https://calhacks.io/",
+    roles: [
+      { title: "Internal Vice President", date: "Fall '26 – Present" },
+      { title: "Tech Director", date: "Fall '26 – Present" },
+      { title: "Sponsorship Director", date: "Fall '24 – Present" },
+      { title: "Hacker Experience & Inclusion Lead", date: "Fall '24 – Fall '25" },
+    ],
+    summary: "Engineering & sponsorships for the largest collegiate hackathon",
+    desc: [
+      "Built and deployed 3 production websites including live hacker portal, judging system, and public site (React, TypeScript, Supabase, PostgreSQL) and published an iOS app (C, Swift), serving 4,000+ hackers and 60+ sponsors.",
+      "Built an automated sponsorship pipeline reaching 2,000+ companies and 14,000+ contacts, raising $1,250,000+.",
+    ],
+  },
+  {
+    date: "",
+    role: "Campus Leader",
+    co: "Notion @ UC Berkeley",
+    category: "Community",
+    summary: "",
+    desc: [],
+  },
+  {
+    date: "Jan '21 – Present",
+    role: "Founder & President",
+    co: "TeensinAI Hong Kong",
+    category: "Technology",
+    summary: "Youngest lead organiser in the global #GirlsinAI hackathon campaigns",
+    desc: [
+      "Youngest lead organiser at 14 in the global #GirlsinAI 2021, #AdaHack2021, #GirlsinAI2022 and #GirlsinAI2023 hackathon campaigns; hosted 3 hackathons with 300 participants, 8 companies and 50+ mentors.",
+      "Oversaw 20 executive team members across 11 departments.",
+      "Raised $10,000+ for STEM programs and social service events as a winner of the Kids4Kids Young Entrepreneurship competition and HKIS Dream Fund.",
+      "Spoke at 12 events; featured in De Telegraaf and by the UNWEF.",
+    ],
+  },
+  {
+    date: "Jul '22 – Present",
+    role: "Vice President",
+    co: "Hong Kong Outstanding Students' Association",
+    category: "Social Service",
+    summary: "Raised $200,000+ for youth and social service programs",
+    desc: [
+      "Fundraised over $200,000 in 2022–23.",
+      "Ran Youth Summit 2023 (100+ participants), Children's Cancer Foundation visits, the Social Service Series, the DSE/IB Study Abroad Series, the Annual Themed Luncheon and a mentorship program.",
+    ],
+  },
+  {
+    date: "Nov '25 – Present",
+    role: "Teaching Assistant",
+    co: "UC Berkeley Full Stack Web Development",
+    category: "Teaching",
+    link: "https://fullstackdecal.com/",
+    summary: "Teaching full stack web development to 100+ students",
+    desc: [
+      "Lead lectures, curriculum delivery, and office hours for 100+ students per semester across frontend (React, Next.js, UI/UX), backend (Node.js, Express, Flask, Django, REST APIs, authentication), databases (MongoDB, SQL, ORMs, Firebase), and DevOps.",
+    ],
+  },
+  {
+    date: "",
+    role: "Industry Developer",
+    co: "Web Development at Berkeley",
+    category: "Technology",
+    summary: "",
+    desc: [],
+  },
+  {
+    date: "",
+    role: "Project Chair",
+    co: "Bioengineering Honors Society",
+    category: "Bioengineering",
+    summary: "",
+    desc: [],
+  },
+  {
+    date: "Jun '21 – Present",
+    role: "Head of Communications & Outreach",
+    co: "Fresh Dose Hong Kong",
+    category: "Medicine",
+    summary: "Biomedical advocacy and community health education",
+    desc: [
+      "Ran first-aid workshops with several charities.",
+      "Managed internal communications and research documents, and published social media posts on medical issues for the community.",
+      "Researched and advocated biomedical topics such as organ donation and epigenetics; featured twice on RTHK 3 Common Room Radio.",
+    ],
+  },
+  {
+    date: "Aug '18 – Present",
+    role: "Deputy Secretary General",
+    co: "Model United Nations",
+    category: "Social Issues",
+    summary: "Chaired 7 conferences and delegated at 20",
+    desc: [
+      "Deputy Secretary General of WISMUN 2022: organised my school's first in-person conference (100+ delegates).",
+      "Executive Committee member (Press Director) at ISMUN 2023, organising Hong Kong's largest MUN conference (400+ attendees).",
+      "Head Chair: GSISMUN 2022, DBSMUN 2022, ICSMUN 2022, WISMUN 2023.",
+      "Deputy Chair: ISMUN 2022, AISMUN 2021, HKMUN 2023.",
+    ],
+  },
+  {
+    date: "Feb '20 – Present",
+    role: "Director of Chapters",
+    co: "Inter-School Social Issues Association",
+    category: "Social Issues",
+    summary: "Led 10+ school ambassadors",
+    desc: [
+      "Director of Chapters (2022–23), overseeing 10+ school ambassadors.",
+      "Social Media Manager (2021–22), producing weekly posts.",
+      "Writer, Podcaster and Graphic Designer (2020–21).",
+    ],
+  },
+  {
+    date: "Jan '20 – Aug '22",
+    role: "Hong Kong Regional Ambassador",
+    co: "Technovation Girls Challenge",
+    category: "Technology",
+    summary: "Regional ambassador and 2020 quarterfinalist",
+    desc: [
+      "Hong Kong Regional Ambassador in 2021 and 2022.",
+      "Quarterfinalist in the 2020 Technovation Girls Challenge as founder of Rewhere.",
+    ],
+  },
+  {
+    date: "Jun '21 – Jun '22",
+    role: "Executive Director of Outreach",
+    co: "GirlsinSTEM International",
+    category: "Technology",
+    summary: "Led a global team of 200 project managers and ambassadors",
+    desc: [
+      "Oversaw a team of 200 girls, including global project managers and ambassadors.",
+      "Partnered with organisations, NGOs and professionals around the world; delegated tasks and hosted monthly meetings.",
+    ],
+  },
+  {
+    date: "Mar '22 – Present",
+    role: "Co-Founder",
+    co: "MedEd HK (West Island School)",
+    category: "Medicine",
+    summary: "Medical and biomedical society",
+    desc: [
+      "Co-founded the school's medical and biomedical society and served as its student leader.",
+      "Researched, discussed and taught medical topics to students.",
+    ],
+  },
+  {
+    date: "'18 – '23",
+    role: "House Captain",
+    co: "West Island School",
+    category: "School",
+    summary: "Student leadership roles",
+    desc: [
+      "House Captain (2022–23).",
+      "Pre-16 Student Leader (2021–22).",
+      "Senior Digital Leader (2019–20) and Student Ambassador (2018–20).",
+      "Student leader for Model United Nations and MedEd HK; core organising member of the ESF Computer Conference.",
+    ],
+  },
+  {
+    date: "Jan '21 – Present",
+    role: "Chapter Leader",
+    co: "Inquisitive Minds Hong Kong",
+    category: "Social Service",
+    summary: "Tutoring underprivileged children",
+    desc: [
+      "Led the West Island School chapter.",
+      "Tutored English and Mathematics for underprivileged children in Hong Kong.",
+    ],
+  },
+  {
+    date: "Feb '22 – Present",
+    role: "Researcher",
+    co: "Because Mental Health",
+    category: "Medicine",
+    summary: "Mental health advocacy",
+    desc: [
+      "Advocated for mental health in the Hong Kong community with a registered Hong Kong charity.",
+    ],
+  },
+  {
+    date: "Aug '17 – Jun '20",
+    role: "School Ambassador",
+    co: "Society for the Relief of Disabled Children",
+    category: "Social Service",
+    summary: "Fundraising and hospital support",
+    desc: [
+      "Organised and volunteered at fundraising events.",
+      "Delivered medical equipment and toys to the Duchess of Kent Children's Hospital and helped with administration.",
+    ],
+  },
 ];
 
 export type Project = {
@@ -79,7 +328,7 @@ export type Project = {
   link?: string;
   // Optional cover photo in /public; a generated texture is used otherwise.
   image?: string;
-  // Optional award shown as a ribbon on the cover, e.g. "1st Place · HackMIT".
+  // Optional award shown as a badge on the cover, e.g. "1st Place · HackMIT".
   award?: string;
 };
 
@@ -138,6 +387,15 @@ export const projects: Project[] = [
       "AI insurance agent — document parsing, policy comparison, and natural language Q&A over coverage details.",
     ],
     stack: "React · TensorFlow.js · LangChain",
+  },
+  {
+    name: "Webinet",
+    event: "Young Founders' Summit Asia 2020",
+    award: "Semi-Finalist · YFS Asia",
+    desc: [
+      "An app that surfaces university webinars and courses so students can grow through e-learning, in support of accessible quality education for all (SDG 4).",
+    ],
+    stack: "Mobile App · EdTech · SDG 4",
   },
 ];
 
