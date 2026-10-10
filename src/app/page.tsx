@@ -37,7 +37,7 @@ export default function HomePage() {
               Previously, I optimized MCP eval tools at{" "}
               <a href="https://www.apple.com/" target="_blank" rel="noreferrer" className="link">Apple</a>{" "} 
               and conducted ML research at <a href="https://albalab.ucsf.edu/" target="_blank" rel="noreferrer" className="link">UCSF’s Memory and Aging Center</a>.
-              I was also involved in building CV pipelines for ALS patients and AI cell segmentation for pathology images.
+              I was also involved in building CV pipelines for ALS patients and AI cell segmentation tools for pathology images.
             </p>
             
             <p className="muted"> 

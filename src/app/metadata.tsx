@@ -335,6 +335,114 @@ export const leadership: Leadership[] = [
   },
 ];
 
+export type Award = {
+  title: string;
+  // Omitted when the title already names the organisation.
+  issuer?: string;
+  date: string;
+  // Filter group, from the "Type" column of the activities list.
+  category: string;
+  note?: string;
+};
+
+export const awards: Award[] = [
+  {
+    title: "HKSES Scholar",
+    issuer: "Hong Kong Scholarship for Excellence Scheme",
+    date: "",
+    category: "Scholarship",
+    note: "$155,000 merit scholarship awarded to top 50 students in Hong Kong for overseas higher education",
+  },
+  {
+    title: "Student of the Year 2022–23 · Grand Prize Finalist",
+    issuer: "South China Morning Post",
+    date: "May '23",
+    category: "Social Service",
+    note: "Top 12 students in Hong Kong for social service and community impact",
+  },
+  {
+    title: "Hong Kong Outstanding Students' Award 2020–21 · Finalist",
+    issuer: "Youth Arch Foundation",
+    date: "Jan '22",
+    category: "Social Service",
+  },
+  {
+    title: "Young Entrepreneurs Project Award",
+    issuer: "Kids4Kids HK",
+    date: "Jan '23",
+    category: "Social Service",
+    note: "Won $3,000 funding from Tsang's Group",
+  },
+  {
+    title: "SDG Champion",
+    issuer: "Kids 4 SDGs",
+    date: "",
+    category: "Social Service",
+  },
+  {
+    title: "ESF Inter-School Psychology Competition · Gold Award",
+    date: "Oct '22",
+    category: "Medicine",
+  },
+  {
+    title: "Canadian Computing Competition · Certificate of Distinction",
+    issuer: "University of Waterloo",
+    date: "Feb '22",
+    category: "Technology",
+  },
+  {
+    title: "UK Biology Challenge · Bronze Award",
+    date: "Jun '21",
+    category: "Medicine",
+  },
+  {
+    title: "Certificate of Merit",
+    issuer: "Hong Kong Academy for the Talented",
+    date: "May '21",
+    category: "Medicine",
+  },
+  {
+    title: "Young Founders' Summit Asia · Semi-Finalist",
+    issuer: "Smarter Me SG",
+    date: "Oct '20",
+    category: "Technology",
+  },
+  {
+    title: "Technovation Girls Challenge · Quarter-Finalist",
+    date: "Jun '20",
+    category: "Technology",
+  },
+  {
+    title: "Entrepreneurship Day · Semi-Finalist",
+    issuer: "HKTDC",
+    date: "'20",
+    category: "Technology",
+  },
+  {
+    title: "Global Goals Competition · Semi-Finalist",
+    issuer: "Global Social Leaders",
+    date: "'20",
+    category: "Start-up",
+  },
+  {
+    title: "Tiger Global Case Competition · Renesas Project",
+    date: "'20",
+    category: "Start-up",
+  },
+  {
+    title: "Student of the Year",
+    issuer: "West Island School",
+    date: "'19",
+    category: "School",
+  },
+  {
+    title: "High Honours",
+    issuer: "Johns Hopkins Center for Talented Youth",
+    date: "'18",
+    category: "School",
+  },
+];
+
 export type Project = {
   name: string;
   event: string;

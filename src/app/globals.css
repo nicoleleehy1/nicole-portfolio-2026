@@ -32,7 +32,7 @@ ul, ol {
 
 /* Page container, shared by every route */
 .container {
-  max-width: 860px;
+  max-width: 760px;
   margin: 0 auto;
   padding: 0 1.5rem;
 }
@@ -68,7 +68,7 @@ ul, ol {
   text-decoration: underline;
 }
 
-/* Big section heading, used on /experience, /leadership, /projects */
+/* Big section heading, used on every page */
 .page-title {
   font-family: var(--display);
   font-weight: 700;
@@ -324,7 +324,6 @@ ul, ol {
   margin-bottom: 1rem;
 }
 .prose {
-  max-width: 712px; /* keep essay lines readable inside the wider container */
   font-size: 0.95rem;
   line-height: 1.75;
   margin-top: 2rem;
@@ -618,10 +617,40 @@ html:has(.peek[open]) { overflow: hidden; }
 }
 .peek-desc li + li { margin-top: 0.4rem; }
 
+/* Notion-style list view (awards) */
+.list { border-top: 1px solid var(--rule); }
+.list-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 0.6rem 0.5rem;
+  border-bottom: 1px solid var(--rule);
+  transition: background 0.12s ease;
+}
+.list-row:hover { background: rgba(55, 53, 47, 0.04); }
+.list-main { flex: 1; min-width: 0; }
+.list-title { font-size: 0.95rem; font-weight: 500; line-height: 1.45; }
+.list-subtitle {
+  margin-left: 0.5rem;
+  font-weight: 400;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+.list-note { font-size: 0.85rem; color: var(--muted); margin-top: 0.1rem; }
+.list-date {
+  flex-shrink: 0;
+  padding-top: 0.15rem;
+  text-align: right;
+  font-size: 0.85rem;
+  color: var(--muted);
+  white-space: nowrap;
+}
+
 /* Mobile */
 @media (max-width: 560px) {
   .hero-grid { grid-template-columns: 1fr; }
   .gallery { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .list-subtitle { display: block; margin-left: 0; }
   .peek-content { padding: 1.5rem 1.25rem 2rem; }
   .peek-props { grid-template-columns: 5.5rem 1fr; }
   .portrait { order: -1; width: 140px; height: 200px; }
