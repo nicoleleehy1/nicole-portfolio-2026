@@ -6,7 +6,6 @@ import { RESUME_URL } from "../app/metadata";
 const navItems = [
   { label: "Experience", href: "/experience" },
   { label: "Leadership", href: "/leadership" },
-  { label: "Research", href: "/research" },
   { label: "Projects", href: "/projects" },
   { label: "Writings", href: "/writings" },
 ];

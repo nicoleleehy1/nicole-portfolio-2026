@@ -1,5 +1,3 @@
-import type { XpEntry } from "../components/xp-list";
-
 export const RESUME_URL = "/Nicole_Lee_Resume_Oct_2026.pdf";
 export const skills = [
   "Java","Python","Go","C/C++","TypeScript","Rust","SQL",
@@ -24,6 +22,7 @@ export const experience = [
     date: "Aug – Dec '25",
     role: "Forward Deployed Engineer Intern",
     co: "Wedge (YC S25)",
+    link: "https://www.wedge.ai/",
     summary: "Clinician analytics platform for LA General Medical Center",
     desc: [
       "Built a clinician analytics platform for LA General Medical Center (600-bed Level I trauma center) using React, TypeScript, and GraphQL, surfacing EHR and scheduling across 30K+ annual discharges to improve bed turnover.",
@@ -34,6 +33,7 @@ export const experience = [
     date: "Jun – Aug '25",
     role: "Software Engineer Intern",
     co: "Anchor Logics",
+    link: "https://anchorlogics.com/",
     summary: "Real-time IoT telemetry & computer vision for ALS/Parkinson's patients",
     desc: [
       "Led 5 engineers to ship a real-time telemetry platform that analyzes 3D IMU data streamed from IoT vests used by 50+ ALS/Parkinson's patients, surfacing data visualizations, timeline scrubbers, and playback controls.",
@@ -54,7 +54,8 @@ export const experience = [
   {
     date: "Apr – Jun '25",
     role: "Software Engineer Intern",
-    co: "Digpath.ai",
+    co: "DigPath",
+    link: "https://www.digpath.ai/",
     summary: "Pathology cell segmentation & serverless analytics",
     desc: [
       "Deployed a SageMaker + Meta SAM cell segmentation pipeline with GPU-accelerated inference across 500+ whole-slide pathology images (70GB dataset); reduced manual annotation turnaround from days to under 2 hours per case.",
@@ -92,6 +93,15 @@ export const experience = [
       "Developed an R-based time-series analysis pipeline cross-correlating community mobility data with COVID-19 case and hospital admission trends across 20K+ data points, quantifying lagged relationships between mobility shifts and transmission during the pandemic.",
       "Supported cancer genomics research in Dr Jason Wong's lab, assisting with Oxford Nanopore long-read sequencing workflows, from library preparation to basecalling and downstream variant analysis.",
       "Led an independent DNA extraction and sequencing study (2023), carrying samples through extraction, quality control, Nanopore sequencing and computational analysis, and co-designed a hands-on wet-lab curriculum for the School of Biomedical Sciences.",
+    ],
+  },
+  {
+    date: "",
+    role: "Primary Researcher",
+    co: "HK PolyU Junior Researcher Mentorship Program",
+    summary: "E-habits and cardiovascular health of secondary school students",
+    desc: [
+      "Evaluated the e-habits and cardiovascular health of secondary school students in a cardiovascular exercise lab, using an ergometer, plethysmography and questionnaires.",
     ],
   },
   // {
@@ -401,41 +411,6 @@ export const projects: Project[] = [
       "An app that surfaces university webinars and courses so students can grow through e-learning, in support of accessible quality education for all (SDG 4).",
     ],
     stack: "Mobile App · EdTech · SDG 4",
-  },
-];
-
-export const research: XpEntry[] = [
-  {
-    date: "Aug '24 – Feb '25",
-    role: "ML Researcher",
-    co: "University of California, San Francisco",
-    link: "https://neuroailab.ucsf.edu/blog/2025/11/12/mac-rag-system",
-    summary: "MAC RAG: retrieval-augmented generation over neurodegenerative disease research",
-    desc: [
-      "Built MAC RAG, a retrieval-augmented generation system grounding GPT-4 Turbo answers in 2,000+ neurodegenerative disease papers from UCSF's Memory and Aging Center faculty, with full citations (author, year, journal, PMID) for every response.",
-      "Engineered the retrieval pipeline: overlapping 1,000-character chunking, 384-dim all-MiniLM-L6-v2 sentence embeddings, and exact nearest-neighbor search over a FAISS index, tuning top-k retrieval (k=10) for answer quality.",
-      "Deployed a Gradio interface on Hugging Face Spaces surfacing answers alongside supporting passages, used by clinicians at a Clinical Pathology Conference to reference diagnostic criteria and treatment approaches.",
-    ],
-  },
-  {
-    date: "Aug '23 – Sep '24",
-    role: "Researcher",
-    co: "University of Hong Kong",
-    summary: "COVID-19 epidemiological modeling, cancer genomics & Nanopore sequencing",
-    desc: [
-      "Developed an R-based time-series analysis pipeline cross-correlating community mobility data with COVID-19 case and hospital admission trends across 20K+ data points, quantifying lagged relationships between mobility shifts and transmission during the pandemic.",
-      "Supported cancer genomics research in Dr Jason Wong's lab, assisting with Oxford Nanopore long-read sequencing workflows, from library preparation to basecalling and downstream variant analysis.",
-      "Led an independent DNA extraction and sequencing study (2023), carrying samples through extraction, quality control, Nanopore sequencing and computational analysis, and co-designed a hands-on wet-lab curriculum for the School of Biomedical Sciences.",
-    ],
-  },
-  {
-    date: "",
-    role: "Primary Researcher",
-    co: "HK PolyU Junior Researcher Mentorship Program",
-    summary: "E-habits and cardiovascular health of secondary school students",
-    desc: [
-      "Evaluated the e-habits and cardiovascular health of secondary school students in a cardiovascular exercise lab, using an ergometer, plethysmography and questionnaires.",
-    ],
   },
 ];
 

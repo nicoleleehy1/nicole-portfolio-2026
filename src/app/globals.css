@@ -68,7 +68,7 @@ ul, ol {
   text-decoration: underline;
 }
 
-/* Big section heading, used on /experience, /research, /projects */
+/* Big section heading, used on /experience, /leadership, /projects */
 .page-title {
   font-family: var(--display);
   font-weight: 700;
@@ -187,7 +187,7 @@ ul, ol {
 }
 .plain-list li:last-child { margin-bottom: 0; }
 
-/* Role name in expandable experience / research rows */
+/* Role name in expandable experience rows */
 .entry-role {
   font-family: var(--display);
   font-weight: 600;
