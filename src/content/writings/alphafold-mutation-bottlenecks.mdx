@@ -1,0 +1,60 @@
+---
+title: "The design choice behind Google Deepmind's AlphaFold2's biggest blind spot: Why a protein prediction model trained on evolution goes blind to single mutations."
+date: 2026-10-12
+summary: ""
+kind: "Research"
+draft: false
+---
+
+AlphaFold2 can predict the shape of nearly any protein on Earth, but it can't tell you what happens when you change one amino acid in it. Why?
+
+In 2020, a neural network effectively solved a 50-year-old problem in biology: Give AlphaFold2 a protein sequence and
+it returns a 3D structure often accurate within the width on an atom. What previously took months or years to get structures
+experimentally (X-ray crystollography, cro-EM) now can be done in minutes to hours computationally. At CASP14 (2020), the blind
+structure prediction competition, AlphaFold2 hit a median backbone error of under 1Å, often close to experimental accuracy. The next best method was around 2.8 Å.
+
+When I first read about AlphaFold2, I assumed diagnosing genetic disease was basically solved:
+can't we just swap in the mutation, fold the protein, see what breaks? But I was wrong - and it turns
+out, the answer was hiding behind how AlphaFold works.
+
+
+
+## How does AlphaFold work?
+AlphaFold2 doesn't just fold proteins from physics. It's most important input is a
+**multiple sequence alignment**: thousands of versions of the same protein from different species, lined up. When
+two positions in a protein mutate together across evolution, that's a strong hint that they touch in 3D. If
+one changes, the other has to compensate, or the protein falls apart.
+
+The model's core block, the **Evoformer**, is built to mine exactly this. It keeps a running guess of which residue pairs are close,
+and refines it with "triangle" updates: if residue A is near B and B is near C, then A and C can't be far apart. I found this to be the most
+elegant part of the paper.
+
+Following that, the model treats each amino acid as a small rigid piece with a position and a facing direction. 
+It then slides and turns them into a chain. Its attention (Invariant Point Attention) gives the same answer no matter
+how you spin the whole protein. The finished guess gets fed back in a few times to sharpen it, and a confidence score (pLDDT)
+from 0 to 100 is generated.
+
+
+
+## The catch
+That evolutionary signal describes the protein *family*, not just your specific copy. Change one amino acid and the alignment
+barely moves - thousands of sequences still vote for the same fold. So AlphaFold mostly predicts the same structure for the mutant and
+the original, even when the mutation is know to cause disease.
+
+Follow-up work tested this directly and found AlphaFold2's predicted structures don't reliably capture the effects of a single missense mutations.
+For example, a single letter change in your CFTR gene, and you have cystic fibrosis. Ask AlphaFold2 what that change does to your protein, and it'll
+hand you back a structure that looks almost exaclty like the healthy one. That's not a bug! It's a model doing exactly what it's trained for: predicting
+the shape a sequence family converges on.
+
+This approach has several bottlenecks. Although largely solving the question of structure prediction, AlphaFold has yet to solve the *how* and *why* it gets there.
+Specifically, by depending on evolutionary signal, it has yet to solve the physical pathway from a floppy chain to a folded shape, and why it took that route. 
+This also causes proteins with few relatives (ie. shallow MSAs) to be predicted worse.
+
+AlphaFold also outputs one static structure, not the range of shapes a protein moves through. Proteins often go through conformational changes, with many having no
+stable structure at all (disordered regions), which makes this a huge bottleneck.
+
+
+## Why does this matter?
+Many disease mutations don't wreck a protein's fold. They nudge stability, breaking a binding site, or shift how the protein moves. A single static
+structure misses that, and the confidence score (pLDDT) measures how sure the model is about the fold, not whether the fold survives your mutation.
+
