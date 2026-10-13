@@ -1,0 +1,87 @@
+---
+title: "Five ways to predict protein mutation."
+date: 2026-10-12
+summary: ""
+kind: "Research"
+draft: false
+---
+
+AlphaFold2 can predict the shape of nearly any protein on Earth, but it can't tell you what happens when you change one amino acid in it. Why?
+
+In 2020, a neural network effectively solved a 50-year-old problem in biology: Give AlphaFold2 a protein sequence and
+it returns a 3D structure often accurate within the width on an atom. What previously took months or years to get structures
+experimentally (X-ray crystollography, cro-EM) now can be done in minutes to hours computationally. At CASP14 (2020), the blind
+structure prediction competition, AlphaFold2 hit a median backbone error of under 1Å, often close to experimental accuracy. The next best method was around 2.8 Å.
+
+When I first read about AlphaFold2, I assumed diagnosing genetic disease was basically solved:
+can't we just swap in the mutation, fold the protein, see what breaks? But I was wrong - and it turns
+out, the answer was hiding behind how AlphaFold works.
+
+In my previous [article](https://nextjs.org/docs), 
+
+# So how do people work around it?
+
+> Hint: The fix isn't making AlphaFold better at structures - it's realizing structures are the wrong output for this question.
+
+| Method          | Input          | Output                   | Needs MSA | Needs structure | Training labels             |
+| --------------- | -------------- | ------------------------ | --------- | --------------- | --------------------------- |
+| AlphaMissense   | Sequence + MSA | Pathogenicity score      | Yes       | Implicit        | Weak (population frequency) |
+| EVE             | MSA            | Pathogenicity probability| Yes       | No              | None                        |
+| ESM-1v          | Sequence       | Likelihood ratio         | No        | No              | None                        |
+| FoldX / Rosetta | Structure      | ΔΔG                      | No        | Yes             | Fitted energy weights       |
+| ThermoMPNN      | Structure      | ΔΔG map                  | No        | Yes             | Experimental stability      |
+| AF-Cluster      | MSA            | Alternate structures     | Yes       | Predicts it     | None (uses AF2)             |
+| MD / FEP        | Structure      | Dynamics, ΔΔG            | No        | Yes             | Force field                 |
+| DMS             | Wet lab        | Measured fitness         | No        | No              | It *is* the labels          |
+
+
+## Score the mutation directly
+**1. AlphaMissense** (Cheng et al., Science 2023) keeps AlphaFold2's architecture but swaps the output. Instead of 3D coordinates, 
+it returns a score from 0 to 1 for how likely a variant is to be pathogenic.
+
+The clever part is the training data. Clinical labels are scarce and biased, so the team used population data as a weak proxy:
+- Likely *benign*: variants seen often in humans and in other primates. If a chimpanzee carries a variant and is fine, it's probably tolerated.
+- Likely *pathogenic*: variants that could plausibly occur but never show up, adjusted for how often each kind of DNA mutation naturally happens.
+
+They also kept ClinVar, the main clinical variant database, out of training so they could evaluate against it honestly. 
+The result covers all ~71 million possible single amino acid changes in the human proteome. The trade-off: it tells you a variant is bad, not why.
+
+
+**2. EVE** (Frazer et al., Nature 2021) treats the problem as anomaly detection. For each protein, it trains a Bayesian variational autoencoder on that 
+protein's MSA, learning what evolution allows. Because it models whole sequences, it captures interactions between positions, not just "position 42 is usually leucine."
+
+To score a mutation, EVE compares how likely the model finds the mutant versus the original. Then it does something neat: 
+it fits a two-component Gaussian mixture across every possible variant in the protein, splitting them into a tolerated cluster and a damaging one.
+That produces a pathogenicity probability with no clinical labels at all. The cost is one model per protein, and it needs a deep alignment to work.
+
+## Ask a language model
+**ESM-1v** (Meier et al., NeurIPS 2021) is a 650M-parameter transformer trained like BERT on ~98 million protein sequences: hide some amino acids, 
+predict them. A model that's good at filling in blanks already knows which substitutions fit.
+
+Scoring a mutation takes one forward pass:
+1. Mask the mutated position in the original sequence.
+2. Read the model's probabilities for that position.
+3. Score = log P(mutant) − log P(original). Strongly negative means the model prefers the original, so the mutation is likely damaging.
+
+It needs neither an alignment nor a structure, and it still performs comparably to EVE-style models on mutation benchmarks. 
+The weak spots: proteins with few relatives in the training data score poorly, and summing scores for multiple mutations assumes they act independently.
+
+
+## Estimate stability instead of shape
+Plenty of disease mutations leave the fold intact and just make the protein less stable. The number that captures this is ΔΔG: the change in folding stability caused by a mutation.
+
+**FoldX and Rosetta** compute it from physics. Starting from a structure (experimental or AlphaFold), they swap in the mutant residue, repack the nearby side chains, and score both versions with an energy function built from van der Waals contacts, hydrogen bonds, electrostatics and solvation. Subtract, and you get ΔΔG. The big advantage is that you can see why a mutation hurts, like a lost hydrogen bond or a buried charge. The catch is that they're only as good as the input structure, so on AlphaFold models you want to stick to high-confidence regions.
+
+**ThermoMPNN** (Dieckhaus et al., PNAS 2024) learns ΔΔG from data instead. It reuses the encoder from ProteinMPNN, a graph neural network originally trained to design sequences for a given backbone, so its embeddings already encode how each residue fits its surroundings. A small prediction head on top was trained on the mega-scale dataset from Tsuboyama et al. (Nature 2023), which measured stability for hundreds of thousands of variants. One pass returns predicted ΔΔG for every substitution at every position. The open question is generalization: the training domains were small, roughly 40 to 72 residues.
+
+
+## Recover the motion
+**AF-Cluster** (Wayment-Steele et al., Nature 2024) starts from a simple observation. An MSA mixes subfamilies that may favor different shapes, and AlphaFold averages them into one consensus fold. So split them: cluster the alignment by sequence similarity, run AlphaFold on each cluster, and compare. On KaiB, a protein that switches between two folds, this recovered both states. The team then designed point mutations predicted to tip the balance and confirmed the shift experimentally with NMR. That's AlphaFold being used to predict what a mutation does. Later work debated how far this generalizes, so it's a promising result rather than a settled one.
+
+**Molecular dynamics** skips prediction and simulates. You build wild-type and mutant structures (often from AlphaFold), surround them with simulated water, and integrate Newton's equations in femtosecond steps for nanoseconds to microseconds. Comparing the runs shows how flexibility changes, which contacts break, or whether a binding pocket opens. Free energy perturbation goes further and computes ΔΔG by gradually morphing one residue into another. It's the most physically grounded option and by far the most expensive, and many real protein motions happen on timescales too long to simulate directly.
+
+
+## Measure it
+**Deep mutational scanning** tests nearly every possible single mutation of a protein in one experiment. You build a DNA library of variants, express them in cells, yeast or phage so each carries one version, then apply a selection tied to function, like growth or binding. Sequencing before and after shows which variants got enriched and which disappeared, giving each one a fitness score. The limitation is that each assay measures one property, and fitness in a yeast growth assay isn't automatically disease relevance in a human.
+
+**ProteinGym** (Notin et al., NeurIPS 2023) gathers over 200 of these assays, plus clinical variant sets, into one benchmark. It ranks every model above by how well its predictions correlate with experimental measurements, which is how this whole field keeps score.
