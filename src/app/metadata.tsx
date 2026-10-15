@@ -1,4 +1,4 @@
-export const RESUME_URL = "/Nicole_Lee_Resume_Oct_2026.pdf";
+export const RESUME_URL = "/Nicole_Lee_Resume";
 export const skills = [
   "Java","Python","Go","C/C++","TypeScript","Rust","SQL",
   "React","Next.js","Node","FastAPI","PostgreSQL","Redis",
