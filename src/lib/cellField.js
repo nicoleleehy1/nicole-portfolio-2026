@@ -541,7 +541,7 @@ export function initCellField(container, options = {}){
     const id = pinned ? s.id : s.id + (Math.random()*40|0);
     const sub = () => id + (Math.random()*120|0) - 60;
     return {type, s, id, pinned, born: performance.now(), b:null,
-      ax: rnd(.45,.95), ay: rnd(.35,.8), ox: rnd(-.12,.12), oy: rnd(-.12,.12), cur:null, nextStep:0, style: pinned ? 2 : (Math.random()*3|0),
+      ax: rnd(.45,.95), ay: rnd(.35,.8), ox: rnd(-.12,.12), oy: rnd(-.12,.12), cur:null, nextStep:0, style: 1,
       can: mkCan(56,40), nextMosh:0, grid:null, tex: Math.random()*4|0,
       mode: pinned ? 'mosh' : Math.random() < .25 ? 'ascii' : 'mosh',
       frags: Array.from({length: Math.random()*3|0}, () => ({dx: rnd(-1.4,1.4), dy: rnd(-1.2,1.2), s: rnd(8,22), id: sub()})),
@@ -1211,10 +1211,7 @@ export function initCellField(container, options = {}){
     }
     if (Math.random() < .02*G){ ch.globalAlpha = .7; ch.fillStyle = '#fff'; ch.fillRect(x, y, w, h); }
     ch.globalAlpha = 1; ch.lineWidth = 1;
-    if (jit || tk.style === 2){
-      ch.strokeStyle = 'rgba(255,79,216,.85)'; ch.strokeRect(x + 2, y + 1, w, h);
-      ch.strokeStyle = 'rgba(127,243,234,.85)'; ch.strokeRect(x - 2, y - 1, w, h);
-    }
+    // every tracker uses the bracketed frame; the plain and pink/cyan double-outline styles are gone
     ch.strokeStyle = 'rgba(255,255,255,.95)';
     if (tk.style === 1){ brackets(x - 3, y - 3, w + 6, h + 6, Math.min(10, w*.3)); ch.globalAlpha = .45; ch.strokeRect(x, y, w, h); ch.globalAlpha = 1; }
     else ch.strokeRect(x, y, w, h);
