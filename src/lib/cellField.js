@@ -57,6 +57,8 @@ export function initCellField(container, options = {}){
   // reduced motion: slow speed, low glitch, no line boil, whatever setOptions asks for
   const capMotion = () => { if (reduced){ S.speed = Math.min(S.speed, .3); S.glitch = Math.min(S.glitch, .35); } };
   let exclusion = [], readout = null, readoutLabel = '', destroyed = false, raf = 0;
+  // low glitch settings drop the strobing blink and slow the datamosh refresh, for a calmer read
+  const soft = () => S.glitch < .6;
   const asciiOn = () => S.ascii && W >= 600;
   const offs = [];
   const on = (el, type, fn, opt) => { el.addEventListener(type, fn, opt); offs.push(() => el.removeEventListener(type, fn, opt)); };
@@ -1144,7 +1146,7 @@ export function initCellField(container, options = {}){
 
   function drawBox(tk, now){
     const b = tk.b, G = S.glitch, age = (now - tk.born)/1000;
-    if (age < .4 && ((age*20)|0) % 2) return;
+    if (!soft() && age < .4 && ((age*20)|0) % 2) return;
     if (tk.cur && now - tk.cur.born < 40) return;
     const mode = (tk.mode === 'ascii' && !asciiOn()) || (tk.mode === 'tex' && b.w > 64) ? 'mosh' : tk.mode;
     if (now > tk.nextMosh){
@@ -1194,7 +1196,7 @@ export function initCellField(container, options = {}){
 
   function drawRBoxes(now){
     const vis = rboxes.filter(b => { const a = now - b.born, l = b.until - now;
-      if (a < 0 || hitsText(b.x - b.w/2, b.y - b.h/2, b.w + 40, b.h)) return false; if (a < 300 && ((a/45)|0) % 2) return false; if (l < 300 && ((l/45)|0) % 2) return false; return true; });
+      if (a < 0 || hitsText(b.x - b.w/2, b.y - b.h/2, b.w + 40, b.h)) return false; if (!soft() && a < 300 && ((a/45)|0) % 2) return false; if (!soft() && l < 300 && ((l/45)|0) % 2) return false; return true; });
     // plexus between neighbouring random boxes
     if (S.plexus){
     ch.strokeStyle = 'rgba(150,255,238,.32)'; ch.lineWidth = .8; ch.beginPath();
@@ -1210,21 +1212,23 @@ export function initCellField(container, options = {}){
       const w = Math.round(Math.min(bx.w, S.boxMax)), h = Math.round(Math.min(bx.h, S.boxMax*.8));
       let x = Math.round(bx.x - w/2) + .5; const y = Math.round(bx.y - h/2) + .5;
       const mode = bx.mode === 'ascii' && !asciiOn() ? 'mosh' : bx.mode;
+      // soft mode fades boxes in and out instead of blinking them
+      const fa = soft() ? Math.max(0, Math.min(1, (now - bx.born)/400, (bx.until - now)/400)) : 1;
       if (now > bx.next){
         if (mode === 'mosh') mosh(bx.can, bx.x - w/2, bx.y - h/2, w, h, Math.max(.3, G));
         else if (mode === 'ascii') bx.grid = asciiGrid(bx.x - w/2, bx.y - h/2, w, h);
-        bx.next = now + rnd(70,160);
+        bx.next = now + (soft() ? rnd(260,480) : rnd(70,160));
       }
       if (Math.random() < .05*G) x += Math.round(rnd(-5,5)*G);
       if (mode === 'ascii'){
-        ch.globalAlpha = .6; ch.fillStyle = '#010305'; ch.fillRect(x, y, w, h);
-        ch.save(); ch.beginPath(); ch.rect(x, y, w, h); ch.clip(); drawAscii(bx.grid, x, y, '#a8fff4', .92); ch.restore();
+        ch.globalAlpha = .6*fa; ch.fillStyle = '#010305'; ch.fillRect(x, y, w, h);
+        ch.save(); ch.beginPath(); ch.rect(x, y, w, h); ch.clip(); drawAscii(bx.grid, x, y, '#a8fff4', .92*fa); ch.restore();
       } else {
         const src = mode === 'mosh' ? bx.can : GT[bx.tex];
-        ch.globalAlpha = .86;
+        ch.globalAlpha = .86*fa;
         if (Math.random() < .1*G) slicedDraw(src, x, y, w, h, 2 + (Math.random()*3|0), 6*G); else ch.drawImage(src, x, y, w, h);
       }
-      ch.globalAlpha = 1; ch.lineWidth = 1; ch.strokeStyle = 'rgba(255,255,255,.92)'; ch.strokeRect(x, y, w, h);
+      ch.globalAlpha = fa; ch.lineWidth = 1; ch.strokeStyle = 'rgba(255,255,255,.92)'; ch.strokeRect(x, y, w, h);
       ch.font = w < 28 ? FONT_S : FONT; ch.fillStyle = '#fff'; ch.fillText(idText(bx.id, bx.born, now), x + w + 3, y + 9);
     }
     ch.globalAlpha = 1;
@@ -1234,9 +1238,9 @@ export function initCellField(container, options = {}){
     const vis = tk.boxes.filter((bx, i) => {
       const age = now - tk.born - bx.delay;
       if (age < 0) return false;
-      if (age < 380 && ((age/45)|0) % 2) return false;
+      if (!soft() && age < 380 && ((age/45)|0) % 2) return false;
       const out = left - (tk.boxes.length - 1 - i)*110;
-      if (out < 380 && ((out/45)|0) % 2) return false;
+      if (!soft() && out < 380 && ((out/45)|0) % 2) return false;
       return out > 0;
     });
     if (!vis.length) return;
@@ -1261,7 +1265,7 @@ export function initCellField(container, options = {}){
       if (now > bx.next){
         if (mode === 'mosh') mosh(bx.can, bx.x - w/2, bx.y - h/2, w, h, Math.max(.3, G));
         else if (mode === 'ascii') bx.grid = asciiGrid(bx.x - w/2, bx.y - h/2, w, h);
-        bx.next = now + rnd(70,160);
+        bx.next = now + (soft() ? rnd(260,480) : rnd(70,160));
       }
       const jit = Math.random() < .05*G; if (jit) x += Math.round(rnd(-5,5)*G);
       if (mode === 'ascii'){
@@ -1281,7 +1285,7 @@ export function initCellField(container, options = {}){
   }
   function drawSwarm(tk, now){
     const s = tk.s, G = Math.max(.3, S.glitch), age = (now - tk.born)/1000;
-    if (age < .35 && ((age*24)|0) % 2) return;
+    if (!soft() && age < .35 && ((age*24)|0) % 2) return;
     if (now > tk.nextJump){
       for (const it of tk.items) if (Math.random() < .35){
         it.dx = Math.max(-1.2, Math.min(1.2, it.dx + rnd(-.3,.3))); it.dy = Math.max(-1.2, Math.min(1.2, it.dy + rnd(-.3,.3)));
