@@ -415,7 +415,7 @@ ul, ol {
   transition: color 0.15s ease, background 0.15s ease;
 }
 .icon-link:hover { color: var(--accent); }
-/* Home: icons sit in small sketched cells: a translucent membrane with a doubled pencil outline,
+/* Home: icons sit in small translucent cells with a light blue membrane,
    slightly different sizes, slowly breathing and drifting */
 .hero .icon-link {
   --s: 40px;
@@ -432,36 +432,10 @@ ul, ol {
   animation: cell-breathe 7s ease-in-out infinite, cell-drift 9s ease-in-out infinite;
   transition: color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
 }
-/* second, offset pencil stroke so the outline reads hand-drawn */
-.hero .icon-link::before {
-  content: "";
-  position: absolute;
-  inset: -3px -2px -1px -4px;
-  border-radius: 55% 45% 48% 52% / 46% 56% 44% 54%;
-  border: 1px solid rgba(255, 159, 207, 0.45);
-  transform: rotate(-8deg);
-  pointer-events: none;
-  animation: cell-breathe 5.5s ease-in-out infinite reverse;
-}
-/* a tiny nucleus-like bud on the rim */
-.hero .icon-link::after {
-  content: "";
-  position: absolute;
-  width: 5px;
-  height: 5px;
-  top: 8%;
-  right: 6%;
-  border-radius: 50%;
-  border: 1px solid rgba(255, 211, 107, 0.75);
-  pointer-events: none;
-}
 .hero .icon-link:nth-child(1) { --s: 42px; animation-duration: 7s, 9s; animation-delay: 0s, -2s; }
 .hero .icon-link:nth-child(2) { --s: 36px; animation-duration: 8.5s, 11s; animation-delay: -3s, -5s; }
-.hero .icon-link:nth-child(2)::after { top: auto; bottom: 4%; right: auto; left: 10%; border-color: rgba(255, 159, 207, 0.8); }
 .hero .icon-link:nth-child(3) { --s: 44px; animation-duration: 6.5s, 10s; animation-delay: -1.5s, -7s; }
-.hero .icon-link:nth-child(3)::after { top: 2%; right: auto; left: 20%; border-color: rgba(127, 243, 234, 0.8); }
 .hero .icon-link:nth-child(4) { --s: 38px; animation-duration: 9s, 8s; animation-delay: -4s, -1s; }
-.hero .icon-link:nth-child(4)::after { top: auto; bottom: 10%; right: 2%; width: 4px; height: 4px; }
 .hero .icon-link:hover {
   color: #fff;
   border-color: #7ff3ea;
@@ -478,8 +452,7 @@ ul, ol {
   50% { translate: 0 -3px; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .hero .icon-link,
-  .hero .icon-link::before { animation: none; }
+  .hero .icon-link { animation: none; }
 }
 .icon-link svg {
   width: 20px;
