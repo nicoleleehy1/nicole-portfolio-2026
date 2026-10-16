@@ -969,13 +969,15 @@ html:has(.peek[open]) { overflow: hidden; }
   .hud-readout { text-align: left; }
 }
 
-/* Light / dark switch in the nav, styled like the other nav labels */
+/* Light / dark switch in the nav: an icon sized to the nav labels' cap height and line box */
 .theme-toggle {
-  font: inherit;
-  letter-spacing: inherit;
-  text-transform: inherit;
+  display: inline-flex;
+  align-items: center;
+  height: calc(0.72rem * 1.6);
   background: none;
   border: 0;
   padding: 0;
+  color: var(--muted);
   cursor: pointer;
 }
+.theme-toggle svg { width: 0.95rem; height: 0.95rem; display: block; }
