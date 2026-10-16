@@ -542,7 +542,7 @@ export function initCellField(container, options = {}){
     return {type, s, id, pinned, born: performance.now(), b:null,
       ax: rnd(.45,.95), ay: rnd(.35,.8), ox: rnd(-.12,.12), oy: rnd(-.12,.12), cur:null, nextStep:0, style: pinned ? 2 : (Math.random()*3|0),
       can: mkCan(56,40), nextMosh:0, grid:null, tex: Math.random()*4|0,
-      mode: pinned ? 'mosh' : (r => r < .28 ? 'ascii' : r < .75 ? 'mosh' : 'tex')(Math.random()),
+      mode: pinned ? 'mosh' : Math.random() < .25 ? 'ascii' : 'mosh',
       frags: Array.from({length: Math.random()*3|0}, () => ({dx: rnd(-1.4,1.4), dy: rnd(-1.2,1.2), s: rnd(8,22), id: sub()})),
       items: type === 'swarm' ? Array.from({length: 6 + (Math.random()*10|0)}, () => ({dx: rnd(-1,1), dy: rnd(-1,1), w: rnd(10,28), h: rnd(8,18), id: sub(), fill: Math.random() < .45, tex: Math.random()*4|0})) : null,
       boxes: type === 'group' ? makeGroupBoxes(s, id) : null,
@@ -556,7 +556,7 @@ export function initCellField(container, options = {}){
       const w = rnd(16, mx);
       return {bi: s.blobs ? (Math.random()*s.blobs.length|0) : -1, dx: rnd(-.7,.7), dy: rnd(-.7,.7), w, h: w*rnd(.55,.95),
         id: id + i*(1 + (Math.random()*9|0)), delay: i*rnd(140,340), can: mkCan(16,12), next:0, grid:null, tex: Math.random()*4|0,
-        mode: asciiOn() && Math.random() < .18 ? 'ascii' : Math.random() < .78 ? 'mosh' : 'tex', x:null, y:null};
+        mode: asciiOn() && Math.random() < .18 ? 'ascii' : 'mosh', x:null, y:null};
     });
   }
   function acquire(){
@@ -717,11 +717,12 @@ export function initCellField(container, options = {}){
       const band = Math.max(40, Math.min(W*.16, ...exclusion.map(r => Math.min(r.l, W - r.r)))), side = Math.random() < .5;
       const cx = S.edgeBoxes ? (side ? rnd(16, band) : rnd(W - band, W - 16)) : rnd(20, W - 20);
       for (let i = 0; i < n; i++){
-        const w = n > 1 ? rnd(10,26) : rnd(16, Math.max(20, Math.min(S.boxMax, 90)));
+        // loose boxes stay small; big glitch boxes only appear as trackers locked onto a structure
+        const w = n > 1 ? rnd(10,22) : rnd(12,28);
         const [bx, by] = push([cx + (n > 1 ? rnd(-30,30) : 0), cy + (n > 1 ? rnd(-24,24) : 0)]);
         rboxes.push({x: bx, y: by, w, h: w*rnd(.5,.95),
           born: now + i*rnd(60,200), until: now + rnd(900,3200), id: nid(), tex: Math.random()*4|0, can: mkCan(16,12), next:0, grid:null,
-          mode: asciiOn() && Math.random() < .2 ? 'ascii' : Math.random() < .75 ? 'mosh' : 'tex'});
+          mode: asciiOn() && Math.random() < .2 ? 'ascii' : 'mosh'});
       }
       while (rboxes.length > 16) rboxes.shift();
       nextRBox = now + rnd(250,700)/Math.max(.3, S.glitch);

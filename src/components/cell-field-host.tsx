@@ -4,8 +4,8 @@ import { usePathname } from "next/navigation";
 import type { CellField, CellFieldOptions } from "@/lib/cellField";
 
 // Full strength on the home page; calmer behind long-form section pages.
-const FULL: CellFieldOptions = { glitch: 0.45, speed: 0.25, maxTrackers: 4, edgeBoxes: true };
-const CALM: CellFieldOptions = { glitch: 0.25, speed: 0.2, maxTrackers: 3, edgeBoxes: true };
+const FULL: CellFieldOptions = { glitch: 0.45, speed: 0.25, maxTrackers: 6, edgeBoxes: true };
+const CALM: CellFieldOptions = { glitch: 0.25, speed: 0.2, maxTrackers: 4, edgeBoxes: true };
 const intensity = (pathname: string) => (pathname === "/" ? FULL : CALM);
 
 // Text blocks marked data-exclude, clipped to the viewport: cells spawn and wander around them, not under them.
