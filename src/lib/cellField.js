@@ -52,7 +52,7 @@ export function initCellField(container, options = {}){
   const glc = mkLayer('gl'), orc = mkLayer('org'), hdc = mkLayer('hud');
   const co = orc.getContext('2d'), ch = hdc.getContext('2d');
   const S = {cell:6, speed:1, glow:1, glitch:1, boxMax:110, track:true, hover:true, ascii:true, plexus:true, burst:true, coral:true, protein:true, half:true, paused:false,
-    maxTrackers:7, edgeBoxes:false, scale:1};
+    maxTrackers:7, edgeBoxes:false, scale:1, density:1};
   const reduced = win.matchMedia('(prefers-reduced-motion: reduce)').matches;
   // reduced motion: slow speed, low glitch, no line boil, whatever setOptions asks for
   const capMotion = () => { if (reduced){ S.speed = Math.min(S.speed, .3); S.glitch = Math.min(S.glitch, .35); } };
@@ -275,7 +275,7 @@ export function initCellField(container, options = {}){
   const KIND = [['AMOEBOID CELL','PSEUDOPODIUM','PLASMA MEMBRANE'], ['EPITHELIAL CLUSTER','CELL COLONY'], ['LIPID DROPLETS','VACUOLE']];
 
   /* calm reading area: spawn points and wander targets inside an exclusion rect get pushed out into the free gutter */
-  const PAD = 36;
+  const PAD = 70; // roughly a structure's radius, so edges don't graze the text
   function setExclusion(rects){
     exclusion = (rects || []).map(r => {
       const l = r.left ?? r.x, t = r.top ?? r.y;
@@ -305,18 +305,36 @@ export function initCellField(container, options = {}){
     for (const r of exclusion) if (!best || (r.r - r.l)*(r.b - r.t) > (best.r - best.l)*(best.b - best.t)) best = r;
     return best;
   }
-  function sidePos(side = Math.random() < .5 ? 0 : 1){
-    const a = area(), gl = a ? a.l - PAD : W*.25, gr = a ? W - a.r - PAD : W*.25;
-    // a side too thin to hold anything (a phone) falls back to the outer fifth of the screen
-    const band = Math.max(side ? gr : gl, W*.2);
-    const d = band*Math.pow(Math.random(), 1.4)*.9 + band*.05; // denser toward the screen edge
-    return push([side ? W - d : d, rnd(.06, .94)*H]);
+  /* while seeding, each position is the best of several candidates (farthest from everything placed so far),
+     which spaces structures out evenly instead of letting random draws clump */
+  let placed = null;
+  function spread(gen){
+    if (!placed) return gen();
+    let best = null, bd = -1;
+    for (let i = 0; i < 12; i++){
+      const p = gen(); let d = 1e9;
+      for (const q of placed) d = Math.min(d, Math.hypot(p[0] - q[0], p[1] - q[1]));
+      if (d > bd){ bd = d; best = p; }
+    }
+    placed.push(best);
+    return best;
+  }
+  function sidePos(side){
+    return spread(() => {
+      const sd = side ?? (Math.random() < .5 ? 0 : 1);
+      const a = area(), gl = a ? a.l - PAD : W*.25, gr = a ? W - a.r - PAD : W*.25;
+      // a side too thin to hold anything (a phone) falls back to the outer fifth of the screen
+      const band = Math.max(sd ? gr : gl, W*.2);
+      const d = band*(.08 + .84*Math.random());
+      return push([sd ? W - d : d, rnd(.08, .92)*H]);
+    });
   }
   function edgePos(){
-    const a = area(), top = Math.random() < .5;
-    const room = a ? (top ? a.t - PAD : H - a.b - PAD) : H*.18, band = Math.max(room, H*.12);
-    const d = rnd(.1, .9)*band;
-    return push([rnd(.04, .96)*W, top ? d : H - d]);
+    return spread(() => {
+      const a = area(), top = Math.random() < .5;
+      const room = a ? (top ? a.t - PAD : H - a.b - PAD) : H*.18, band = Math.max(room, H*.12);
+      return push([rnd(.04, .96)*W, top ? rnd(.15, .85)*band : H - rnd(.15, .85)*band]);
+    });
   }
 
   function makeCluster(type, x, y){
@@ -424,7 +442,8 @@ export function initCellField(container, options = {}){
   function seed(){
     clusters = []; trackers = [];
     // small screens get roughly half of every structure
-    const m = W < 600 ? .5 : 1, n = k => Math.max(1, Math.round(k*m));
+    const m = (W < 600 ? .5 : 1)*S.density, n = k => Math.max(1, Math.round(k*m));
+    placed = [];
     const types = [0,1,2,0,1,2,0,1,2,0,1,2,0].slice(0, n(13));
     types.forEach((ty, i) => { const [x, y] = sidePos(i % 2); clusters.push(makeCluster(ty, x, y)); });
     vesicles = Array.from({length:n(3)}, (_, i) => { const [x, y] = sidePos(i % 2); return makeVesicle(x, y, rnd(42,68)); });
@@ -459,6 +478,7 @@ export function initCellField(container, options = {}){
     rboxes = [];
     nextAcq = t;
     for (const a of anchors) vesicles.push(a.s);
+    placed = null;
   }
 
   function spawn(x, y){
@@ -686,7 +706,8 @@ export function initCellField(container, options = {}){
       const cx = S.edgeBoxes ? (side ? rnd(16, band) : rnd(W - band, W - 16)) : rnd(20, W - 20);
       for (let i = 0; i < n; i++){
         const w = n > 1 ? rnd(10,26) : rnd(16, Math.max(20, Math.min(S.boxMax, 90)));
-        rboxes.push({x: cx + (n > 1 ? rnd(-30,30) : 0), y: cy + (n > 1 ? rnd(-24,24) : 0), w, h: w*rnd(.5,.95),
+        const [bx, by] = push([cx + (n > 1 ? rnd(-30,30) : 0), cy + (n > 1 ? rnd(-24,24) : 0)]);
+        rboxes.push({x: bx, y: by, w, h: w*rnd(.5,.95),
           born: now + i*rnd(60,200), until: now + rnd(900,3200), id: nid(), tex: Math.random()*4|0, can: mkCan(16,12), next:0, grid:null,
           mode: asciiOn() && Math.random() < .2 ? 'ascii' : Math.random() < .75 ? 'mosh' : 'tex'});
       }

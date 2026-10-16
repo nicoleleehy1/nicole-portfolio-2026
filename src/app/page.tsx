@@ -1,12 +1,8 @@
 import { SocialLinks } from "../components/social-links";
-import { SubjectPin } from "../components/subject-pin";
 
 export default function HomePage() {
   return (
     <section className="hero">
-      {/* The field keeps a cell locked here, just above the name. */}
-      <SubjectPin label="PRT-2201 · SUBJECT: NICOLE LEE · CONF .97" />
-
       {/* No backing box: the text sits in the field, and cells are pushed around it (data-exclude). */}
       <div className="hero-text" data-content data-exclude>
         <h1 className="hero-name">Hi, I&apos;m Nicole.</h1>

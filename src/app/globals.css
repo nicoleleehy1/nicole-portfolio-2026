@@ -336,29 +336,22 @@ ul, ol {
 }
 .hero-text {
   max-width: 38rem;
-  font-family: "Times New Roman", Times, serif;
-  font-size: 0.95rem;
-  /* a soft dark halo keeps the copy legible over whatever drifts close */
-  text-shadow: 0 0 6px var(--bg), 0 0 14px var(--bg), 0 0 24px var(--bg);
+  font-family: var(--font-garamond), "EB Garamond", Garamond, "Times New Roman", serif;
+  font-size: 1.05rem;
+  /* a slight cyan glow, over a dark halo that keeps the copy legible near drifting cells */
+  text-shadow: 0 0 10px rgba(127, 243, 234, 0.28), 0 0 6px var(--bg), 0 0 18px var(--bg);
 }
 .hero-name {
   font-family: inherit;
   font-weight: 400;
   font-size: clamp(1.9rem, 4.5vw, 2.6rem);
-  letter-spacing: -0.01em;
+  letter-spacing: 0;
   line-height: 1.05;
   color: var(--ink-strong);
   margin-bottom: 1.1rem;
 }
 .hero-text p + p { margin-top: 1rem; }
 .muted { color: var(--muted); }
-
-/* An empty slot the field keeps a pinned cell locked onto, above the name */
-.subject-slot {
-  width: 100%;
-  height: 150px;
-  flex-shrink: 0;
-}
 
 /* Links row (email / linkedin / github / resume) */
 .link-row {
@@ -879,7 +872,6 @@ html:has(.peek[open]) { overflow: hidden; }
 
 /* Mobile */
 @media (max-width: 600px) {
-  .subject-slot { height: 110px; }
   .gallery { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.6rem; }
   .list-subtitle { display: block; margin-left: 0; }
   .peek-content { padding: 1.5rem 1.25rem 2rem; }

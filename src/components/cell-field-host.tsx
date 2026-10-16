@@ -4,7 +4,7 @@ import { usePathname } from "next/navigation";
 import type { CellField, CellFieldOptions } from "@/lib/cellField";
 
 // Full strength on the home page; calmer behind long-form section pages.
-const FULL: CellFieldOptions = { glitch: 1, speed: 1, maxTrackers: 7, edgeBoxes: false };
+const FULL: CellFieldOptions = { glitch: 1, speed: 1, maxTrackers: 4, edgeBoxes: true };
 const CALM: CellFieldOptions = { glitch: 0.5, speed: 0.6, maxTrackers: 3, edgeBoxes: true };
 const intensity = (pathname: string) => (pathname === "/" ? FULL : CALM);
 
@@ -40,6 +40,8 @@ export default function FieldHost({ onReady }: { onReady: (field: CellField | nu
           readoutLabel: "NICOLE LEE",
           // smaller structures than the standalone piece, so they frame the text instead of crowding it
           scale: 0.6,
+          // fewer pieces than the standalone piece, so the frame around the text stays airy
+          density: 0.6,
           fontFamily: getComputedStyle(document.documentElement).getPropertyValue("--font-plex-mono").trim(),
         });
         fieldRef.current = field;

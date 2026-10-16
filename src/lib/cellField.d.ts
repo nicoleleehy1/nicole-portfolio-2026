@@ -19,6 +19,8 @@ export type CellFieldOptions = {
   paused?: boolean;
   // Most auto trackers at once.
   maxTrackers?: number;
+  // Multiplier on how many structures are seeded (1 = the standalone piece).
+  density?: number;
   // Size multiplier for every structure (1 = the standalone piece).
   scale?: number;
   // Keep random glitch boxes in the outer bands of the page.
