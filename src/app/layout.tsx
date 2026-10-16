@@ -30,7 +30,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${fraunces.variable} ${garamond.variable} ${plexMono.variable}`}>
+    <html lang="en" className={`${fraunces.variable} ${garamond.variable} ${plexMono.variable}`} suppressHydrationWarning>
+      <head>
+        {/* apply a saved light-mode choice before first paint, so the page never flashes dark */}
+        <script dangerouslySetInnerHTML={{ __html: THEME_SCRIPT }} />
+      </head>
       <body>
         {/* The living background sits behind every page and persists across navigation. */}
         <CellFieldProvider>
@@ -48,6 +52,8 @@ export default function RootLayout({
   );
 }
 
+const THEME_SCRIPT = `try{if(localStorage.getItem("theme")==="light")document.documentElement.dataset.theme="light"}catch(e){}`;
+
 export const metadata: Metadata = {
   title: {
     default: "Nicole Lee",
@@ -58,5 +64,5 @@ export const metadata: Metadata = {
 
 export const viewport: Viewport = {
   themeColor: "#010305",
-  colorScheme: "dark",
+  colorScheme: "dark light",
 };

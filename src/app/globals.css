@@ -8,8 +8,8 @@
   --faint: rgba(107, 154, 160, 0.6);
   --accent: #7ff3ea;
   --warm: #ff9b5e;
-  --rule: rgba(127, 243, 234, 0.16);
-  --edge: rgba(127, 243, 234, 0.28);
+  --rule: rgba(var(--glow), 0.16);
+  --edge: rgba(var(--glow), 0.28);
   --panel: rgba(3, 10, 12, 0.94);
   --serif: var(--font-fraunces), Georgia, "Times New Roman", serif;
   --mono: var(--font-plex-mono), ui-monospace, "SF Mono", Menlo, Consolas, monospace;
@@ -17,8 +17,36 @@
   --display: var(--serif);
   /* Container gutter; scrims bleed out by the same amount so text stays aligned */
   --pad: clamp(1rem, 4vw, 2rem);
+  /* rgb triplets: veil = the background tint used for scrims and clouds, hi = highest-contrast ink, glow = accent glow */
+  --veil: 1, 3, 5;
+  --hi: 255, 255, 255;
+  --glow: 127, 243, 234;
+  --panel-solid: #02080a;
   color-scheme: dark;
 }
+
+/* Light mode: white page, deep teal ink, and the field inverted so its neon reads as ink on paper */
+:root[data-theme="light"] {
+  --bg: #ffffff;
+  --ink: rgba(6, 26, 32, 0.88);
+  --ink-strong: #04161b;
+  --muted: #4b7076;
+  --faint: rgba(75, 112, 118, 0.6);
+  --accent: #0b7f78;
+  --warm: #c8551f;
+  --rule: rgba(11, 127, 120, 0.18);
+  --edge: rgba(11, 127, 120, 0.32);
+  --panel: rgba(250, 253, 253, 0.95);
+  --panel-solid: #f7fbfb;
+  --veil: 255, 255, 255;
+  --hi: 4, 22, 27;
+  --glow: 11, 127, 120;
+  color-scheme: light;
+}
+/* invert keeps each hue (after the 180deg turn) while black space becomes white */
+:root[data-theme="light"] .cell-field { filter: invert(1) hue-rotate(180deg); }
+:root[data-theme="light"] .cell-field.cf-static { filter: none; }
+:root[data-theme="light"] .hero-text::after { filter: invert(1); }
 
 html, body {
   background: var(--bg);
@@ -43,7 +71,7 @@ ul, ol {
   list-style: none;
 }
 
-::selection { background: rgba(127, 243, 234, 0.3); color: var(--ink-strong); }
+::selection { background: rgba(var(--glow), 0.3); color: var(--ink-strong); }
 :focus-visible { outline: 1px solid var(--warm); outline-offset: 2px; }
 
 /* Mono HUD type: nav, labels, eyebrows, metadata */
@@ -98,7 +126,7 @@ ul, ol {
 
 /* Calm reading surface behind text blocks: no card, just a darkened, blurred patch of the field */
 .scrim {
-  background: rgba(1, 3, 5, 0.55);
+  background: rgba(var(--veil), 0.55);
   -webkit-backdrop-filter: blur(6px);
   backdrop-filter: blur(6px);
   padding: calc(var(--pad) * 1.25) var(--pad);
@@ -164,7 +192,7 @@ ul, ol {
   padding: 8px 0;
   cursor: pointer;
 }
-.cf-btns button:hover { background: rgba(127, 243, 234, 0.1); }
+.cf-btns button:hover { background: rgba(var(--glow), 0.1); }
 .cf-hint { color: var(--muted); line-height: 1.55; }
 .cf-hint kbd { font: inherit; color: var(--warm); }
 
@@ -284,7 +312,7 @@ ul, ol {
 .prose a {
   color: var(--accent);
   text-decoration: underline;
-  text-decoration-color: rgba(127, 243, 234, 0.5);
+  text-decoration-color: rgba(var(--glow), 0.5);
   text-decoration-thickness: 1px;
   text-underline-offset: 3px;
   outline: 1px solid transparent;
@@ -295,7 +323,7 @@ ul, ol {
 .prose a:hover {
   color: var(--ink-strong);
   text-decoration-color: transparent;
-  outline-color: #fff;
+  outline-color: rgb(var(--hi));
 }
 
 /* Hairline rule */
@@ -342,7 +370,7 @@ ul, ol {
   font-family: var(--font-garamond), "EB Garamond", Garamond, "Times New Roman", serif;
   font-size: 1.05rem;
   /* a slight cyan glow, over a dark halo that keeps the copy legible near drifting cells */
-  text-shadow: 0 0 10px rgba(127, 243, 234, 0.28), 0 0 6px var(--bg), 0 0 18px var(--bg);
+  text-shadow: 0 0 10px rgba(var(--glow), 0.28), 0 0 6px var(--bg), 0 0 18px var(--bg);
 }
 .hero-text::before,
 .hero-text::after {
@@ -354,7 +382,7 @@ ul, ol {
 }
 /* the cloud: a dark veil that blurs the field behind the copy, shaped by overlapping lumps so its edge is uneven */
 .hero-text::before {
-  background: rgba(1, 3, 5, 0.5);
+  background: rgba(var(--veil), 0.5);
   -webkit-backdrop-filter: blur(5px);
   backdrop-filter: blur(5px);
   --lump: rgba(0, 0, 0, 1) 0, rgba(0, 0, 0, 0.75) 38%, transparent 70%;
@@ -418,15 +446,15 @@ ul, ol {
 .icon-link:hover { color: var(--accent); }
 /* Home: plain solid white icons with a faint glow, each drifting slightly out of step */
 .hero .icon-link {
-  color: #fff;
-  filter: drop-shadow(0 0 6px rgba(127, 243, 234, 0.35));
+  color: rgb(var(--hi));
+  filter: drop-shadow(0 0 6px rgba(var(--glow), 0.35));
   animation: cell-drift 9s ease-in-out infinite;
   transition: color 0.2s ease, filter 0.2s ease;
 }
 .hero .icon-link:nth-child(2) { animation-duration: 11s; animation-delay: -5s; }
 .hero .icon-link:nth-child(3) { animation-duration: 10s; animation-delay: -7s; }
 .hero .icon-link:nth-child(4) { animation-duration: 8s; animation-delay: -1s; }
-.hero .icon-link:hover { color: #7ff3ea; filter: drop-shadow(0 0 10px rgba(127, 243, 234, 0.6)); }
+.hero .icon-link:hover { color: var(--accent); filter: drop-shadow(0 0 10px rgba(var(--glow), 0.6)); }
 .hero .icon-link svg { width: 22px; height: 22px; }
 @keyframes cell-drift {
   0%, 100% { translate: 0 0; }
@@ -518,8 +546,8 @@ ul, ol {
   aspect-ratio: 16 / 9;
   overflow: hidden;
   background:
-    linear-gradient(rgba(127, 243, 234, 0.06) 1px, transparent 1px) 0 0 / 12px 12px,
-    linear-gradient(90deg, rgba(127, 243, 234, 0.06) 1px, transparent 1px) 0 0 / 12px 12px,
+    linear-gradient(rgba(var(--glow), 0.06) 1px, transparent 1px) 0 0 / 12px 12px,
+    linear-gradient(90deg, rgba(var(--glow), 0.06) 1px, transparent 1px) 0 0 / 12px 12px,
     rgba(0, 40, 48, 0.35);
   border-bottom: 1px solid var(--rule);
 }
@@ -647,13 +675,13 @@ ul, ol {
   font-family: var(--mono);
   font-size: 0.85em;
   padding: 0.1em 0.3em;
-  background: rgba(127, 243, 234, 0.08);
+  background: rgba(var(--glow), 0.08);
   color: var(--ink-strong);
 }
 .prose pre {
   overflow-x: auto;
   padding: 1rem;
-  background: rgba(127, 243, 234, 0.06);
+  background: rgba(var(--glow), 0.06);
   border: 1px solid var(--rule);
   font-size: 0.85rem;
   line-height: 1.6;
@@ -773,7 +801,7 @@ main:has(.hero) > .footer { display: none; }
   text-align: left;
   cursor: pointer;
 }
-.gallery-menu-item:hover { background: rgba(127, 243, 234, 0.08); }
+.gallery-menu-item:hover { background: rgba(var(--glow), 0.08); }
 .gallery-menu-item input { accent-color: var(--accent); margin: 0; }
 .gallery-menu-check { margin-left: auto; color: var(--accent); }
 .gallery-menu-clear {
@@ -802,7 +830,7 @@ main:has(.hero) > .footer { display: none; }
   padding: 0;
   border: 1px solid var(--rule);
   overflow: hidden;
-  background: rgba(1, 3, 5, 0.5);
+  background: rgba(var(--veil), 0.5);
   font: inherit;
   color: inherit;
   text-align: left;
@@ -810,8 +838,8 @@ main:has(.hero) > .footer { display: none; }
   transition: border-color 0.15s ease, background 0.15s ease;
 }
 .gallery-card:hover {
-  border-color: rgba(255, 255, 255, 0.85);
-  background: rgba(1, 3, 5, 0.7);
+  border-color: rgba(var(--hi), 0.85);
+  background: rgba(var(--veil), 0.7);
 }
 .gallery-cover { position: relative; }
 .gallery-card:focus-visible { outline: 1px solid var(--warm); outline-offset: 2px; }
@@ -839,13 +867,13 @@ html:has(.peek[open]) { overflow: hidden; }
   margin: auto;
   padding: 0;
   border: 1px solid var(--edge);
-  background: #02080a;
+  background: var(--panel-solid);
   color: var(--ink);
   overflow-y: auto;
 }
 .peek[open] { animation: peek-in 0.18s ease-out; }
 .peek::backdrop {
-  background: rgba(1, 3, 5, 0.7);
+  background: rgba(var(--veil), 0.7);
   -webkit-backdrop-filter: blur(4px);
   backdrop-filter: blur(4px);
 }
@@ -862,13 +890,13 @@ html:has(.peek[open]) { overflow: hidden; }
   width: 2rem;
   height: 2rem;
   border: 1px solid var(--edge);
-  background: rgba(1, 3, 5, 0.8);
+  background: rgba(var(--veil), 0.8);
   color: var(--ink-strong);
   font-size: 1.3rem;
   line-height: 1;
   cursor: pointer;
 }
-.peek-close:hover { border-color: #fff; }
+.peek-close:hover { border-color: rgb(var(--hi)); }
 .peek-content { padding: 2rem 3rem 2.5rem; }
 .peek-title {
   font-family: var(--display);
@@ -910,7 +938,7 @@ html:has(.peek[open]) { overflow: hidden; }
   border-bottom: 1px solid var(--rule);
   transition: background 0.12s ease;
 }
-.list-row:hover { background: rgba(127, 243, 234, 0.04); }
+.list-row:hover { background: rgba(var(--glow), 0.04); }
 .list-main { flex: 1; min-width: 0; }
 .list-title { font-size: 0.97rem; font-weight: 500; line-height: 1.45; color: var(--ink-strong); }
 .list-subtitle {
@@ -938,4 +966,15 @@ html:has(.peek[open]) { overflow: hidden; }
   .xp-head { flex-direction: column; gap: 0; }
   .nav-links { gap: 0.6rem 1.1rem; }
   .hud-readout { text-align: left; }
+}
+
+/* Light / dark switch in the nav, styled like the other nav labels */
+.theme-toggle {
+  font: inherit;
+  letter-spacing: inherit;
+  text-transform: inherit;
+  background: none;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
 }
