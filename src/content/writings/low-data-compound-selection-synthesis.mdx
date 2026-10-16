@@ -1,0 +1,97 @@
+---
+title: "What 6,000 replayed campaigns taught me about choosing compounds with very little data."
+date: 2026-10-16
+summary: "A synthesis of every selection experiment I've run for Aster: representations, models, acquisition rules, uncertainty, literature evidence and docking, and the one mechanism that explains most of the results."
+kind: "Research"
+draft: false
+---
+
+Over the last few weeks I've run a long series of experiments on one narrow problem in computational drug discovery: given a few dozen measured compounds and a pool of a few hundred untested ones, which eight should a team assay next?
+
+Each experiment tested one idea that "should" help: a pretrained molecular encoder, fine-tuning, exploring where the model is uncertain, adding diversity, adding published measurements, adding protein structure. Almost all of them failed to beat a fingerprint model with a linear regression on top. Read one at a time, that looks like a string of disappointments. Read together, they point at a single mechanism, and that's what this piece is about.
+
+## The problem, formally
+
+This is **pool-based batch active learning**. There's a fixed pool of candidate molecules `U`, a small labelled set `L` (32 to 100 compounds with measured potency), and an expensive oracle (the assay). Each round:
+
+```text
+fit  f  on  L
+score every x in U with an acquisition function  a(x)
+pick the batch  B = top-8 of a(x)  (with any batch-level rules)
+query the oracle for B, move B from U to L
+repeat for 5 rounds  (40 oracle calls in total)
+```
+
+Potency is a log-scale value such as **pKi** (the negative log of the binding constant, so 7 means 100 nM and each unit is a factor of 10).
+
+The objective is **not** prediction accuracy. It's discovery under a fixed budget: how many of the pool's top-decile compounds end up in the 40 picks. I track held-out prediction error (MAE on an untouched audit set) as a secondary metric, and the two regularly disagree. In the very first experiment, random picking gave a slightly lower final MAE (0.748 vs 0.793 pIC50) while greedy model-guided picking found 36.0 hits against random's 8.7. My reading is that a model trained on its own greedy picks sees a biased sample, which costs global accuracy, but that's exactly the sample you want if the goal is finding strong binders.
+
+## The harness
+
+Everything runs as **retrospective replay** on public data where every label is already known. A few rules make the comparisons trustworthy:
+
+- **Hidden-label oracle.** Unpicked labels sit behind an in-process API that only answers for selected compounds. The decile cutoff used for scoring is computed after the replay ends.
+- **Paired design.** Every arm in a case shares the same initial labelled set, pool, audit set and seed, so I analyse per-case differences, not two noisy means.
+- **Pre-registration.** Each study's arms, cases and pass/fail gate are written to a config and frozen by hash before the evaluation targets are run. Each run seals its inputs, library versions and module hashes into a contract file and refuses to overwrite a run with a different contract.
+- **Fresh targets per milestone.** Once a target's results have been inspected, it can't be used as a blind test again, so each milestone moves to targets earlier ones hadn't seen, and removes compounds shared with previously inspected targets.
+
+Data so far: one SARS-CoV-2 main protease potency set from the ASAP/Polaris/OpenADMET challenge, nine Ki tasks from **MoleculeACE** (a ChEMBL-derived benchmark built around activity cliffs), one cryo-EM structure of the dopamine transporter, and a small literature corpus. Two split protocols throughout: the benchmark's published partition, and **scaffold transfer**, where the pool's Bemis–Murcko scaffolds (the molecule's ring-system core) are disjoint from the labelled set's.
+
+## The default
+
+- **Representation:** chirality-aware Morgan fingerprints, radius 2, folded to 2,048 binary bits (RDKit). Each bit marks the presence of a hashed circular substructure.
+- **Model:** standardized ridge regression, alpha 10. It minimises squared error plus `alpha * ||w||^2`, which shrinks every substructure weight toward zero unless the data insist otherwise.
+- **Acquisition:** greedy. `a(x) = f(x)`, take the top 8.
+
+## What each experiment found
+
+| Milestone | Idea tested | Result (top-decile found per 40 picks) | Verdict |
+| --- | --- | --- | --- |
+| 1 | Model-guided vs random (Morgan + forest) | 36.0 vs 8.7 hits, all 10 seeds | Learning from labels is worth it |
+| 2 | Ridge vs forest vs frozen CheMeleon + ridge | 12.75 / 11.29 / 11.38, random 3.42 | Ridge best; CheMeleon head numerically unstable |
+| 3 | Repaired CheMeleon head; 5-epoch fine-tuning | 18.67 ridge / 15.50 frozen; pilot: fine-tuned 13.67 | Pretrained features lost 15 of 24 matched cases |
+| 4 | Uncertainty and diversity acquisition | greedy 14.29 / explore 14.17 / diverse 15.13 | No arm cleared the +1.0 gate |
+| 7B | Docking into one pocket | 4 of 5 redocks under 2 Å | Usable for inspection, not for ranking yet |
+| 9 | Literature measurements as training rows | +0.40 (SE 0.33), scrambled control +0.20 | Null; +0.03 when rerun with 4x seeds |
+| 9 retest | Exact measurements, supply swept 12/50/150 | +0.29 / +2.35 / +2.80 | Supply matters |
+| 9 retest | Same, with literature-level noise added | +2.80 becomes -0.99 | Precision matters more |
+
+Rows use different targets, so compare within a row. In total that's a little over 6,000 replays, most of them in the evidence retest.
+
+## Three findings that turned out to be one
+
+**1. The uncertainty signal carried almost no information about error.** Milestone 4 fit 16 bootstrap ridge models and used their standard deviation as uncertainty. For flagging which predictions would have a large error, it scored an AUROC of **0.477** (0.5 is a coin flip) and a correlation with absolute error of -0.034. Simple chemical novelty, the distance to the nearest measured compound, did a little better at 0.610. Nominal 80% residual bands covered only 72.5% of audit outcomes, and 63.4% on one scaffold-transfer target.
+
+So an upper-confidence-bound rule like `f(x) + 0.5 * sigma(x)` was adding a noise term to the ranking. On development data it looked good (14.00 vs 12.33); on fresh targets the gain was -0.125. This matches what OpenADMET found on real campaign data, where ensemble spread correlated with error at only 0.11 to 0.34.
+
+**2. Pretrained features were less stable than they looked.** The first CheMeleon run had an audit MAE of 5.60 pKi units. The diagnosis: standardizing features using only the 32 measured compounds. One embedding dimension had a training-set standard deviation of about 1.4 x 10^-6, so a modest value at test time became a standardized feature around 138,914, and predictions ranged down to -1,116 pKi. Dropping features with training standard deviation below 0.01 fixed the numerics (guard violations went from 1,110 to 0), but the stable model still found fewer compounds than Morgan + ridge.
+
+**3. Extra training rows only help if they're precise.** In the evidence retest, appending 150 donor measurements with their values *permuted* cost **8.54** top-decile compounds per 40 picks. Appending the same 150 with Gaussian noise of 0.68 log units, the typical cross-source disagreement in ChEMBL, turned a +2.80 gain into -0.99, and into a significant -1.88 when donors came from different scaffolds.
+
+The shared mechanism: **in the 32-to-104-label regime, the binding constraint is signal-to-noise per label, and the default model has no way to weight its inputs by reliability.** Ridge's loss treats every row identically. An imprecise literature value, a numerically blown-up feature, and a meaningless uncertainty bonus all inject variance that a model with so few labels can't average away. Every idea that added information *together with noise* failed. The ones that won were the ones that stayed out of the way.
+
+Seen that way, the negative results stop being a list and start making predictions. Methods that can discount a noisy input (a weighted or heteroscedastic likelihood, evidence used as a filter rather than as rows, uncertainty that's actually calibrated) are the ones worth testing next. Methods that add capacity without adding a way to discount noise are not.
+
+## What about structure?
+
+Milestone 7B set up AutoDock Vina docking into the dopamine transporter's cryo-EM structure (8Y2G, 2.83 Å). Redocking the bound ligand from fresh conformers put the top pose within 2 Å RMSD in 4 of 5 seeds (the fifth found the correct pose, but not as its top-ranked one). That validates the pocket setup for inspection. It doesn't make docking a ranking feature: the receptor is rigid, the sodium ions the transporter depends on couldn't be typed and were left out of scoring, and it's one pocket on one protein.
+
+The retest also put a price on testing structure properly. The standard deviation of paired differences across the retest was 5.26 compounds, so detecting a +1.0 gain at 80% power needs about 219 paired cases. One new pocket on one protein yields 16 cases, enough to detect only about +3.9. That experiment wasn't worth running, so I didn't.
+
+## Where this stops
+
+- Everything is retrospective, on public benchmark data, with pools of hundreds rather than millions. Greedy acquisition is genuinely contested in the literature: on a 3-million-molecule docking-scored pool, uncertainty sampling beat greedy decisively ([Williams et al., JCIM 2026](https://strathprints.strath.ac.uk/95343/13/Williams-etal-JCIM-2026-how-selection-strategies-influence-active-learning-in-drug-discovery.pdf)).
+- Milestones 2 to 4 used two or three seeds per case, and the targets within a milestone share chemistry, so cases aren't independent.
+- The evidence retest's noise analysis was decided after seeing the main result, and its exact-value gains are an upper bound.
+- No temporal split yet. None of this tells me whether a decision would have been right *at the time*, which needs dated measurements.
+- Nine of the ten targets measure the same kind of quantity (Ki). "Any assay" is a design goal, not a tested claim.
+
+## What I'd test next
+
+1. **Count fingerprints instead of bits.** The strongest published fingerprint baselines use counts; mine are binary.
+2. **TabPFN on CheMeleon features**, which was best or tied on all 30 MoleculeACE tasks in a 2026 benchmark and needs no training.
+3. **A reliability-weighted likelihood** for evidence rows, so a 0.68-log-unit literature value can count for less than a same-lab measurement.
+4. **Censored labels.** Assays often report "greater than 10 µM". Today those can't enter the model, even though they're confirmed negatives. A Tobit-style censored likelihood would let them.
+5. **A temporal holdout** on BindingDB with publication dates.
+
+The most useful thing I've learned isn't any single result. It's that a negative result is only as good as the experiment behind it, and that when several negatives share a cause, finding that cause is worth more than any one of them.
