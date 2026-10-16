@@ -336,9 +336,10 @@ export function initCellField(container, options = {}){
       return push([sd ? W - d : d, rnd(.08, .92)*H]);
     });
   }
-  function edgePos(){
+  // a spot in the top or bottom band; pass false for the bottom only
+  function edgePos(onTop){
     return spread(() => {
-      const a = area(), top = Math.random() < .5;
+      const a = area(), top = onTop ?? Math.random() < .5;
       const room = a ? (top ? a.t - PAD : H - a.b - PAD) : H*.18, band = Math.max(room, H*.12);
       return push([rnd(.04, .96)*W, top ? rnd(.15, .85)*band : H - rnd(.15, .85)*band]);
     });
@@ -346,8 +347,8 @@ export function initCellField(container, options = {}){
 
   function makeCluster(type, x, y){
     let n, mkB;
-    if (type === 0){ n = 2 + (Math.random()*2|0); mkB = () => ({r: rnd(20,46), orbit: rnd(15,65)}); }
-    else if (type === 1){ n = 3 + (Math.random()*2|0); mkB = () => ({r: rnd(34,58), orbit: rnd(30,80)}); }
+    if (type === 0){ n = 2 + (Math.random()*2|0); mkB = () => ({r: rnd(16,30), orbit: rnd(12,38)}); }
+    else if (type === 1){ n = 2 + (Math.random()*2|0); mkB = () => ({r: rnd(18,30), orbit: rnd(16,40)}); }
     else { const big = Math.random() < .35; n = big ? 2 + (Math.random()*3|0) : 3 + (Math.random()*4|0);
       mkB = big ? () => ({r: rnd(22,36), orbit: rnd(14,34)}) : () => ({r: rnd(8,15), orbit: rnd(6,22)}); }
     const blobs = Array.from({length:n}, () => Object.assign(mkB(), {fx: rnd(.12,.42), fy: rnd(.12,.42), ph: rnd(TAU), ph2: rnd(TAU), x, y, rr:0}));
@@ -457,19 +458,20 @@ export function initCellField(container, options = {}){
     vesicles = Array.from({length:n(3)}, (_, i) => { const [x, y] = sidePos(i % 2); return makeVesicle(x, y, rnd(42,68)); });
     donuts = Array.from({length:n(6)}, () => { const [x, y] = edgePos(); return {kind:'LYSOSOME', id: nid(), bx:x, by:y, x, y, r: rnd(6,13), seed: rnd(100), ph: rnd(TAU), cx:x, cy:y, cr:10}; });
     fans = Array.from({length: n(9 + (Math.random()*4|0))}, () => {
-      const [x, y] = sidePos(), barrel = Math.random() < .3;
+      // about a third of the corals grow along the bottom of the page, shorter so they fit the band
+      const low = Math.random() < .35, [x, y] = low ? edgePos(false) : sidePos(), barrel = Math.random() < .3;
       const ang = Math.atan2(y - H/2, x - W/2) + Math.PI/2 + rnd(-.9,.9);
-      return makeColony(x, y, ang, 1 + (Math.random()*6|0), rnd(60,170), barrel ? 'barrel' : 'rose',
+      return makeColony(x, y, ang, 1 + (Math.random()*6|0), low ? rnd(40,90) : rnd(60,170), barrel ? 'barrel' : 'rose',
         barrel ? {r:[8,15], mouth:.55, rings:10} : {r:[4,10]});
     });
     foams = Array.from({length:n(6)}, () => { const [x, y] = sidePos(); return makeFoam(x, y); });
     dust = Array.from({length:n(7)}, () => { const [x, y] = edgePos();
       const cols = 5 + (Math.random()*10|0), rows = 1 + (Math.random()*4|0);
       return {bx:x, by:y, x, y, ph: rnd(TAU), cols, rows, next:0, grid: Array.from({length:rows}, () => dustRow(cols)), hex: Math.random() < .35}; });
-    proteins = Array.from({length:n(8)}, () => { const [x, y] = sidePos(); return makeProtein(x, y, 20 + Math.pow(Math.random(), 1.2)*75); });
+    proteins = Array.from({length:n(8)}, () => { const [x, y] = Math.random() < .35 ? edgePos(false) : sidePos(); return makeProtein(x, y, 20 + Math.pow(Math.random(), 1.2)*75); });
     stars = Array.from({length:n(7)}, () => { const [x, y] = edgePos(); return makeStar(x, y); });
     rods = Array.from({length:n(3)}, () => { const [x, y] = sidePos(); return makeRod(x, y); });
-    bursts = Array.from({length:n(10)}, () => { const [x, y] = sidePos(); return makeBurst(x, y); });
+    bursts = Array.from({length:n(10)}, () => { const [x, y] = Math.random() < .35 ? edgePos(false) : sidePos(); return makeBurst(x, y); });
     dots = Array.from({length:n(7)}, () => { const [x, y] = edgePos();
       return {kind:'NUCLEOLUS', id: nid(), bx:x, by:y, x, y, r: rnd(9,22), ph: rnd(TAU), pal: pick(HT_PAL),
         lobes: Array.from({length: 1 + (Math.random()*3|0)}, (_, i) => ({dx: i ? rnd(-1,1) : 0, dy: i ? rnd(-1,1) : 0, r: i ? rnd(.5,.9) : 1, ph: rnd(TAU)})), cx:x, cy:y, cr:15}; });
