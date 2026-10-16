@@ -6,6 +6,8 @@ export type CellFieldOptions = {
   cell?: number;
   speed?: number;
   glow?: number;
+  /** light mode: white paper with pastel structures */
+  light?: boolean;
   glitch?: number;
   boxMax?: number;
   track?: boolean;

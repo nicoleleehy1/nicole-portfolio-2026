@@ -43,9 +43,10 @@
   --glow: 11, 127, 120;
   color-scheme: light;
 }
-/* invert keeps each hue (after the 180deg turn) while black space becomes white */
-:root[data-theme="light"] .cell-field { filter: invert(1) hue-rotate(180deg); }
-:root[data-theme="light"] .cell-field.cf-static { filter: none; }
+/* the WebGL layer draws its own pastel-on-white version; the sketch layer sits on it normally instead of screening,
+   and the HUD's white boxes and labels flip to dark ink (hue kept by the 180deg turn) */
+:root[data-theme="light"] .cell-field .cf-org { mix-blend-mode: normal; filter: url(#cf-pastel); }
+:root[data-theme="light"] .cell-field .cf-hud { filter: invert(1) hue-rotate(180deg); }
 :root[data-theme="light"] .hero-text::after { filter: invert(1); }
 
 html, body {

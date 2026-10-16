@@ -51,7 +51,7 @@ export function initCellField(container, options = {}){
   const mkLayer = name => { const c = doc.createElement('canvas'); c.className = 'cf-' + name; c.setAttribute('aria-hidden', 'true'); container.appendChild(c); return c; };
   const glc = mkLayer('gl'), orc = mkLayer('org'), hdc = mkLayer('hud');
   const co = orc.getContext('2d'), ch = hdc.getContext('2d');
-  const S = {cell:6, speed:1, glow:1, glitch:1, boxMax:110, track:true, hover:true, ascii:true, plexus:false, burst:true, coral:true, protein:true, half:true, paused:false,
+  const S = {light:false, cell:6, speed:1, glow:1, glitch:1, boxMax:110, track:true, hover:true, ascii:true, plexus:false, burst:true, coral:true, protein:true, half:true, paused:false,
     maxTrackers:7, edgeBoxes:false, scale:1, density:1};
   const reduced = win.matchMedia('(prefers-reduced-motion: reduce)').matches;
   // reduced motion: slow speed, low glitch, no line boil, whatever setOptions asks for
@@ -75,7 +75,7 @@ export function initCellField(container, options = {}){
   const FS = `#version 300 es
   precision highp float;
   out vec4 o;
-  uniform vec2 uRes; uniform float uScale, uTime, uReal, uCell, uGlow;
+  uniform vec2 uRes; uniform float uScale, uTime, uReal, uCell, uGlow, uLight;
   uniform vec4 uHov;
   uniform vec4 uS[24]; uniform int uSN;
   uniform vec4 uV[24]; uniform int uVN;
@@ -218,6 +218,14 @@ export function initCellField(container, options = {}){
     col += (h(p0 + fract(rt*7.)*91.) - .5)*.045;
     vec2 uv = p0/uRes - .5; col *= 1. - .35*dot(uv,uv);
     col = 1. - exp(-col*1.5);
+    // light mode: black space becomes white paper; each pixel keeps its hue as a pastel tint whose strength
+    // follows its brightness, so washes and glows turn soft pastel and the brightest rims stay saturated
+    if (uLight > .5) {
+      float m = max(max(col.r, col.g), col.b);
+      vec3 hue = col/max(m, 1e-3);
+      vec3 tint = mix(mix(vec3(1.), hue, .5), hue*.9, smoothstep(.65, 1., m)*.6);
+      col = mix(vec3(1.), tint, smoothstep(.02, .8, m));
+    }
     o = vec4(col, 1.);
   }`;
 
@@ -234,7 +242,7 @@ export function initCellField(container, options = {}){
     }
     if (prog) {
       gl.useProgram(prog); gl.bindVertexArray(gl.createVertexArray());
-      for (const n of ['uRes','uScale','uTime','uReal','uCell','uGlow','uHov','uSN','uVN','uBN','uCN','uXN']) U[n] = gl.getUniformLocation(prog, n);
+      for (const n of ['uRes','uScale','uTime','uReal','uCell','uGlow','uLight','uHov','uSN','uVN','uBN','uCN','uXN']) U[n] = gl.getUniformLocation(prog, n);
       for (const n of ['uS','uV','uB','uC','uX']) U[n] = gl.getUniformLocation(prog, n + '[0]');
     }
   }
@@ -1416,7 +1424,7 @@ export function initCellField(container, options = {}){
 
     const hs = hov.s && hov.str > .02 ? hov.s : null;
     gl.uniform2f(U.uRes, W, H); gl.uniform1f(U.uScale, glc.width/W); gl.uniform1f(U.uTime, t); gl.uniform1f(U.uReal, now/1000 % 1000);
-    gl.uniform1f(U.uCell, S.cell); gl.uniform1f(U.uGlow, S.glow);
+    gl.uniform1f(U.uCell, S.cell); gl.uniform1f(U.uGlow, S.glow); gl.uniform1f(U.uLight, S.light ? 1 : 0);
     gl.uniform4f(U.uHov, hs ? hs.cx : -1e4, hs ? hs.cy : -1e4, hs ? hs.cr*1.05 : 1, hs ? hov.str*Math.min(1, .35 + S.glitch*.4) : 0);
     gl.uniform4fv(U.uS, sArr); gl.uniform4fv(U.uV, vArr); gl.uniform4fv(U.uB, bArr); gl.uniform4fv(U.uC, cArr);
     const xn = Math.min(4, exclusion.length);
