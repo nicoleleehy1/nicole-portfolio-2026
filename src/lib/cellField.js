@@ -117,10 +117,10 @@ export function initCellField(container, options = {}){
     // ghost voxel constellations
     float gc = uCell*.85;
     vec2 gi = floor(p/gc), gf = fract(p/gc);
-    float gOn = step(.64, fbm(gi*.07 + vec2(t*.02, 3.)));
+    float gOn = step(.7, fbm(gi*.07 + vec2(t*.02, 3.)));
     float gw = 1./gc;
     float ge = max(max(step(gf.x,gw), step(1.-gw,gf.x)), max(step(gf.y,gw), step(1.-gw,gf.y)));
-    col += gOn*(vec3(.12,.38,.7)*ge*.45 + vec3(.01,.04,.09))*(1. - .9*cm);
+    col += gOn*(vec3(.1,.34,.62)*ge*.2 + vec3(.004,.015,.035))*(1. - .9*cm);
 
     // smooth membranes
     float fs = fS(p);
@@ -137,7 +137,8 @@ export function initCellField(container, options = {}){
     fill += vec3(.45,1.,.9)*smoothstep(1.4,0.,fd)*.55;
     float depth = smoothstep(1.,4.,fs);
     col = mix(col, fill*(.35+.45*depth), inside*.92);
-    col += vec3(.42,1.,.92)*(smoothstep(1.6,.2,d1)*.95 + exp(-d1*.28)*.4*uGlow);
+    vec3 mc = mix(vec3(.42,1.,.92), vec3(1.,.45,.85), smoothstep(.55,.8,fbm(p*.008 + vec2(t*.03, 7.))));
+    col += mc*(smoothstep(1.6,.2,d1)*.95 + exp(-d1*.28)*.4*uGlow);
     col += vec3(.75,.9,1.)*smoothstep(1.2,0.,d2)*.35*inside;
     col += vec3(.5,.8,1.)*smoothstep(1.,0.,d3)*.18;
 
@@ -164,8 +165,10 @@ export function initCellField(container, options = {}){
       vec3 vf = mix(vec3(.0,.32,.24), vec3(.04,.12,.48), fbm(p*.025 + vec2(0.,t*.03)));
       vf = mix(vf, vec3(.55,.2,.1), step(.93,hv)*.6);
       col = mix(col, vf*(.45+.5*smoothstep(1.,3.5,fvC)), .9);
-      vec3 lc = h(ci*1.7) > .55 ? vec3(1.,.82,.55) : vec3(.6,1.,.95);
-      col += lc*edge*1.1 + vec3(1.,.38,.22)*inset*.9 + vec3(.2,.75,.8)*grid*.28;
+      float lh = h(ci*1.7);
+      vec3 lc = lh > .7 ? vec3(1.,.55,.3) : lh > .5 ? vec3(1.,.45,.85) : lh > .3 ? vec3(1.,.85,.5) : vec3(.55,1.,.95);
+      // thin neon outline with a soft inner line and almost no interior grid, so voxels read sketched rather than solid
+      col += lc*edge*1.15 + lc*inset*.45 + vec3(.2,.75,.8)*grid*.1;
     }
 
     // hollow bead chains
@@ -447,24 +450,25 @@ export function initCellField(container, options = {}){
     // small screens get roughly half of every structure
     const m = (W < 600 ? .5 : 1)*S.density, n = k => Math.max(1, Math.round(k*m));
     placed = [];
-    const types = [0,1,2,0,1,2,0,1,2,0,1,2,0].slice(0, n(13));
+    // mostly soft membranes and bead chains; only a couple of blocky voxel aggregates
+    const types = [0,2,1,0,2,0,2,1,0,2,0,2,0].slice(0, n(13));
     types.forEach((ty, i) => { const [x, y] = sidePos(i % 2); clusters.push(makeCluster(ty, x, y)); });
     vesicles = Array.from({length:n(3)}, (_, i) => { const [x, y] = sidePos(i % 2); return makeVesicle(x, y, rnd(42,68)); });
     donuts = Array.from({length:n(6)}, () => { const [x, y] = edgePos(); return {kind:'LYSOSOME', id: nid(), bx:x, by:y, x, y, r: rnd(6,13), seed: rnd(100), ph: rnd(TAU), cx:x, cy:y, cr:10}; });
-    fans = Array.from({length: n(6 + (Math.random()*3|0))}, () => {
+    fans = Array.from({length: n(9 + (Math.random()*4|0))}, () => {
       const [x, y] = sidePos(), barrel = Math.random() < .3;
       const ang = Math.atan2(y - H/2, x - W/2) + Math.PI/2 + rnd(-.9,.9);
       return makeColony(x, y, ang, 1 + (Math.random()*6|0), rnd(60,170), barrel ? 'barrel' : 'rose',
         barrel ? {r:[8,15], mouth:.55, rings:10} : {r:[4,10]});
     });
-    foams = Array.from({length:n(4)}, () => { const [x, y] = sidePos(); return makeFoam(x, y); });
+    foams = Array.from({length:n(6)}, () => { const [x, y] = sidePos(); return makeFoam(x, y); });
     dust = Array.from({length:n(7)}, () => { const [x, y] = edgePos();
       const cols = 5 + (Math.random()*10|0), rows = 1 + (Math.random()*4|0);
       return {bx:x, by:y, x, y, ph: rnd(TAU), cols, rows, next:0, grid: Array.from({length:rows}, () => dustRow(cols)), hex: Math.random() < .35}; });
-    proteins = Array.from({length:n(5)}, () => { const [x, y] = sidePos(); return makeProtein(x, y, 20 + Math.pow(Math.random(), 1.2)*75); });
-    stars = Array.from({length:n(5)}, () => { const [x, y] = edgePos(); return makeStar(x, y); });
+    proteins = Array.from({length:n(8)}, () => { const [x, y] = sidePos(); return makeProtein(x, y, 20 + Math.pow(Math.random(), 1.2)*75); });
+    stars = Array.from({length:n(7)}, () => { const [x, y] = edgePos(); return makeStar(x, y); });
     rods = Array.from({length:n(3)}, () => { const [x, y] = sidePos(); return makeRod(x, y); });
-    bursts = Array.from({length:n(7)}, () => { const [x, y] = sidePos(); return makeBurst(x, y); });
+    bursts = Array.from({length:n(10)}, () => { const [x, y] = sidePos(); return makeBurst(x, y); });
     dots = Array.from({length:n(7)}, () => { const [x, y] = edgePos();
       return {kind:'NUCLEOLUS', id: nid(), bx:x, by:y, x, y, r: rnd(9,22), ph: rnd(TAU), pal: pick(HT_PAL),
         lobes: Array.from({length: 1 + (Math.random()*3|0)}, (_, i) => ({dx: i ? rnd(-1,1) : 0, dy: i ? rnd(-1,1) : 0, r: i ? rnd(.5,.9) : 1, ph: rnd(TAU)})), cx:x, cy:y, cr:15}; });
@@ -856,7 +860,7 @@ export function initCellField(container, options = {}){
   let BF = 0;
   function roughEllipse(g, x, y, rx, ry, rot, seed, k){
     const s0 = seed*13.1 + k*7.7 + BF*3.3, n = rx > 14 ? 16 : 10;
-    const start = rh(s0, 1)*TAU, sweep = TAU + .12 + rh(s0, 2)*.4, amp = .05 + .03*k;
+    const start = rh(s0, 1)*TAU, sweep = TAU + .12 + rh(s0, 2)*.4, amp = .08 + .04*k;
     const ox = (rh(s0, 40) - .5)*rx*.08, oy = (rh(s0, 41) - .5)*ry*.08;
     const cr = Math.cos(rot), sr = Math.sin(rot);
     let px = 0, py = 0;
@@ -871,8 +875,8 @@ export function initCellField(container, options = {}){
   }
   function roughLine(g, x1, y1, x2, y2, seed, k){
     const s0 = seed*9.7 + k*5.1 + BF*2.9, dx = x2 - x1, dy = y2 - y1, L = Math.hypot(dx, dy) || 1, nx = -dy/L, ny = dx/L;
-    const e1 = (rh(s0, 1) - .5)*.12, e2 = 1 + (rh(s0, 2) - .35)*.14, bow = (rh(s0, 3) - .5)*L*.1;
-    const ax = x1 + dx*e1 + nx*(rh(s0, 4) - .5)*1.6, ay = y1 + dy*e1 + ny*(rh(s0, 4) - .5)*1.6;
+    const e1 = (rh(s0, 1) - .5)*.12, e2 = 1 + (rh(s0, 2) - .35)*.14, bow = (rh(s0, 3) - .5)*L*.16;
+    const ax = x1 + dx*e1 + nx*(rh(s0, 4) - .5)*1.6, ay = y1 + dy*e1 + ny*(rh(s0, 4) - .5)*2.6;
     const bx = x1 + dx*e2, by = y1 + dy*e2;
     g.moveTo(ax, ay); g.quadraticCurveTo((ax + bx)/2 + nx*bow, (ay + by)/2 + ny*bow, bx, by);
   }
