@@ -1,0 +1,89 @@
+---
+title: "Morgan fingerprints and ridge regression versus a pretrained molecular encoder: what my replays show, why, and what would overturn it."
+date: 2026-10-16
+summary: "Across three milestones of paired replays, folded Morgan bits with ridge beat CheMeleon, frozen and fine-tuned, at 32 to 104 labels. A technical look at the comparison, the numerical failure that nearly hid the real answer, and the strongest counter-evidence."
+kind: "Research"
+draft: false
+---
+
+Aster ranks candidate molecules with about the simplest model in cheminformatics: binary Morgan fingerprints and a linear ridge regression. I didn't start there out of conviction. I started there as a baseline, and then every attempt to replace it with a pretrained neural encoder lost. This piece goes through the comparison at a technical level, including a numerical bug that made the first result look worse than it was, and the published work that says I may still be wrong.
+
+## The comparison
+
+The task is low-data batch selection: start from 32 or 64 measured compounds on one target, pick 8 per round from a pool of several hundred for 5 rounds, and count how many of the pool's top-decile compounds are found. All arms in a case share the same initial set, pool, audit set and seed.
+
+The arms:
+
+- **Morgan + ridge.** RDKit Morgan fingerprints, radius 2, chirality-aware, folded to 2,048 binary bits. Features are standardized using measured compounds only, then fitted with ridge at alpha 10.
+- **Morgan + random forest.** Same features, a tree ensemble instead of a linear model.
+- **CheMeleon + ridge.** CheMeleon is a Chemprop directed message-passing network pretrained to predict Mordred molecular descriptors. I took its frozen, mean-aggregated embedding and fitted the same ridge head on top.
+- **Fine-tuned CheMeleon.** In a matched pilot, the encoder and a linear head were updated for 5 CPU epochs per round on the observed labels, then the ridge head was refit on the adapted features.
+
+## Results
+
+| Study | Targets | Morgan + ridge | Morgan + forest | CheMeleon | Random |
+| --- | --- | --- | --- | --- | --- |
+| Milestone 2 (24 cases) | CHEMBL1871, 2034 | **12.75** | 11.29 | 11.38 (unstable head) | 3.42 |
+| Milestone 3 (24 cases) | 5-HT1A, GSK-3β, CLK4 | **18.67** | 17.33 | 15.50 (repaired head) | 4.92 |
+| Milestone 3 pilot (6 cases) | same | **17.33** | 16.17 | frozen 15.33, fine-tuned 13.67 | 5.50 |
+
+In milestone 3 the repaired CheMeleon head lost to Morgan + ridge in 15 of 24 matched cases, tied 3 and won 6. Fine-tuning tied the frozen model in four pilot cases and lost in two. It never helped.
+
+Two caveats belong next to that table. Ridge beats the forest by only 0.25 to 1.46 compounds per 40 picks across milestones 2 to 4, while the forest had slightly *lower* audit error in milestones 3 and 4. So ridge is the discovery winner, not the accuracy winner. And the effect is target-dependent: on published GSK-3β splits CheMeleon found 14.75 against ridge's 13.50, while on 5-HT1A scaffold-transfer splits it found 9.00 against 18.50.
+
+## The numerical failure
+
+The first CheMeleon result had an audit MAE of **5.60** pKi units, against about 0.78 for the fingerprint models. That's not a weak model; it's a broken one.
+
+A post-hoc diagnostic on the development task found the cause. Standardization was fitted on the 32 measured compounds only, which is correct for avoiding leakage. But one embedding dimension had a training standard deviation of about **1.4 x 10^-6**. Dividing by that turned ordinary values at prediction time into standardized features up to about **138,914**, and predictions ranged from -1,116 to 11.2 pKi. Dense learned embeddings have near-constant dimensions on small, chemically narrow sets, and z-scoring amplifies them catastrophically. Binary fingerprints rarely hit this, since a bit that's constant in training is simply zero after centering.
+
+Milestone 3 fixed this with a pre-registered six-head sweep on the development target only. The winner removes features whose training standard deviation is below 0.01 before standardizing, recomputed each round from revealed labels only. Prediction-guard violations fell from 1,110 to zero, development audit MAE from 4.76 to 0.89, and discovery from 10.33 to 14.83. The repaired head is what the milestone 3 row uses, and it still lost. So the instability was real but wasn't the whole story: stability was necessary, not sufficient.
+
+## Why the simple model wins in this regime
+
+**Ridge is the right estimator for p much greater than n.** With 2,048 features and 32 to 72 labels, ordinary least squares is undefined and flexible models have plenty of room to fit noise. Ridge's solution
+
+```text
+w = (XᵀX + alpha·I)⁻¹ Xᵀy
+```
+
+is always well-posed, and it's equivalent to the posterior mean of a Bayesian linear model with a Gaussian prior on the weights, or of a Gaussian process with a linear kernel. That puts it in the same kernel-method family as the SVM-on-ECFP models that did best on MoleculeACE activity cliffs ([van Tilborg et al., 2022](https://pubs.acs.org/doi/10.1021/acs.jcim.2c01073)).
+
+**Pretraining's advantage is small and fades fast.** A 2026 re-benchmark of the 30 MoleculeACE tasks put the best pretrained model (KPGT) at R² 0.678 against 0.668 for XGBoost on Morgan counts ([Zhao et al., 2026](https://link.springer.com/article/10.1186/s13321-026-01217-2)). In OpenADMET's 2026 simulated campaigns, CheMeleon's head start over training from scratch was gone by about 200 labels ([OpenADMET](https://openadmet.ghost.io/model-take-the-wheel-active-learning-with-pec50-data/)). My replays sit at 32 to 104 labels, where pretraining should help *most*, and it still didn't. My inference is that CheMeleon's descriptor-prediction pretraining doesn't align well with these targets' structure–activity relationships, rather than that I lacked data to adapt it, but I haven't tested that directly.
+
+**Activity cliffs favour substructure features.** MoleculeACE was built around pairs of near-identical molecules with large potency differences. A hashed substructure bit can flip on exactly the small change that matters, whereas a smooth learned embedding tends to place near-identical molecules close together, which is what you want for most properties and not for cliffs.
+
+**Interpretability is part of the objective.** Aster's product question is "why did we test this compound?" A ridge prediction decomposes exactly into a sum of per-bit contributions, and every pick can be shown next to its nearest measured analogue by Tanimoto similarity. One caveat: folded bits collide, so a bit doesn't map to a unique substructure, and I don't yet claim fragment-level attributions.
+
+## The case against
+
+The strongest published challenges, and why each doesn't settle it:
+
+| Challenger | Claim | Why it doesn't transfer directly |
+| --- | --- | --- |
+| [CheMeleon](https://arxiv.org/abs/2506.15792) (Burns et al.) | Best or tied on 29 of 30 MoleculeACE tasks | Trained end to end on 615 to 3,657 molecules per task. I used a ridge head on 32 to 104. My negative is about my recipe at my data size |
+| [TabPFN on CheMeleon features](https://arxiv.org/pdf/2604.16123) (2026) | Best or tied on all 30 MoleculeACE tasks; Morgan inputs clearly weaker | Untested by me. No separate result below 1,000 labels, no ridge baseline |
+| [ADKF-IFT](https://arxiv.org/pdf/2205.02708) (Chen et al., ICLR 2023) | R² 0.34 vs 0.18 for fingerprint models at 64 labels on FS-Mol | Needs meta-training on thousands of other assays; scored on prediction, not selection |
+| [Chemprop D-MPNN](https://arxiv.org/pdf/1904.01561) (Yang et al., 2019) | Beat forest-on-Morgan on most datasets | Same paper notes fingerprints can win below about 1,000 molecules |
+| Tanimoto-kernel GP ([GAUCHE](https://arxiv.org/pdf/2212.04450)) | Strong Bayesian optimisation baseline with count fingerprints | Natural upgrade from ridge; value depends on calibrated uncertainty, which has been weak in my data |
+
+The pattern: most wins are on prediction accuracy rather than selection, and with more labels or more auxiliary assays than a single early campaign has. That makes them reasons to re-test, not refutations.
+
+## What would overturn the default
+
+I've pre-committed to three re-tests, each on targets I haven't inspected, with the gate fixed before running and ties going to ridge:
+
+1. **Count fingerprints.** Mine are binary (`GetFingerprintAsNumPy` on a bit generator). Nearly every strong fingerprint baseline above uses counts. It's a one-line change and the fairest test of the default itself.
+2. **TabPFN on CheMeleon embeddings plus RDKit descriptors.** The best-supported challenger, no fine-tuning, CPU-friendly.
+3. **CheMeleon fine-tuned as its authors recommend**, end to end with their head, so the comparison can't be blamed on my ridge-head recipe.
+
+Beyond those, I'd reopen the question if a campaign's pool moves far from its measured chemistry, if a target accumulates around 10,000 compatible measurements, or when prospective data arrive.
+
+## Limits of this evidence
+
+- Retrospective, on ten public targets, nine of them Ki tasks; pools of hundreds of compounds.
+- Two or three seeds per case in milestones 2 to 4, and targets within a milestone share chemistry, so cases aren't independent.
+- The fine-tuning pilot was six cases with one five-epoch CPU recipe.
+- Held-out targets aren't guaranteed absent from CheMeleon's own pretraining data.
+
+What I'd take from this beyond the specific models: when a sophisticated method loses, check whether it lost or broke. Here it did both, and only separating the two made the result trustworthy.
