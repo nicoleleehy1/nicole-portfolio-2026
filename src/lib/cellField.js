@@ -223,8 +223,10 @@ export function initCellField(container, options = {}){
     if (uLight > .5) {
       float m = max(max(col.r, col.g), col.b);
       vec3 hue = col/max(m, 1e-3);
-      vec3 tint = mix(mix(vec3(1.), hue, .5), hue*.9, smoothstep(.65, 1., m)*.6);
-      col = mix(vec3(1.), tint, smoothstep(.02, .8, m));
+      // push the hue away from grey and deepen it so pastels hold up against white
+      hue = clamp(mix(vec3(dot(hue, vec3(.333))), hue, 1.6), 0., 1.)*.8;
+      vec3 tint = mix(mix(vec3(1.), hue, .7), hue*.85, smoothstep(.45, 1., m)*.85);
+      col = mix(vec3(1.), tint, smoothstep(.04, .55, m));
     }
     o = vec4(col, 1.);
   }`;

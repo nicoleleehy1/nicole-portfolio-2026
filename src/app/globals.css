@@ -45,7 +45,7 @@
 }
 /* the WebGL layer draws its own pastel-on-white version; the sketch layer sits on it normally instead of screening,
    and the HUD's white boxes and labels flip to dark ink (hue kept by the 180deg turn) */
-:root[data-theme="light"] .cell-field .cf-org { mix-blend-mode: normal; filter: url(#cf-pastel); }
+:root[data-theme="light"] .cell-field .cf-org { mix-blend-mode: normal; filter: url(#cf-pastel) saturate(1.7) brightness(0.82); }
 :root[data-theme="light"] .cell-field .cf-hud { filter: invert(1) hue-rotate(180deg); }
 :root[data-theme="light"] .hero-text::after { filter: invert(1); }
 
@@ -308,7 +308,7 @@ ul, ol {
   margin-bottom: 1rem;
 }
 
-/* Underlined link, used throughout body copy; hover outlines it like a tracking box */
+/* Underlined link, used throughout body copy; hover makes it glow */
 .link,
 .prose a {
   color: var(--accent);
@@ -316,15 +316,13 @@ ul, ol {
   text-decoration-color: rgba(var(--glow), 0.5);
   text-decoration-thickness: 1px;
   text-underline-offset: 3px;
-  outline: 1px solid transparent;
-  outline-offset: 2px;
-  transition: outline-color 0.1s ease, text-decoration-color 0.1s ease;
+  transition: color 0.2s ease, text-shadow 0.25s ease, text-decoration-color 0.2s ease;
 }
 .link:hover,
 .prose a:hover {
   color: var(--ink-strong);
-  text-decoration-color: transparent;
-  outline-color: rgb(var(--hi));
+  text-decoration-color: rgba(var(--glow), 0.9);
+  text-shadow: 0 0 6px rgba(var(--glow), 0.9), 0 0 14px rgba(var(--glow), 0.6), 0 0 26px rgba(var(--glow), 0.35);
 }
 
 /* Hairline rule */
