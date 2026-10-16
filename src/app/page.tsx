@@ -1,4 +1,5 @@
 import { SocialLinks } from "../components/social-links";
+import { Footer } from "../components/footer";
 
 export default function HomePage() {
   return (
@@ -46,6 +47,7 @@ export default function HomePage() {
         </p>
 
         <SocialLinks />
+        <Footer className="hero-footer" />
       </div>
     </section>
   );

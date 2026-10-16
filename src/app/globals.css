@@ -710,6 +710,9 @@ ul, ol {
   color: var(--muted);
   font-size: 0.64rem;
 }
+/* Home: the footer line sits right under the social links instead of at the bottom of the page */
+main:has(.hero) > .footer { display: none; }
+.footer.hero-footer { margin: 1.5rem 0 0; padding: 0; text-align: center; }
 
 /* Leadership / projects gallery (cover cards + centered peek dialog) */
 .gallery-header {

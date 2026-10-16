@@ -1,6 +1,6 @@
-export function Footer() {
+export function Footer({ className = "" }: { className?: string }) {
   return (
-    <footer className="footer" data-content>
+    <footer className={`footer ${className}`.trim()} data-content>
       © Nicole Lee {new Date().getFullYear()}
     </footer>
   );
