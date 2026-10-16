@@ -255,6 +255,7 @@ ul, ol {
 
 /* One-line HUD readout, written by the field */
 .hud-readout {
+  min-height: 1.2em;
   margin: 0.6rem 0 1.25rem;
   font-size: 0.625rem;
   letter-spacing: 0.09em;

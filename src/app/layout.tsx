@@ -3,6 +3,7 @@ import "./globals.css";
 import { EB_Garamond, Fraunces, IBM_Plex_Mono } from "next/font/google";
 import { Nav } from "../components/nav";
 import { Footer } from "../components/footer";
+import { LiveClock } from "../components/live-clock";
 import { CellFieldProvider } from "../components/cell-field";
 
 const fraunces = Fraunces({
@@ -36,6 +37,7 @@ export default function RootLayout({
           <div className="page">
             <main className="container">
               <Nav />
+              <LiveClock />
               {children}
               <Footer />
             </main>
