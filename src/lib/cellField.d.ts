@@ -30,7 +30,7 @@ export type CellFieldOptions = {
   readoutLabel?: string;
   // font-family list for canvas labels; next/font renames families.
   fontFamily?: string;
-  // Show the Tune panel (it is otherwise shown by ?tune or the T key).
+  // false hides the collapsed Tune box (T toggles it either way).
   tune?: boolean;
 };
 

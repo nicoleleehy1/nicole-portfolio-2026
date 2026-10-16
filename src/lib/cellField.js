@@ -7,6 +7,7 @@
  *   const subject = field.pinNear(x, y, 'PRT-2201 · SUBJECT');  // subject.move(x, y), subject.release()
  *   field.destroy();
  *
+ * A collapsed Tune box sits in the bottom-right corner (T hides it, ?tune opens it).
  * The canvases never take pointer events; the field listens on window and ignores anything that lands on
  * page content (links, buttons, [data-content]).
  */
@@ -15,7 +16,7 @@
 const CONTENT = 'a, button, input, select, textarea, label, summary, dialog, [data-content]';
 
 const TUNE_HTML = `
-<details class="cf-tune-box" open>
+<details class="cf-tune-box">
   <summary>Tune</summary>
   <div class="cf-panel">
     <div class="cf-rows">
@@ -36,7 +37,7 @@ const TUNE_HTML = `
       <label><input data-t="half" type="checkbox"> Halftone</label>
     </div>
     <div class="cf-btns"><button data-b="reseed" type="button">Reseed</button><button data-b="pause" type="button">Pause</button></div>
-    <p class="cf-hint"><kbd>Hover</kbd> a structure to lock on. <kbd>Click</kbd> it to pin a tracker, or click empty space to seed a cell. <kbd>Drag</kbd> to pull a cell. <kbd>T</kbd> hides this panel.</p>
+    <p class="cf-hint"><kbd>Hover</kbd> a structure to lock on. <kbd>Click</kbd> it to pin a tracker, or click empty space to seed a cell. <kbd>Drag</kbd> to pull a cell. <kbd>T</kbd> hides or shows this box.</p>
   </div>
 </details>`;
 
@@ -297,8 +298,26 @@ export function initCellField(container, options = {}){
     }
     return [x, y];
   }
-  function ringPos(rmin, rmax, a){ a = a ?? rnd(TAU); const r = rnd(rmin, rmax);
-    return push([W/2 + Math.cos(a)*W*r, H/2 + Math.sin(a)*H*r]); }
+  /* Layout: big structures hug the left and right sides; small ones trickle along the top and bottom edges.
+     Both bands are measured from the main reading area (the widest exclusion rect), or from screen fractions without one. */
+  function area(){
+    let best = null;
+    for (const r of exclusion) if (!best || (r.r - r.l)*(r.b - r.t) > (best.r - best.l)*(best.b - best.t)) best = r;
+    return best;
+  }
+  function sidePos(side = Math.random() < .5 ? 0 : 1){
+    const a = area(), gl = a ? a.l - PAD : W*.25, gr = a ? W - a.r - PAD : W*.25;
+    // a side too thin to hold anything (a phone) falls back to the outer fifth of the screen
+    const band = Math.max(side ? gr : gl, W*.2);
+    const d = band*Math.pow(Math.random(), 1.4)*.9 + band*.05; // denser toward the screen edge
+    return push([side ? W - d : d, rnd(.06, .94)*H]);
+  }
+  function edgePos(){
+    const a = area(), top = Math.random() < .5;
+    const room = a ? (top ? a.t - PAD : H - a.b - PAD) : H*.18, band = Math.max(room, H*.12);
+    const d = rnd(.1, .9)*band;
+    return push([rnd(.04, .96)*W, top ? d : H - d]);
+  }
 
   function makeCluster(type, x, y){
     let n, mkB;
@@ -407,33 +426,33 @@ export function initCellField(container, options = {}){
     // small screens get roughly half of every structure
     const m = W < 600 ? .5 : 1, n = k => Math.max(1, Math.round(k*m));
     const types = [0,1,2,0,1,2,0,1,2,0,1,2,0].slice(0, n(13));
-    types.forEach((ty, i) => { const [x, y] = ringPos(.2, .44, i/types.length*TAU + rnd(-.2,.2)); clusters.push(makeCluster(ty, x, y)); });
-    vesicles = Array.from({length:n(3)}, (_, i) => { const [x, y] = ringPos(.22, .4, i/n(3)*TAU + rnd(.5)); return makeVesicle(x, y, rnd(42,68)); });
-    donuts = Array.from({length:n(6)}, () => { const [x, y] = ringPos(.12, .48); return {kind:'LYSOSOME', id: nid(), bx:x, by:y, x, y, r: rnd(6,13), seed: rnd(100), ph: rnd(TAU), cx:x, cy:y, cr:10}; });
+    types.forEach((ty, i) => { const [x, y] = sidePos(i % 2); clusters.push(makeCluster(ty, x, y)); });
+    vesicles = Array.from({length:n(3)}, (_, i) => { const [x, y] = sidePos(i % 2); return makeVesicle(x, y, rnd(42,68)); });
+    donuts = Array.from({length:n(6)}, () => { const [x, y] = edgePos(); return {kind:'LYSOSOME', id: nid(), bx:x, by:y, x, y, r: rnd(6,13), seed: rnd(100), ph: rnd(TAU), cx:x, cy:y, cr:10}; });
     fans = Array.from({length: n(6 + (Math.random()*3|0))}, () => {
-      const [x, y] = ringPos(.18, .52), barrel = Math.random() < .3;
+      const [x, y] = sidePos(), barrel = Math.random() < .3;
       const ang = Math.atan2(y - H/2, x - W/2) + Math.PI/2 + rnd(-.9,.9);
       return makeColony(x, y, ang, 1 + (Math.random()*6|0), rnd(60,170), barrel ? 'barrel' : 'rose',
         barrel ? {r:[8,15], mouth:.55, rings:10} : {r:[4,10]});
     });
-    foams = Array.from({length:n(4)}, () => { const [x, y] = ringPos(.22, .46); return makeFoam(x, y); });
-    dust = Array.from({length:n(7)}, () => { const [x, y] = ringPos(.1, .48);
+    foams = Array.from({length:n(4)}, () => { const [x, y] = sidePos(); return makeFoam(x, y); });
+    dust = Array.from({length:n(7)}, () => { const [x, y] = edgePos();
       const cols = 5 + (Math.random()*10|0), rows = 1 + (Math.random()*4|0);
       return {bx:x, by:y, x, y, ph: rnd(TAU), cols, rows, next:0, grid: Array.from({length:rows}, () => dustRow(cols)), hex: Math.random() < .35}; });
-    proteins = Array.from({length:n(5)}, () => { const [x, y] = ringPos(.14, .44); return makeProtein(x, y, 20 + Math.pow(Math.random(), 1.2)*75); });
-    stars = Array.from({length:n(5)}, () => { const [x, y] = ringPos(.14, .45); return makeStar(x, y); });
-    rods = Array.from({length:n(3)}, () => { const [x, y] = ringPos(.2, .42); return makeRod(x, y); });
-    bursts = Array.from({length:n(7)}, () => { const [x, y] = ringPos(.2, .5); return makeBurst(x, y); });
-    dots = Array.from({length:n(7)}, () => { const [x, y] = ringPos(.12, .5);
+    proteins = Array.from({length:n(5)}, () => { const [x, y] = sidePos(); return makeProtein(x, y, 20 + Math.pow(Math.random(), 1.2)*75); });
+    stars = Array.from({length:n(5)}, () => { const [x, y] = edgePos(); return makeStar(x, y); });
+    rods = Array.from({length:n(3)}, () => { const [x, y] = sidePos(); return makeRod(x, y); });
+    bursts = Array.from({length:n(7)}, () => { const [x, y] = sidePos(); return makeBurst(x, y); });
+    dots = Array.from({length:n(7)}, () => { const [x, y] = edgePos();
       return {kind:'NUCLEOLUS', id: nid(), bx:x, by:y, x, y, r: rnd(9,22), ph: rnd(TAU), pal: pick(HT_PAL),
         lobes: Array.from({length: 1 + (Math.random()*3|0)}, (_, i) => ({dx: i ? rnd(-1,1) : 0, dy: i ? rnd(-1,1) : 0, r: i ? rnd(.5,.9) : 1, ph: rnd(TAU)})), cx:x, cy:y, cr:15}; });
-    clumps = Array.from({length:n(7)}, () => { const [x, y] = ringPos(.1, .5); return {x, y, pts: Array.from({length: 10 + (Math.random()*16|0)}, () => [rnd(-22,22), rnd(-16,16), rnd(1,3.2), pick(['#3d8bff','#7ff3ea','#2a5bd8'])])}; });
+    clumps = Array.from({length:n(7)}, () => { const [x, y] = edgePos(); return {x, y, pts: Array.from({length: 10 + (Math.random()*16|0)}, () => [rnd(-22,22), rnd(-16,16), rnd(1,3.2), pick(['#3d8bff','#7ff3ea','#2a5bd8'])])}; });
     parts = Array.from({length:n(160)}, () => ({x: rnd(W), y: rnd(H), vx: rnd(-6,6), vy: rnd(-6,6), s: rnd(.6,2.2),
       c: Math.random() < .8 ? '#7ff3ea' : (Math.random() < .5 ? '#ff7fd1' : '#ffd36b'), a: rnd(.25,.8)}));
     // small blue bubbles: some loose, some in little clusters, all slowly rising
     bubbles = [];
     for (let i = 0, nb = n(14); i < nb; i++){
-      const [cx, cy] = Math.random() < .6 ? ringPos(.1, .5) : [rnd(W), rnd(H)], n = Math.random() < .5 ? 1 : 3 + (Math.random()*7|0);
+      const [cx, cy] = edgePos(), n = Math.random() < .5 ? 1 : 3 + (Math.random()*7|0);
       for (let j = 0; j < n; j++) bubbles.push({x: cx + (n > 1 ? rnd(-18,18) : 0), y: cy + (n > 1 ? rnd(-14,14) : 0), r: rnd(1.5,6)*(n > 1 ? .8 : 1),
         vy: -rnd(2,7), ph: rnd(TAU), c: pick(['#5aa8ff','#8fd0ff','#3d7bff','#7fc8ff'])});
     }
@@ -552,8 +571,9 @@ export function initCellField(container, options = {}){
       o.x += (o.anchor.x + (o.jx || 0) - o.x)*k; o.y += (o.anchor.y + (o.jy || 0) - o.y)*k;
     }
     else if (t > o.next){
-      const a = Math.atan2((o.y - H/2)/H, (o.x - W/2)/W) + rnd(-.7,.7), rr = rnd(.2,.44);
-      [o.tx, o.ty] = push([W/2 + Math.cos(a)*W*rr, H/2 + Math.sin(a)*H*rr]); o.next = t + rnd(6,14);
+      // wander along its own side, occasionally crossing to the other
+      const side = (o.x > W/2) !== (Math.random() < .12) ? 1 : 0;
+      [o.tx, o.ty] = sidePos(side); o.next = t + rnd(6,14);
     }
     if (o.anchor){ /* position handled above */ }
     else if (ptr.drag === o){ const k = Math.min(1, rdt*8); o.x += (ptr.x - o.x)*k; o.y += (ptr.y - o.y)*k; o.tx = o.x; o.ty = o.y; o.next = t + 4; }
@@ -1359,7 +1379,8 @@ export function initCellField(container, options = {}){
   /* Tune panel: hidden unless the URL has ?tune or T is pressed */
   const tune = doc.createElement('aside');
   tune.className = 'cf-tune'; tune.dataset.content = ''; tune.innerHTML = TUNE_HTML;
-  tune.hidden = !(options.tune || new URLSearchParams(win.location.search).has('tune'));
+  // a small collapsed "Tune" toggle is always there; ?tune opens it, T hides or shows it
+  tune.querySelector('details').open = new URLSearchParams(win.location.search).has('tune');
   doc.body.appendChild(tune);
   const fmtV = {cell: v => v + 'px', speed: v => v.toFixed(2), glow: v => v.toFixed(2), glitch: v => v.toFixed(2), boxMax: v => v + 'px'};
   const pb = tune.querySelector('[data-b="pause"]');
@@ -1388,7 +1409,7 @@ export function initCellField(container, options = {}){
     if ('exclusionRects' in o) setExclusion(o.exclusionRects);
     if ('readout' in o) readout = o.readout || null;
     if ('readoutLabel' in o) readoutLabel = o.readoutLabel || '';
-    if ('tune' in o) tune.hidden = !o.tune;
+    if ('tune' in o) tune.hidden = o.tune === false;
     if ('scale' in o) fitK();
     capMotion();
     syncTune();
