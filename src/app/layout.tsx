@@ -36,7 +36,6 @@ export default function RootLayout({
           <div className="page">
             <main className="container">
               <Nav />
-              <p className="hud-readout" data-cell-readout aria-hidden="true">CELL-TRACK · NICOLE LEE · INITIALIZING</p>
               {children}
               <Footer />
             </main>

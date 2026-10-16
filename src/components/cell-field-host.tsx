@@ -36,8 +36,6 @@ export default function FieldHost({ onReady }: { onReady: (field: CellField | nu
         const field = initCellField(el, {
           ...intensity(window.location.pathname),
           exclusionRects: readingRects(),
-          readout: document.querySelector<HTMLElement>("[data-cell-readout]"),
-          readoutLabel: "NICOLE LEE",
           // smaller structures than the standalone piece, so they frame the text instead of crowding it
           scale: 0.6,
           // fewer pieces than the standalone piece so the frame stays airy, with a brighter neon glow
