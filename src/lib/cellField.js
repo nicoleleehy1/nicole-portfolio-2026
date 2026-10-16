@@ -347,8 +347,8 @@ export function initCellField(container, options = {}){
 
   function makeCluster(type, x, y){
     let n, mkB;
-    if (type === 0){ n = 2 + (Math.random()*2|0); mkB = () => ({r: rnd(16,30), orbit: rnd(12,38)}); }
-    else if (type === 1){ n = 2 + (Math.random()*2|0); mkB = () => ({r: rnd(18,30), orbit: rnd(16,40)}); }
+    if (type === 0){ n = 2 + (Math.random()*2|0); mkB = () => ({r: rnd(18,38), orbit: rnd(14,50)}); }
+    else if (type === 1){ n = 3 + (Math.random()*2|0); mkB = () => ({r: rnd(26,44), orbit: rnd(22,58)}); }
     else { const big = Math.random() < .35; n = big ? 2 + (Math.random()*3|0) : 3 + (Math.random()*4|0);
       mkB = big ? () => ({r: rnd(22,36), orbit: rnd(14,34)}) : () => ({r: rnd(8,15), orbit: rnd(6,22)}); }
     const blobs = Array.from({length:n}, () => Object.assign(mkB(), {fx: rnd(.12,.42), fy: rnd(.12,.42), ph: rnd(TAU), ph2: rnd(TAU), x, y, rr:0}));
