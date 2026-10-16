@@ -15,7 +15,7 @@ const items: ListItem[] = awards.map(a => ({
 
 export default function AwardsPage() {
   return (
-    <section className="section scrim" data-content>
+    <section className="section scrim" data-content data-exclude>
       <SectionEyebrow href="/awards" count={awards.length} />
       <ListView title="Awards" items={items} />
     </section>

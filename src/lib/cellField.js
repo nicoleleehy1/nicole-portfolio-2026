@@ -51,7 +51,7 @@ export function initCellField(container, options = {}){
   const glc = mkLayer('gl'), orc = mkLayer('org'), hdc = mkLayer('hud');
   const co = orc.getContext('2d'), ch = hdc.getContext('2d');
   const S = {cell:6, speed:1, glow:1, glitch:1, boxMax:110, track:true, hover:true, ascii:true, plexus:true, burst:true, coral:true, protein:true, half:true, paused:false,
-    maxTrackers:7, edgeBoxes:false};
+    maxTrackers:7, edgeBoxes:false, scale:1};
   const reduced = win.matchMedia('(prefers-reduced-motion: reduce)').matches;
   // reduced motion: slow speed, low glitch, no line boil, whatever setOptions asks for
   const capMotion = () => { if (reduced){ S.speed = Math.min(S.speed, .3); S.glitch = Math.min(S.glitch, .35); } };
@@ -78,6 +78,7 @@ export function initCellField(container, options = {}){
   uniform vec4 uV[24]; uniform int uVN;
   uniform vec4 uB[24]; uniform int uBN;
   uniform vec4 uC[20]; uniform int uCN;
+  uniform vec4 uX[4]; uniform int uXN;
 
   float h(vec2 p){ p=fract(p*vec2(123.34,456.21)); p+=dot(p,p+45.32); return fract(p.x*p.y); }
   float n2(vec2 p){ vec2 i=floor(p), f=fract(p); f=f*f*(3.-2.*f);
@@ -86,6 +87,9 @@ export function initCellField(container, options = {}){
   float fS(vec2 p){ float s=0.; for(int i=0;i<24;i++){ if(i>=uSN) break; vec2 d=p-uS[i].xy; s+=uS[i].z*uS[i].z/(dot(d,d)+1.); } return s; }
   float fV(vec2 p){ float s=0.; for(int i=0;i<24;i++){ if(i>=uVN) break; vec2 d=p-uV[i].xy; s+=uV[i].z*uV[i].z/(dot(d,d)+1.); } return s; }
   float fB(vec2 p){ float s=0.; for(int i=0;i<24;i++){ if(i>=uBN) break; vec2 d=p-uB[i].xy; s+=uB[i].z*uB[i].z/(dot(d,d)+1.); } return s; }
+
+  // 1 inside the reading-area rects (fading out over 40px), so the background texture stays quiet behind text
+  float calm(vec2 p){ float m=0.; for(int i=0;i<4;i++){ if(i>=uXN) break; vec4 r=uX[i]; vec2 d=max(r.xy-p, p-r.zw); m=max(m, smoothstep(40.,0.,max(d.x,d.y))); } return m; }
 
   void main(){
     vec2 p0 = vec2(gl_FragCoord.x, uRes.y*uScale - gl_FragCoord.y)/uScale;
@@ -106,7 +110,8 @@ export function initCellField(container, options = {}){
 
     // deep haze
     float hz = fbm(p*.0035 + vec2(t*.012, -t*.008));
-    col += vec3(.0,.04,.11)*smoothstep(.5,.9,hz)*1.6;
+    float cm = calm(p0);
+    col += vec3(.0,.04,.11)*smoothstep(.5,.9,hz)*1.6*(1. - .6*cm);
 
     // ghost voxel constellations
     float gc = uCell*.85;
@@ -114,7 +119,7 @@ export function initCellField(container, options = {}){
     float gOn = step(.64, fbm(gi*.07 + vec2(t*.02, 3.)));
     float gw = 1./gc;
     float ge = max(max(step(gf.x,gw), step(1.-gw,gf.x)), max(step(gf.y,gw), step(1.-gw,gf.y)));
-    col += gOn*(vec3(.12,.38,.7)*ge*.45 + vec3(.01,.04,.09));
+    col += gOn*(vec3(.12,.38,.7)*ge*.45 + vec3(.01,.04,.09))*(1. - .9*cm);
 
     // smooth membranes
     float fs = fS(p);
@@ -211,7 +216,7 @@ export function initCellField(container, options = {}){
 
   const gl = glc.getContext('webgl2', {antialias:false, alpha:false, preserveDrawingBuffer:true, powerPreference:'high-performance'});
   let prog = null; const U = {};
-  const sArr = new Float32Array(96), vArr = new Float32Array(96), bArr = new Float32Array(96), cArr = new Float32Array(80);
+  const sArr = new Float32Array(96), vArr = new Float32Array(96), bArr = new Float32Array(96), cArr = new Float32Array(80), xArr = new Float32Array(16);
   function mk(type, src){ const s = gl.createShader(type); gl.shaderSource(s, src); gl.compileShader(s);
     if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) { console.error(gl.getShaderInfoLog(s)); return null; } return s; }
   if (gl) {
@@ -222,8 +227,8 @@ export function initCellField(container, options = {}){
     }
     if (prog) {
       gl.useProgram(prog); gl.bindVertexArray(gl.createVertexArray());
-      for (const n of ['uRes','uScale','uTime','uReal','uCell','uGlow','uHov','uSN','uVN','uBN','uCN']) U[n] = gl.getUniformLocation(prog, n);
-      for (const n of ['uS','uV','uB','uC']) U[n] = gl.getUniformLocation(prog, n + '[0]');
+      for (const n of ['uRes','uScale','uTime','uReal','uCell','uGlow','uHov','uSN','uVN','uBN','uCN','uXN']) U[n] = gl.getUniformLocation(prog, n);
+      for (const n of ['uS','uV','uB','uC','uX']) U[n] = gl.getUniformLocation(prog, n + '[0]');
     }
   }
 
@@ -239,6 +244,7 @@ export function initCellField(container, options = {}){
   }
 
   const coarse = win.matchMedia('(pointer: coarse)');
+  const fitK = () => { K = Math.max(.55, Math.min(1.25, Math.min(W, H)/850))*S.scale; };
   function resize(){
     W = win.innerWidth; H = win.innerHeight;
     const dpr = win.devicePixelRatio || 1, mobile = W < 768 || coarse.matches;
@@ -248,7 +254,7 @@ export function initCellField(container, options = {}){
     if (W*H*gs*gs > 2.4e6) gs = Math.sqrt(2.4e6/(W*H));
     glc.width = Math.round(W*gs); glc.height = Math.round(H*gs);
     for (const c of [orc, hdc]){ c.width = Math.round(W*ds); c.height = Math.round(H*ds); }
-    K = Math.max(.55, Math.min(1.25, Math.min(W, H)/850));
+    fitK();
     if (prog) gl.viewport(0, 0, glc.width, glc.height);
   }
   on(win, 'resize', resize); resize();
@@ -268,24 +274,25 @@ export function initCellField(container, options = {}){
   const KIND = [['AMOEBOID CELL','PSEUDOPODIUM','PLASMA MEMBRANE'], ['EPITHELIAL CLUSTER','CELL COLONY'], ['LIPID DROPLETS','VACUOLE']];
 
   /* calm reading area: spawn points and wander targets inside an exclusion rect get pushed out into the free gutter */
-  const PAD = 28;
+  const PAD = 36;
   function setExclusion(rects){
     exclusion = (rects || []).map(r => {
       const l = r.left ?? r.x, t = r.top ?? r.y;
       return {l, t, r: r.right ?? l + r.width, b: r.bottom ?? t + r.height};
-    // a column covering most of the screen (phones) leaves nowhere to go; the content scrim handles those
-    }).filter(r => r.r - r.l < W*.75);
+    });
   }
-  function push(p){
+  // f picks how far into the free space a point lands; pass a fixed one to get the same answer every frame
+  function push(p, f){
     let [x, y] = p;
     for (const r of exclusion){
       if (x < r.l - PAD || x > r.r + PAD || y < r.t - PAD || y > r.b + PAD) continue;
       const room = [r.l - PAD, W - r.r - PAD, r.t - PAD, H - r.b - PAD]; // free space left, right, above, below
       const dist = [x - r.l + PAD, r.r + PAD - x, y - r.t + PAD, r.b + PAD - y];
       let best = -1;
-      for (let i = 0; i < 4; i++) if (room[i] > 30 && (best < 0 || dist[i] < dist[best])) best = i;
+      // a side with no real room (e.g. text spanning a phone screen) is no escape; leave those cells be
+      for (let i = 0; i < 4; i++) if (room[i] > 80 && (best < 0 || dist[i] < dist[best])) best = i;
       if (best < 0) continue;
-      const j = rnd(.15, .85)*room[best];
+      const j = (f ?? rnd(.15, .85))*room[best];
       if (best === 0) x = r.l - PAD - j; else if (best === 1) x = r.r + PAD + j; else if (best === 2) y = r.t - PAD - j; else y = r.b + PAD + j;
     }
     return [x, y];
@@ -550,7 +557,11 @@ export function initCellField(container, options = {}){
     }
     if (o.anchor){ /* position handled above */ }
     else if (ptr.drag === o){ const k = Math.min(1, rdt*8); o.x += (ptr.x - o.x)*k; o.y += (ptr.y - o.y)*k; o.tx = o.x; o.ty = o.y; o.next = t + 4; }
-    else { o.x += (o.tx - o.x)*ease; o.y += (o.ty - o.y)*ease; }
+    else {
+      // keep targets out of the reading area as it moves (scroll, resize); a cell dragged under text drifts back out
+      [o.tx, o.ty] = push([o.tx, o.ty], o.pf ??= rnd(.15,.85));
+      o.x += (o.tx - o.x)*ease; o.y += (o.ty - o.y)*ease;
+    }
     o.grow = o.dying ? o.grow - rdt*1.4 : Math.min(1, o.grow + rdt*.9);
     return 1 - Math.pow(1 - Math.max(0, o.grow), 3);
   }
@@ -581,6 +592,13 @@ export function initCellField(container, options = {}){
     }
     vesicles = vesicles.filter(v => !(v.dying && v.grow <= 0));
 
+    // drifting decorations ease their base out of the reading area, and back home once it moves away
+    const sk = Math.min(1, rdt*2);
+    for (const arr of [donuts, fans, foams, dust, proteins, stars, rods, bursts, dots]) for (const o of arr){
+      o.hx ??= o.bx; o.hy ??= o.by;
+      const [gx, gy] = push([o.hx, o.hy], o.pf ??= rnd(.15,.85));
+      o.bx += (gx - o.bx)*sk; o.by += (gy - o.by)*sk;
+    }
     for (const d of donuts){ d.x = d.bx + Math.sin(t*.08 + d.ph)*40; d.y = d.by + Math.cos(t*.06 + d.ph)*30; d.cx = d.x; d.cy = d.y; d.cr = Math.max(12, d.r*K*1.6); }
     for (const f of fans){ f.x = f.bx + Math.sin(t*.04 + f.ph)*22; f.y = f.by + Math.cos(t*.035 + f.ph)*18; const L = f.hgt*K;
       f.cx = f.x + Math.sin(f.ang)*L*.4; f.cy = f.y - Math.cos(f.ang)*L*.4; f.cr = Math.max(20, L*.5); }
@@ -1304,6 +1322,9 @@ export function initCellField(container, options = {}){
     gl.uniform1f(U.uCell, S.cell); gl.uniform1f(U.uGlow, S.glow);
     gl.uniform4f(U.uHov, hs ? hs.cx : -1e4, hs ? hs.cy : -1e4, hs ? hs.cr*1.05 : 1, hs ? hov.str*Math.min(1, .35 + S.glitch*.4) : 0);
     gl.uniform4fv(U.uS, sArr); gl.uniform4fv(U.uV, vArr); gl.uniform4fv(U.uB, bArr); gl.uniform4fv(U.uC, cArr);
+    const xn = Math.min(4, exclusion.length);
+    exclusion.slice(0, 4).forEach((r, i) => xArr.set([r.l, r.t, r.r, r.b], i*4));
+    gl.uniform4fv(U.uX, xArr); gl.uniform1i(U.uXN, xn);
     gl.uniform1i(U.uSN, sn); gl.uniform1i(U.uVN, vn); gl.uniform1i(U.uBN, bn); gl.uniform1i(U.uCN, cn);
     gl.drawArrays(gl.TRIANGLES, 0, 3);
     return sn + vn + bn + cn;
@@ -1368,6 +1389,7 @@ export function initCellField(container, options = {}){
     if ('readout' in o) readout = o.readout || null;
     if ('readoutLabel' in o) readoutLabel = o.readoutLabel || '';
     if ('tune' in o) tune.hidden = !o.tune;
+    if ('scale' in o) fitK();
     capMotion();
     syncTune();
   }

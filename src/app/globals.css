@@ -48,7 +48,6 @@ ul, ol {
 
 /* Mono HUD type: nav, labels, eyebrows, metadata */
 .eyebrow,
-.block-label,
 .hud-readout,
 .nav-name,
 .nav-link,
@@ -180,11 +179,8 @@ ul, ol {
   align-items: center;
   gap: 0.75rem 1.5rem;
   flex-wrap: wrap;
-  padding: 1.25rem var(--pad);
-  margin-inline: calc(var(--pad) * -1);
-  background: rgba(1, 3, 5, 0.55);
-  -webkit-backdrop-filter: blur(6px);
-  backdrop-filter: blur(6px);
+  padding: 1.25rem 0;
+  text-shadow: 0 0 6px var(--bg), 0 0 12px var(--bg);
 }
 .nav-links {
   display: flex;
@@ -321,19 +317,24 @@ ul, ol {
   margin-bottom: 1rem;
 }
 
-/* Mono label between body blocks */
-.block-label {
-  font-size: 0.66rem;
-  letter-spacing: 0.18em;
-  color: var(--muted);
-  margin-top: 1.75rem;
-}
-.hero-text .block-label { margin-bottom: 0.4rem; }
-
 /* Sections and hero */
-.section,
-.hero { margin-bottom: 1.25rem; }
+.section { margin-bottom: 1.25rem; }
 
+/* Home: no backing box, the text sits centered in the field and the cells are kept around it */
+.hero {
+  min-height: calc(100svh - 9rem);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding-bottom: 2rem;
+  text-align: center;
+}
+.hero-text {
+  max-width: 40rem;
+  /* a soft dark halo keeps the copy legible over whatever drifts close */
+  text-shadow: 0 0 6px var(--bg), 0 0 14px var(--bg), 0 0 24px var(--bg);
+}
 .hero-name {
   font-family: var(--display);
   font-weight: 500;
@@ -342,30 +343,16 @@ ul, ol {
   letter-spacing: -0.02em;
   line-height: 1.05;
   color: var(--ink-strong);
-  margin-bottom: 0.6rem;
+  margin-bottom: 1.5rem;
 }
-.hero-sub {
-  font-size: clamp(1.15rem, 2.6vw, 1.4rem);
-  line-height: 1.4;
-  color: var(--accent);
-  margin-bottom: 1.75rem;
-}
-.hero-grid {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) 200px;
-  gap: 2.5rem;
-  align-items: start;
-}
-.hero-text p { max-width: 65ch; }
-.hero-text p + p:not(.block-label) { margin-top: 1rem; }
-.hero-text .hero-sub + p,
-.hero-text .block-label + p { margin-top: 0; }
+.hero-text p + p { margin-top: 1rem; }
 .muted { color: var(--muted); }
 
-/* Where the portrait used to be: an empty slot the field keeps a cell locked onto */
+/* An empty slot the field keeps a pinned cell locked onto, above the name */
 .subject-slot {
-  height: 280px;
-  margin-top: 9rem;
+  width: 100%;
+  height: 150px;
+  flex-shrink: 0;
 }
 
 /* Links row (email / linkedin / github / resume) */
@@ -375,6 +362,7 @@ ul, ol {
   gap: 1.25rem;
   margin-top: 1.75rem;
 }
+.hero .link-row { justify-content: center; }
 .icon-link {
   display: inline-flex;
   color: var(--muted);
@@ -652,6 +640,7 @@ ul, ol {
 /* Footer */
 .footer {
   margin-bottom: 2rem;
+  text-shadow: 0 0 6px var(--bg), 0 0 12px var(--bg);
   padding-block: 1.25rem;
   color: var(--muted);
   font-size: 0.64rem;
@@ -873,9 +862,7 @@ html:has(.peek[open]) { overflow: hidden; }
 
 /* Mobile */
 @media (max-width: 600px) {
-  .hero-grid { grid-template-columns: minmax(0, 1fr); gap: 0; }
-  /* The locked subject sits above the text, where the portrait used to */
-  .subject-slot { order: -1; height: 150px; margin-top: 0; }
+  .subject-slot { height: 110px; }
   .gallery { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.6rem; }
   .list-subtitle { display: block; margin-left: 0; }
   .peek-content { padding: 1.5rem 1.25rem 2rem; }

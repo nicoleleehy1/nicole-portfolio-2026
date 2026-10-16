@@ -9,7 +9,7 @@ const navItems = sections.map((s, i) => ({ ...s, id: `NAV-${2203 + i * 4}` }));
 export function Nav() {
   const pathname = usePathname();
   return (
-    <nav className="nav" data-content>
+    <nav className="nav" data-content data-exclude>
       <Link href="/" className="nav-name" data-id="PRT-2201">Nicole Lee</Link>
       <div className="nav-links">
         {navItems.map(item => (

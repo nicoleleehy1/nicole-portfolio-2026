@@ -19,6 +19,8 @@ export type CellFieldOptions = {
   paused?: boolean;
   // Most auto trackers at once.
   maxTrackers?: number;
+  // Size multiplier for every structure (1 = the standalone piece).
+  scale?: number;
   // Keep random glitch boxes in the outer bands of the page.
   edgeBoxes?: boolean;
   // Viewport rects (e.g. the content column) that structures are pushed out of.

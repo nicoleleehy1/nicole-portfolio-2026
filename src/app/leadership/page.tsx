@@ -25,7 +25,7 @@ const items: GalleryItem[] = leadership.map(l => ({
 
 export default function LeadershipPage() {
   return (
-    <section className="section scrim" data-content>
+    <section className="section scrim" data-content data-exclude>
       <SectionEyebrow href="/leadership" count={leadership.length} />
       <Gallery title="Leadership" items={items} />
     </section>

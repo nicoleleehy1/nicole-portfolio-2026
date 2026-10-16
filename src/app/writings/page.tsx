@@ -10,7 +10,7 @@ const dateFormat = new Intl.DateTimeFormat("en-US", { month: "short", day: "nume
 export default async function WritingsPage() {
   const writings = await getWritings();
   return (
-    <section className="section scrim" data-content>
+    <section className="section scrim" data-content data-exclude>
       <SectionEyebrow href="/writings" count={writings.length} />
       <h1 className="page-title">Writings</h1>
       <div>

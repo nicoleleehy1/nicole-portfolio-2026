@@ -28,7 +28,7 @@ export default function RootLayout({
         {/* The living background sits behind every page and persists across navigation. */}
         <CellFieldProvider>
           <div className="page">
-            <main className="container" data-reading-column>
+            <main className="container">
               <Nav />
               <p className="hud-readout" data-cell-readout aria-hidden="true">CELL-TRACK · NICOLE LEE · INITIALIZING</p>
               {children}
