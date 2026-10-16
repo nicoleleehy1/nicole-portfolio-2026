@@ -51,7 +51,7 @@ export function initCellField(container, options = {}){
   const mkLayer = name => { const c = doc.createElement('canvas'); c.className = 'cf-' + name; c.setAttribute('aria-hidden', 'true'); container.appendChild(c); return c; };
   const glc = mkLayer('gl'), orc = mkLayer('org'), hdc = mkLayer('hud');
   const co = orc.getContext('2d'), ch = hdc.getContext('2d');
-  const S = {cell:6, speed:1, glow:1, glitch:1, boxMax:110, track:true, hover:true, ascii:true, plexus:true, burst:true, coral:true, protein:true, half:true, paused:false,
+  const S = {cell:6, speed:1, glow:1, glitch:1, boxMax:110, track:true, hover:true, ascii:true, plexus:false, burst:true, coral:true, protein:true, half:true, paused:false,
     maxTrackers:7, edgeBoxes:false, scale:1, density:1};
   const reduced = win.matchMedia('(prefers-reduced-motion: reduce)').matches;
   // reduced motion: slow speed, low glitch, no line boil, whatever setOptions asks for
@@ -1193,6 +1193,7 @@ export function initCellField(container, options = {}){
     const vis = rboxes.filter(b => { const a = now - b.born, l = b.until - now;
       if (a < 0 || hitsText(b.x - b.w/2, b.y - b.h/2, b.w + 40, b.h)) return false; if (a < 300 && ((a/45)|0) % 2) return false; if (l < 300 && ((l/45)|0) % 2) return false; return true; });
     // plexus between neighbouring random boxes
+    if (S.plexus){
     ch.strokeStyle = 'rgba(150,255,238,.32)'; ch.lineWidth = .8; ch.beginPath();
     for (const a of vis){
       let best = null, bd = 280;
@@ -1200,6 +1201,7 @@ export function initCellField(container, options = {}){
       if (best){ ch.moveTo(a.x, a.y); ch.lineTo(best.x, best.y); }
     }
     ch.stroke();
+    }
     const G = S.glitch;
     for (const bx of vis){
       const w = Math.round(Math.min(bx.w, S.boxMax)), h = Math.round(Math.min(bx.h, S.boxMax*.8));
@@ -1237,6 +1239,7 @@ export function initCellField(container, options = {}){
     if (!vis.length) return;
     // plexus inside the group: a loop around the structure plus spokes to a hub node
     const hub = [s.cx, s.cy];
+    if (S.plexus){
     const pts = vis.map(bx => [bx.x, bx.y, Math.atan2(bx.y - hub[1], bx.x - hub[0])]).sort((a, b) => a[2] - b[2]);
     ch.strokeStyle = 'rgba(150,255,238,.5)'; ch.lineWidth = .9; ch.beginPath();
     pts.forEach((p, i) => {
@@ -1246,6 +1249,7 @@ export function initCellField(container, options = {}){
     ch.stroke();
     ch.fillStyle = '#c8fff6'; ch.beginPath(); ch.arc(hub[0], hub[1], 2.4, 0, TAU); ch.fill();
     ch.strokeStyle = 'rgba(200,255,248,.8)'; ch.beginPath(); ch.arc(hub[0], hub[1], 5, 0, TAU); ch.stroke();
+    }
     ch.font = FONT_S;
     for (const bx of vis){
       const w = Math.round(Math.min(bx.w, S.boxMax)), h = Math.round(Math.min(bx.h, S.boxMax*.8));
