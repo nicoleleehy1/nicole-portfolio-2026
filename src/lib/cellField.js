@@ -619,17 +619,54 @@ export function initCellField(container, options = {}){
     return 1 - Math.pow(1 - Math.max(0, o.grow), 3);
   }
 
+  /* epithelial life cycle: every few seconds one colony is born, divides, merges into a neighbour,
+     grows or shrinks, or fades away, keeping between 2 and 5 of them on screen */
+  let nextLife = 0;
+  function lifeEvent(){
+    const ep = clusters.filter(c => c.type === 1 && !c.dying && !c.merge), r = Math.random();
+    const born = () => { const [x, y] = sidePos(); const c = makeCluster(1, x, y); c.grow = 0; c.s = .4; c.sc = rnd(.8, 1.2); clusters.push(c); };
+    if (ep.length < 2 || (r < .22 && ep.length < 5)) return born();
+    if (r < .44 && ep.length < 5){
+      const a = pick(ep.filter(c => c.blobs.length >= 3));
+      if (!a) return born();
+      const c = makeCluster(1, a.x, a.y), ang = rnd(TAU);
+      c.blobs = a.blobs.splice(0, a.blobs.length >> 1); c.s = a.s ?? 1; c.sc = a.sc ?? 1;
+      c.x = c.tx = a.x; c.y = c.ty = a.y;
+      [c.tx, c.ty] = push([a.x + Math.cos(ang)*140*K, a.y + Math.sin(ang)*140*K]); c.next = t + rnd(8,14);
+      [a.tx, a.ty] = push([a.x - Math.cos(ang)*60*K, a.y - Math.sin(ang)*60*K]); a.next = t + rnd(8,14);
+      clusters.push(c); return;
+    }
+    if (r < .64 && ep.length > 2){
+      const a = pick(ep); let b = null, bd = 1e9;
+      for (const o of ep){ if (o === a) continue; const d = Math.hypot(o.x - a.x, o.y - a.y); if (d < bd){ bd = d; b = o; } }
+      a.merge = b; return;
+    }
+    if (r < .86){ pick(ep).sc = rnd(.6, 1.45); return; }
+    if (ep.length > 2) pick(ep).dying = true; else born();
+  }
+
   function update(dt, rdt, now){
     const ease = 1 - Math.pow(1 - .006, dt*60);
+    if (!S.paused && now > nextLife){ lifeEvent(); nextLife = now + rnd(2500, 5000); }
     for (const c of clusters){
+      if (c.merge){
+        const m = c.merge;
+        if (m.dying || !clusters.includes(m)) c.merge = null;
+        else {
+          // drift into the neighbour; once they overlap this one fades and the neighbour swells
+          const k = Math.min(1, rdt*.6); c.x += (m.x - c.x)*k; c.y += (m.y - c.y)*k; c.tx = m.x; c.ty = m.y; c.next = t + 2;
+          if (Math.hypot(m.x - c.x, m.y - c.y) < 30*K){ c.dying = true; c.merge = null; m.sc = Math.min(1.5, (m.sc ?? 1)*1.2); }
+        }
+      }
       const ge = wander(c, ease, rdt);
+      c.s = (c.s ?? 1) + ((c.sc ?? 1) - (c.s ?? 1))*Math.min(1, rdt*.4);
       let sx = 0, sy = 0;
       for (const b of c.blobs){
         // a deep, slow swing in orbit pulls blobs apart (dividing) and back together (merging)
         const sw = 1 + .6*Math.sin(mt*.3 + b.ph2);
-        b.x = c.x + Math.cos(mt*b.fx + b.ph)*b.orbit*K*sw;
-        b.y = c.y + Math.sin(mt*b.fy + b.ph2)*b.orbit*K*sw;
-        b.rr = b.r*K*(1 + .2*Math.sin(mt*.8 + b.ph))*ge;
+        b.x = c.x + Math.cos(mt*b.fx + b.ph)*b.orbit*K*sw*c.s;
+        b.y = c.y + Math.sin(mt*b.fy + b.ph2)*b.orbit*K*sw*c.s;
+        b.rr = b.r*K*(1 + .2*Math.sin(mt*.8 + b.ph))*ge*c.s;
         sx += b.x; sy += b.y;
       }
       c.cx = sx/c.blobs.length; c.cy = sy/c.blobs.length;
