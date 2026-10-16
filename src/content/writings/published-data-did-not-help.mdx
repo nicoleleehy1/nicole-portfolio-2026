@@ -1,0 +1,128 @@
+---
+title: "Supply or precision? Dissecting a null result on literature-augmented compound selection."
+date: 2026-10-16
+summary: "Milestone 9 found that published measurements don't improve Aster's compound picks. A retest across nine targets and 864 paired cases shows why: below 50 structures supply binds, and above it, literature-grade value noise erases the gain."
+kind: "Research"
+draft: false
+---
+
+Milestone 9 asked a simple question: if you append permitted measurements from the literature to a low-data campaign's training set, does a fingerprint model pick better compounds? The answer was no. The interesting work was figuring out which of two explanations for that "no" was right, because they lead to opposite next steps.
+
+## Setup
+
+The selector is Aster's default: chirality-aware Morgan fingerprints (radius 2, 2,048 bits), standardized ridge regression at alpha 10, and greedy batch selection of 8 compounds per round for 5 rounds. Each case starts from 32 or 64 measured compounds on one target. The primary metric is how many of the pool's top-decile compounds are recovered in the 40 picks, with the decile cutoff computed only after the replay ends.
+
+Evidence enters the simplest way possible: external measurements are **appended as extra training rows** to every fit in the replay.
+
+Every study has three arms run on identical cases:
+
+- **Baseline:** campaign measurements only.
+- **Evidence:** campaign plus external rows.
+- **Permuted control:** the same external structures and the same multiset of values, with values shuffled among structures. This holds row count and value distribution fixed and destroys only the structure–activity link. If the control gains as much as the evidence arm, the gain is an artifact of extra rows.
+
+## Milestone 9 as run
+
+Pre-registered and frozen by hash: one target (CHEMBL238_Ki, the dopamine transporter), 2 split protocols x 2 support sizes x 10 seeds = 40 paired cases per arm. The gate: mean gain of at least +1.0 top-decile compounds, and at least +1.0 separation from the permuted control.
+
+| Arm | Top-decile per 40 picks | Paired difference | SE |
+| --- | --- | --- | --- |
+| Baseline | 13.23 | | |
+| Literature | 13.63 | +0.40 | 0.33 |
+| Permuted control | 13.43 | +0.20 | 0.30 |
+
+Both conditions failed. A leakage filter explained part of it: an external record is only allowed if its canonical isomeric SMILES appears nowhere in the replay dataset. Of 31 usable corpus structures, **19 were already in the dataset**, because the corpus and the benchmark were both built from ChEMBL. That left 12. I recorded "corpus too small" as the reason.
+
+But a null with 12 rows can't distinguish two hypotheses:
+
+- **H1 (supply):** evidence helps, there just wasn't enough of it.
+- **H2 (value):** this kind of evidence doesn't help this selector at any supply.
+
+## Step 1: was it underpowered?
+
+`evidence_power.py` computes the power of a two-sided paired t-test from the noncentral t distribution, using the standard deviation of paired differences from a study's own case metrics:
+
+```text
+ncp   = effect / (sd / sqrt(n))
+power = P(|T_ncp, n-1| > t_crit)
+```
+
+Against the +1.0 gate, milestone 9 had **84% power** and a minimum detectable effect of 0.95. So the null at that threshold was not a power failure. It said nothing about smaller effects: +0.5 would have needed 145 cases.
+
+Rerunning with 40 seeds instead of 10 (160 cases per arm) moved the literature arm from +0.40 to **+0.03** (95% CI -0.34 to +0.39). The original gain was sampling noise.
+
+## Step 2: make supply a controlled variable
+
+To test H1 directly, I needed evidence I could dial up without the overlap problem. `evidence_supply.py` builds it by **withholding donors**: before a case starts, a set of compounds is removed from the task entirely and handed back as "external evidence". These are the most favourable external measurements possible: same assay, same endpoint, exact values, no curation noise, and provably absent from the pool.
+
+Two donor regimes:
+
+- **Random donors:** sampled uniformly.
+- **Scaffold-disjoint donors:** whole Bemis–Murcko scaffold groups are withheld, so no donor shares a ring-system core with any task compound. This is the realistic one, since outside evidence usually sits beside a campaign's chemotypes rather than inside them.
+
+Design: 9 MoleculeACE Ki targets x 2 protocols x 2 regimes x 3 supply levels (12, 50, 150) x 8 seeds = **864 paired cases per arm**, minimum detectable effect 0.50.
+
+| Supplied structures | Random donors | Scaffold-disjoint donors |
+| --- | --- | --- |
+| 12 | +0.29 (-0.50 to +1.07) | +0.23 (-0.48 to +0.94) |
+| 50 | +2.35 (+1.43 to +3.26) | +1.15 (+0.35 to +1.96) |
+| 150 | +2.80 (+1.88 to +3.72) | +1.61 (+0.65 to +2.57) |
+
+The gate passes at 150 in both regimes. Seven of nine targets gain. Three things in this table matter more than the headline:
+
+- **Supply has a threshold.** At 12 structures both regimes sit on zero, on nine targets as on one. No amount of extra seeds on a 12-structure corpus would have shown anything.
+- **The permuted control is strongly harmful:** -8.54 at 150 random donors. So the gain comes from the structure–value link, not from row count. And it's a warning: rows with the wrong value actively pull the fit.
+- **Scaffold-disjoint donors help about half as much.** Part of the random-donor gain comes from near neighbours of pool compounds.
+
+So H1 is supported. If I'd stopped here, the conclusion would have been "build a bigger corpus".
+
+## Step 3: add realistic noise
+
+The donor values are exact. Literature values aren't. Kalliokoski et al. ([PLoS ONE 2013](https://pmc.ncbi.nlm.nih.gov/articles/PMC3628986/)) found that potency values for the same compound aggregated across ChEMBL sources disagree with a standard deviation of about **0.68 log units** (a factor of about 4.8), against 0.17 to 0.29 for repeat measurements within one lab.
+
+I repeated the 50- and 150-donor levels with Gaussian noise added to donor values at 0.29 and 0.68 log units (576 paired cases per arm). **This analysis is post-hoc**: the noise levels were fixed before running it but after I had read the supply result, so it tests the robustness of an observed effect, not a pre-registered hypothesis. As a consistency check, the exact-value arm was rerun inside it and reproduced the primary numbers to the digit, confirming shared splits and seeds.
+
+| Regime, supply | Exact | Same-lab (0.29) | Cross-source (0.68) |
+| --- | --- | --- | --- |
+| Random, 50 | +2.35 | +1.62 | -0.37 |
+| Random, 150 | +2.80 | +1.83 | -0.99 |
+| Scaffold-disjoint, 50 | +1.15 | +0.69 | -0.67 |
+| Scaffold-disjoint, 150 | +1.61 | +1.04 | **-1.88** (-2.92 to -0.83) |
+
+Pooled over 576 cases: exact +1.98, same-lab +1.30, cross-source **-0.98** (p = 0.0001).
+
+At literature precision, the gain doesn't just shrink; it reverses, and significantly so in the realistic regime. Baseline recovery in the retest is about 15.2 compounds per 40 picks, so that's roughly a 12% loss from adding data.
+
+## Why ridge can't absorb noisy rows
+
+Ridge minimises
+
+```text
+sum_i (y_i - w·x_i)^2  +  alpha * ||w||^2
+```
+
+Every row contributes to the loss with the same weight. There's no term for "this label is less reliable", so a donor value off by 0.7 log units pulls the weights exactly as hard as a correct one. With only 32 to 72 campaign rows, 150 noisy rows can dominate the fit. The permuted control is the extreme case of the same mechanism, and the noise arms interpolate between it and the exact arm.
+
+The standard fix is a weighted (heteroscedastic) likelihood, where each row's squared error is divided by its own variance:
+
+```text
+sum_i (y_i - w·x_i)^2 / s_i^2  +  alpha * ||w||^2
+```
+
+With `s_i` around 0.2 for campaign data and 0.68 for literature, a literature row would count for roughly a tenth as much. I haven't tested that yet, and it's the obvious next experiment.
+
+## Conclusions
+
+1. **The milestone 9 decision holds; its stated reason was incomplete.** Evidence stays out of the ranking. Not because there wasn't enough, but because literature values aren't precise enough to be used as plain training rows. A bigger corpus would not have rescued it.
+2. **The requirement for useful evidence is now specific:** 50 or more pool-external structures, measured at single-lab precision, on the campaign's own endpoint. That describes a collaborator's unpublished assay history, not a public corpus.
+3. **The corpus still has a job.** In Aster, literature values are attached to each decision with their provenance, for a scientist to read. That's exactly the right place for a value too imprecise to train on.
+
+## Limitations
+
+- Donors come from the same curated dataset as the task, so every positive number here is an **upper bound** on what a real corpus of that size could deliver.
+- Fixed-variance Gaussian noise is a crude stand-in for real inter-lab disagreement, which is skewed, assay-dependent and correlated within a source. Both levels come from one 2013 study.
+- Nine Ki targets from one benchmark collection; no other endpoint types and essentially no measured inactives.
+- Two targets showed no gain even with exact donors (CHEMBL1871 and CHEMBL214), and 32 cases per target can't say why.
+- Only evidence-as-training-rows was tested. Evidence as a filter, a prior, or a weighted term is untested, and the result above is a reason to test exactly those.
+- No temporal holdout: this says nothing about whether a decision would have been right at the time it was made.
+
+The lesson I'd generalise: when a null result has an obvious explanation, make the explanation a controlled variable and test it. Here the obvious explanation was half right, and the half it missed changed what I'd build next.
