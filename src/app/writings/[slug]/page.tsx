@@ -24,7 +24,7 @@ export default async function WritingPage({ params }: { params: Promise<{ slug: 
   const { Body } = w;
 
   return (
-    <article style={{ padding: "2rem 0 3rem" }}>
+    <article className="section scrim" data-content>
       <Link href="/writings" className="back-link">← Writings</Link>
       <p className="writing-kind" style={{ marginTop: "1.5rem" }}>
         {[w.date && dateFormat.format(w.date), w.kind].filter(Boolean).join(" · ")}

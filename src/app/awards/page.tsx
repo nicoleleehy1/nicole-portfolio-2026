@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { awards } from "../metadata";
 import { ListView, type ListItem } from "../../components/list-view";
+import { SectionEyebrow } from "../../components/section-eyebrow";
 
 export const metadata: Metadata = { title: "Awards" };
 
@@ -14,7 +15,8 @@ const items: ListItem[] = awards.map(a => ({
 
 export default function AwardsPage() {
   return (
-    <section style={{ padding: "2rem 0 3rem" }}>
+    <section className="section scrim" data-content>
+      <SectionEyebrow href="/awards" count={awards.length} />
       <ListView title="Awards" items={items} />
     </section>
   );

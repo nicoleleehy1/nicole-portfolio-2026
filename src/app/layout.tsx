@@ -1,13 +1,20 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import "./globals.css";
-import { Inter } from 'next/font/google';
+import { Fraunces, IBM_Plex_Mono } from "next/font/google";
 import { Nav } from "../components/nav";
 import { Footer } from "../components/footer";
+import { CellFieldProvider } from "../components/cell-field";
 
-const inter = Inter({
-  subsets: ['latin'],
-  weight: ['400', '500', '600', '700'],
-  variable: '--font-inter',
+const fraunces = Fraunces({
+  subsets: ["latin"],
+  axes: ["opsz", "SOFT"],
+  variable: "--font-fraunces",
+});
+
+const plexMono = IBM_Plex_Mono({
+  subsets: ["latin"],
+  weight: ["400", "500"],
+  variable: "--font-plex-mono",
 });
 
 export default function RootLayout({
@@ -16,16 +23,19 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={inter.variable}>
+    <html lang="en" className={`${fraunces.variable} ${plexMono.variable}`}>
       <body>
-        <div style={{ minHeight: "100vh" }}>
-          <main className="container">
-            <Nav />
-            {children}
-            <hr className="rule" />
-            <Footer />
-          </main>
-        </div>
+        {/* The living background sits behind every page and persists across navigation. */}
+        <CellFieldProvider>
+          <div className="page">
+            <main className="container" data-reading-column>
+              <Nav />
+              <p className="hud-readout" data-cell-readout aria-hidden="true">CELL-TRACK · NICOLE LEE · INITIALIZING</p>
+              {children}
+              <Footer />
+            </main>
+          </div>
+        </CellFieldProvider>
       </body>
     </html>
   );
@@ -37,4 +47,9 @@ export const metadata: Metadata = {
     template: "%s · Nicole Lee",
   },
   description: "Nicole Lee 2026 Portfolio",
+};
+
+export const viewport: Viewport = {
+  themeColor: "#010305",
+  colorScheme: "dark",
 };
