@@ -40,9 +40,8 @@ export default function FieldHost({ onReady }: { onReady: (field: CellField | nu
           readoutLabel: "NICOLE LEE",
           // smaller structures than the standalone piece, so they frame the text instead of crowding it
           scale: 0.6,
-          // enough pieces to fill the colonies around the text, a little brighter and more neon
-          density: 0.8,
-          glow: 1.25,
+          // fewer pieces than the standalone piece, so the frame around the text stays airy
+          density: 0.6,
           fontFamily: getComputedStyle(document.documentElement).getPropertyValue("--font-plex-mono").trim(),
         });
         fieldRef.current = field;

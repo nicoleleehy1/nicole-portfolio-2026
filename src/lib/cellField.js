@@ -117,10 +117,10 @@ export function initCellField(container, options = {}){
     // ghost voxel constellations
     float gc = uCell*.85;
     vec2 gi = floor(p/gc), gf = fract(p/gc);
-    float gOn = step(.7, fbm(gi*.07 + vec2(t*.02, 3.)));
+    float gOn = step(.64, fbm(gi*.07 + vec2(t*.02, 3.)));
     float gw = 1./gc;
     float ge = max(max(step(gf.x,gw), step(1.-gw,gf.x)), max(step(gf.y,gw), step(1.-gw,gf.y)));
-    col += gOn*(vec3(.1,.34,.62)*ge*.22 + vec3(.004,.015,.035))*(1. - .9*cm);
+    col += gOn*(vec3(.12,.38,.7)*ge*.45 + vec3(.01,.04,.09))*(1. - .9*cm);
 
     // smooth membranes
     float fs = fS(p);
@@ -164,8 +164,7 @@ export function initCellField(container, options = {}){
       vec3 vf = mix(vec3(.0,.32,.24), vec3(.04,.12,.48), fbm(p*.025 + vec2(0.,t*.03)));
       vf = mix(vf, vec3(.55,.2,.1), step(.93,hv)*.6);
       col = mix(col, vf*(.45+.5*smoothstep(1.,3.5,fvC)), .9);
-      float lh = h(ci*1.7);
-      vec3 lc = lh > .7 ? vec3(1.,.55,.3) : lh > .5 ? vec3(1.,.45,.85) : lh > .3 ? vec3(1.,.85,.5) : vec3(.55,1.,.95);
+      vec3 lc = h(ci*1.7) > .55 ? vec3(1.,.82,.55) : vec3(.6,1.,.95);
       col += lc*edge*1.1 + vec3(1.,.38,.22)*inset*.9 + vec3(.2,.75,.8)*grid*.28;
     }
 
@@ -309,40 +308,36 @@ export function initCellField(container, options = {}){
   // glitch and tracking boxes never draw over the reading area
   const hitsText = (x, y, w, h, m = 12) => exclusion.some(r => x < r.r + m && x + w > r.l - m && y < r.b + m && y + h > r.t - m);
 
-  /* Composition: pieces gather into a few dense colonies ("islands") ringing the reading area, leaving a dark
-     void behind the text. Big structures live in the side colonies, small ones mostly in the top/bottom ones.
-     Colonies are re-derived from the current reading area, with a per-seed jitter so each seed looks different. */
-  let hubJit = [];
-  const gauss = () => (Math.random() + Math.random() + Math.random() - 1.5)/1.5;
-  function hubs(){
-    const a = area() || {l: W*.32, r: W*.68, t: H*.3, b: H*.7};
-    const gl = Math.max(a.l - PAD, W*.14), gr = Math.max(W - a.r - PAD, W*.14);
-    const gt = Math.max(a.t - PAD*.5, H*.1), gb = Math.max(H - a.b - PAD*.5, H*.1);
-    const list = [
-      // side colonies: [x, y, spread x, spread y, side]
-      [gl*.45, H*.27, gl*.32, H*.13, 'side'], [gl*.5, H*.74, gl*.34, H*.14, 'side'],
-      [W - gr*.5, H*.32, gr*.34, H*.14, 'side'], [W - gr*.45, H*.78, gr*.32, H*.12, 'side'],
-      // edge colonies along the top and bottom
-      [W*.36, gt*.45, W*.07, gt*.3, 'edge'], [W*.66, gt*.5, W*.06, gt*.3, 'edge'],
-      [W*.42, H - gb*.45, W*.07, gb*.3, 'edge'], [W*.7, H - gb*.5, W*.06, gb*.3, 'edge'],
-    ];
-    return list.map((h, i) => { const j = hubJit[i] || [0, 0];
-      return {x: h[0] + j[0]*h[2], y: h[1] + j[1]*h[3], sx: h[2], sy: h[3], kind: h[4], side: h[0] > W/2 ? 1 : 0}; });
+  /* while seeding, each position is the best of several candidates (farthest from everything placed so far),
+     which spaces structures out evenly instead of letting random draws clump */
+  let placed = null;
+  function spread(gen){
+    if (!placed) return gen();
+    let best = null, bd = -1;
+    for (let i = 0; i < 12; i++){
+      const p = gen(); let d = 1e9;
+      for (const q of placed) d = Math.min(d, Math.hypot(p[0] - q[0], p[1] - q[1]));
+      if (d > bd){ bd = d; best = p; }
+    }
+    placed.push(best);
+    return best;
   }
-  const near = h => push([Math.max(8, Math.min(W - 8, h.x + gauss()*h.sx)), Math.max(8, Math.min(H - 8, h.y + gauss()*h.sy))]);
   function sidePos(side){
-    const hs = hubs().filter(h => h.kind === 'side' && (side === undefined || h.side === side));
-    return near(pick(hs));
+    return spread(() => {
+      const sd = side ?? (Math.random() < .5 ? 0 : 1);
+      const a = area(), gl = a ? a.l - PAD : W*.25, gr = a ? W - a.r - PAD : W*.25;
+      // a side too thin to hold anything (a phone) falls back to the outer fifth of the screen
+      const band = Math.max(sd ? gr : gl, W*.2);
+      const d = band*(.08 + .84*Math.random());
+      return push([sd ? W - d : d, rnd(.08, .92)*H]);
+    });
   }
   function edgePos(){
-    const hs = hubs(), edge = hs.filter(h => h.kind === 'edge');
-    return near(Math.random() < .7 ? pick(edge) : pick(hs));
-  }
-  // the side colony closest to a point, so wandering cells stay in their own island
-  function homeHub(x, y){
-    let best = null, bd = 1e9;
-    for (const h of hubs()) if (h.kind === 'side'){ const d = Math.hypot(h.x - x, h.y - y); if (d < bd){ bd = d; best = h; } }
-    return best;
+    return spread(() => {
+      const a = area(), top = Math.random() < .5;
+      const room = a ? (top ? a.t - PAD : H - a.b - PAD) : H*.18, band = Math.max(room, H*.12);
+      return push([rnd(.04, .96)*W, top ? rnd(.15, .85)*band : H - rnd(.15, .85)*band]);
+    });
   }
 
   function makeCluster(type, x, y){
@@ -451,7 +446,7 @@ export function initCellField(container, options = {}){
     clusters = []; trackers = [];
     // small screens get roughly half of every structure
     const m = (W < 600 ? .5 : 1)*S.density, n = k => Math.max(1, Math.round(k*m));
-    hubJit = Array.from({length: 8}, () => [rnd(-.35,.35), rnd(-.35,.35)]);
+    placed = [];
     const types = [0,1,2,0,1,2,0,1,2,0,1,2,0].slice(0, n(13));
     types.forEach((ty, i) => { const [x, y] = sidePos(i % 2); clusters.push(makeCluster(ty, x, y)); });
     vesicles = Array.from({length:n(3)}, (_, i) => { const [x, y] = sidePos(i % 2); return makeVesicle(x, y, rnd(42,68)); });
@@ -486,6 +481,7 @@ export function initCellField(container, options = {}){
     rboxes = [];
     nextAcq = t;
     for (const a of anchors) vesicles.push(a.s);
+    placed = null;
   }
 
   function spawn(x, y){
@@ -558,9 +554,7 @@ export function initCellField(container, options = {}){
     const taken = new Set(trackers.map(tk => tk.s));
     const cands = structs.filter(s => !taken.has(s) && !hitsText(s.cx - s.cr, s.cy - s.cr, s.cr*2, s.cr*2));
     if (!cands.length) return;
-    // mostly single boxes, sometimes a group of boxes riding one structure or a swarm of small IDs around it
-    const r = Math.random();
-    trackers.push(makeTracker(pick(cands), r < .2 ? 'group' : r < .35 ? 'swarm' : 'step', false));
+    trackers.push(makeTracker(pick(cands), 'step', false));
   }
   function pin(s){
     if (s.anchor) return;
@@ -600,9 +594,9 @@ export function initCellField(container, options = {}){
       o.x += (o.anchor.x + (o.jx || 0) - o.x)*k; o.y += (o.anchor.y + (o.jy || 0) - o.y)*k;
     }
     else if (t > o.next){
-      // drift within its own colony, now and then migrating to another one
-      const h = Math.random() < .1 ? pick(hubs().filter(k => k.kind === 'side')) : homeHub(o.x, o.y);
-      [o.tx, o.ty] = near(h); o.next = t + rnd(6,14);
+      // wander along its own side, occasionally crossing to the other
+      const side = (o.x > W/2) !== (Math.random() < .12) ? 1 : 0;
+      [o.tx, o.ty] = sidePos(side); o.next = t + rnd(6,14);
     }
     if (o.anchor){ /* position handled above */ }
     else if (ptr.drag === o){ const k = Math.min(1, rdt*8); o.x += (ptr.x - o.x)*k; o.y += (ptr.y - o.y)*k; o.tx = o.x; o.ty = o.y; o.next = t + 4; }
@@ -709,9 +703,10 @@ export function initCellField(container, options = {}){
     }
 
     if (S.track && now > nextRBox){
-      // boxes come in bursts; edgeBoxes keeps them on the side colonies, like a tracker swarming a colony
-      const n = Math.random() < .55 ? 3 + (Math.random()*5|0) : 1;
-      const [cx, cy] = S.edgeBoxes ? sidePos() : [rnd(20, W - 20), rnd(50, H - 20)];
+      const n = Math.random() < .3 ? 2 + (Math.random()*3|0) : 1, cy = rnd(50, H - 20);
+      // edgeBoxes keeps random boxes in the outer bands of the page
+      const band = Math.max(40, Math.min(W*.16, ...exclusion.map(r => Math.min(r.l, W - r.r)))), side = Math.random() < .5;
+      const cx = S.edgeBoxes ? (side ? rnd(16, band) : rnd(W - band, W - 16)) : rnd(20, W - 20);
       for (let i = 0; i < n; i++){
         const w = n > 1 ? rnd(10,26) : rnd(16, Math.max(20, Math.min(S.boxMax, 90)));
         const [bx, by] = push([cx + (n > 1 ? rnd(-30,30) : 0), cy + (n > 1 ? rnd(-24,24) : 0)]);
@@ -719,7 +714,7 @@ export function initCellField(container, options = {}){
           born: now + i*rnd(60,200), until: now + rnd(900,3200), id: nid(), tex: Math.random()*4|0, can: mkCan(16,12), next:0, grid:null,
           mode: asciiOn() && Math.random() < .2 ? 'ascii' : Math.random() < .75 ? 'mosh' : 'tex'});
       }
-      while (rboxes.length > 28) rboxes.shift();
+      while (rboxes.length > 16) rboxes.shift();
       nextRBox = now + rnd(250,700)/Math.max(.3, S.glitch);
     }
     rboxes = rboxes.filter(b => now < b.until);
