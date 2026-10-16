@@ -305,6 +305,9 @@ export function initCellField(container, options = {}){
     for (const r of exclusion) if (!best || (r.r - r.l)*(r.b - r.t) > (best.r - best.l)*(best.b - best.t)) best = r;
     return best;
   }
+  // glitch and tracking boxes never draw over the reading area
+  const hitsText = (x, y, w, h, m = 12) => exclusion.some(r => x < r.r + m && x + w > r.l - m && y < r.b + m && y + h > r.t - m);
+
   /* while seeding, each position is the best of several candidates (farthest from everything placed so far),
      which spaces structures out evenly instead of letting random draws clump */
   let placed = null;
@@ -549,7 +552,7 @@ export function initCellField(container, options = {}){
   }
   function acquire(){
     const taken = new Set(trackers.map(tk => tk.s));
-    const cands = structs.filter(s => !taken.has(s));
+    const cands = structs.filter(s => !taken.has(s) && !hitsText(s.cx - s.cr, s.cy - s.cr, s.cr*2, s.cr*2));
     if (!cands.length) return;
     trackers.push(makeTracker(pick(cands), 'step', false));
   }
@@ -1184,7 +1187,7 @@ export function initCellField(container, options = {}){
 
   function drawRBoxes(now){
     const vis = rboxes.filter(b => { const a = now - b.born, l = b.until - now;
-      if (a < 0) return false; if (a < 300 && ((a/45)|0) % 2) return false; if (l < 300 && ((l/45)|0) % 2) return false; return true; });
+      if (a < 0 || hitsText(b.x - b.w/2, b.y - b.h/2, b.w + 40, b.h)) return false; if (a < 300 && ((a/45)|0) % 2) return false; if (l < 300 && ((l/45)|0) % 2) return false; return true; });
     // plexus between neighbouring random boxes
     ch.strokeStyle = 'rgba(150,255,238,.32)'; ch.lineWidth = .8; ch.beginPath();
     for (const a of vis){
@@ -1336,6 +1339,7 @@ export function initCellField(container, options = {}){
     if (S.track) drawRBoxes(now);
     for (const tk of trackers){
       if (!tk.b || (!S.track && !tk.pinned)) continue;
+      if (tk.type === 'step' && hitsText(tk.b.x - 40, tk.b.y - 20, tk.b.w + 80, tk.b.h + 40)) continue; // label and fragments included
       if (tk.type === 'swarm') drawSwarm(tk, now); else if (tk.type === 'group') drawGroup(tk, now); else drawBox(tk, now);
     }
     drawHover(now);
