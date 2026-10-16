@@ -335,11 +335,59 @@ ul, ol {
   text-align: center;
 }
 .hero-text {
+  position: relative;
+  isolation: isolate;
   max-width: 38rem;
   font-family: var(--font-garamond), "EB Garamond", Garamond, "Times New Roman", serif;
   font-size: 1.05rem;
   /* a slight cyan glow, over a dark halo that keeps the copy legible near drifting cells */
   text-shadow: 0 0 10px rgba(127, 243, 234, 0.28), 0 0 6px var(--bg), 0 0 18px var(--bg);
+}
+.hero-text::before,
+.hero-text::after {
+  content: "";
+  position: absolute;
+  inset: -5.5rem -8rem;
+  z-index: -1;
+  pointer-events: none;
+}
+/* the cloud: a dark veil that blurs the field behind the copy, shaped by overlapping lumps so its edge is uneven */
+.hero-text::before {
+  background: rgba(1, 3, 5, 0.82);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  --lump: rgba(0, 0, 0, 1) 0, rgba(0, 0, 0, 0.75) 38%, transparent 70%;
+  -webkit-mask-image:
+    radial-gradient(ellipse 46% 52% at 50% 48%, var(--lump)),
+    radial-gradient(ellipse 30% 34% at 22% 30%, var(--lump)),
+    radial-gradient(ellipse 26% 30% at 78% 26%, var(--lump)),
+    radial-gradient(ellipse 32% 28% at 30% 76%, var(--lump)),
+    radial-gradient(ellipse 28% 34% at 74% 72%, var(--lump)),
+    radial-gradient(ellipse 18% 22% at 8% 56%, var(--lump)),
+    radial-gradient(ellipse 16% 20% at 93% 48%, var(--lump)),
+    radial-gradient(ellipse 20% 16% at 56% 8%, var(--lump)),
+    radial-gradient(ellipse 22% 16% at 46% 93%, var(--lump));
+  mask-image:
+    radial-gradient(ellipse 46% 52% at 50% 48%, var(--lump)),
+    radial-gradient(ellipse 30% 34% at 22% 30%, var(--lump)),
+    radial-gradient(ellipse 26% 30% at 78% 26%, var(--lump)),
+    radial-gradient(ellipse 32% 28% at 30% 76%, var(--lump)),
+    radial-gradient(ellipse 28% 34% at 74% 72%, var(--lump)),
+    radial-gradient(ellipse 18% 22% at 8% 56%, var(--lump)),
+    radial-gradient(ellipse 16% 20% at 93% 48%, var(--lump)),
+    radial-gradient(ellipse 20% 16% at 56% 8%, var(--lump)),
+    radial-gradient(ellipse 22% 16% at 46% 93%, var(--lump));
+}
+/* texture: wispy smoke from fractal noise, strongest toward the rim so the edge frays instead of fading evenly */
+.hero-text::after {
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='900' height='560' viewBox='0 0 900 560' preserveAspectRatio='none'%3E%3Cfilter id='n' x='0' y='0' width='100%25' height='100%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.009 0.014' numOctaves='5' seed='7'/%3E%3CfeColorMatrix values='0 0 0 0 0.004 0 0 0 0 0.012 0 0 0 0 0.02 -2.6 0 0 0 1.75'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E") center / 100% 100% no-repeat;
+  -webkit-mask-image: radial-gradient(ellipse 50% 50% at 50% 50%, #000 30%, rgba(0, 0, 0, 0.8) 60%, transparent 100%);
+  mask-image: radial-gradient(ellipse 50% 50% at 50% 50%, #000 30%, rgba(0, 0, 0, 0.8) 60%, transparent 100%);
+  opacity: 0.85;
+}
+@media (max-width: 600px) {
+  .hero-text::before,
+  .hero-text::after { inset: -3rem -1.5rem; }
 }
 .hero-name {
   font-family: inherit;
