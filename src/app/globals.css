@@ -330,23 +330,25 @@ ul, ol {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding-bottom: 2rem;
+  /* extra space below lifts the block above the true center */
+  padding-bottom: 14vh;
   text-align: center;
 }
 .hero-text {
-  max-width: 40rem;
+  max-width: 38rem;
+  font-family: "Times New Roman", Times, serif;
+  font-size: 0.95rem;
   /* a soft dark halo keeps the copy legible over whatever drifts close */
   text-shadow: 0 0 6px var(--bg), 0 0 14px var(--bg), 0 0 24px var(--bg);
 }
 .hero-name {
-  font-family: var(--display);
-  font-weight: 500;
-  font-size: clamp(2.5rem, 7vw, 4rem);
-  font-variation-settings: "SOFT" 60;
-  letter-spacing: -0.02em;
+  font-family: inherit;
+  font-weight: 400;
+  font-size: clamp(1.9rem, 4.5vw, 2.6rem);
+  letter-spacing: -0.01em;
   line-height: 1.05;
   color: var(--ink-strong);
-  margin-bottom: 1.5rem;
+  margin-bottom: 1.1rem;
 }
 .hero-text p + p { margin-top: 1rem; }
 .muted { color: var(--muted); }
@@ -365,13 +367,25 @@ ul, ol {
   gap: 1.25rem;
   margin-top: 1.75rem;
 }
-.hero .link-row { justify-content: center; }
+.hero .link-row { justify-content: center; gap: 0.9rem; }
 .icon-link {
   display: inline-flex;
   color: var(--muted);
-  transition: color 0.15s ease;
+  transition: color 0.15s ease, background 0.15s ease;
 }
 .icon-link:hover { color: var(--accent); }
+/* Home: icons sit in blue circles */
+.hero .icon-link {
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #1e4fd8;
+  color: #e6f4ff;
+}
+.hero .icon-link:hover { background: #3d6bff; color: #fff; }
+.hero .icon-link svg { width: 18px; height: 18px; }
 .icon-link svg {
   width: 20px;
   height: 20px;
