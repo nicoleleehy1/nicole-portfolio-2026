@@ -276,7 +276,8 @@ export function initCellField(container, options = {}){
   let HT_PAL;
   let trackers = [], structs = [];
   const anchors = [];
-  let t = 0, nextAcq = 0, spawnI = 0;
+  // mt: a separate clock for cell morphing that keeps a minimum pace even when the field speed is turned down
+  let t = 0, mt = 0, nextAcq = 0, spawnI = 0;
   const cur = {x:-999, y:-999, r:0};
   const KIND = [['AMOEBOID CELL','PSEUDOPODIUM','PLASMA MEMBRANE'], ['EPITHELIAL CLUSTER','CELL COLONY'], ['LIPID DROPLETS','VACUOLE']];
 
@@ -624,10 +625,11 @@ export function initCellField(container, options = {}){
       const ge = wander(c, ease, rdt);
       let sx = 0, sy = 0;
       for (const b of c.blobs){
-        const sw = 1 + .35*Math.sin(t*.21 + b.ph2);
-        b.x = c.x + Math.cos(t*b.fx + b.ph)*b.orbit*K*sw;
-        b.y = c.y + Math.sin(t*b.fy + b.ph2)*b.orbit*K*sw;
-        b.rr = b.r*K*(1 + .12*Math.sin(t*.7 + b.ph))*ge;
+        // a deep, slow swing in orbit pulls blobs apart (dividing) and back together (merging)
+        const sw = 1 + .6*Math.sin(mt*.3 + b.ph2);
+        b.x = c.x + Math.cos(mt*b.fx + b.ph)*b.orbit*K*sw;
+        b.y = c.y + Math.sin(mt*b.fy + b.ph2)*b.orbit*K*sw;
+        b.rr = b.r*K*(1 + .2*Math.sin(mt*.8 + b.ph))*ge;
         sx += b.x; sy += b.y;
       }
       c.cx = sx/c.blobs.length; c.cy = sy/c.blobs.length;
@@ -1400,6 +1402,7 @@ export function initCellField(container, options = {}){
     // rAF stamps the frame start, which can precede the performance.now() taken in start()
     const rdt = Math.max(0, Math.min(.05, (now - lastT)/1000)); lastT = now;
     const dt = S.paused ? 0 : rdt*S.speed; t += dt;
+    if (!S.paused) mt += rdt*Math.max(S.speed, reduced ? .3 : .7);
     BF = reduced ? 0 : Math.floor(now/1000*(S.speed < .5 ? 4 : 9));
     update(dt, rdt, now);
     renderGL(now);
