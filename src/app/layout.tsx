@@ -1,13 +1,27 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import "./globals.css";
-import { Inter } from 'next/font/google';
+import { EB_Garamond, Fraunces, IBM_Plex_Mono } from "next/font/google";
 import { Nav } from "../components/nav";
 import { Footer } from "../components/footer";
+import { LiveClock } from "../components/live-clock";
+import { CellFieldProvider } from "../components/cell-field";
 
-const inter = Inter({
-  subsets: ['latin'],
-  weight: ['400', '500', '600', '700'],
-  variable: '--font-inter',
+const fraunces = Fraunces({
+  subsets: ["latin"],
+  axes: ["opsz", "SOFT"],
+  variable: "--font-fraunces",
+});
+
+// The home page copy
+const garamond = EB_Garamond({
+  subsets: ["latin"],
+  variable: "--font-garamond",
+});
+
+const plexMono = IBM_Plex_Mono({
+  subsets: ["latin"],
+  weight: ["400", "500"],
+  variable: "--font-plex-mono",
 });
 
 export default function RootLayout({
@@ -16,20 +30,29 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={inter.variable}>
+    <html lang="en" className={`${fraunces.variable} ${garamond.variable} ${plexMono.variable}`} suppressHydrationWarning>
+      <head>
+        {/* apply a saved light-mode choice before first paint, so the page never flashes dark */}
+        <script dangerouslySetInnerHTML={{ __html: THEME_SCRIPT }} />
+      </head>
       <body>
-        <div style={{ minHeight: "100vh" }}>
-          <main className="container">
-            <Nav />
-            {children}
-            <hr className="rule" />
-            <Footer />
-          </main>
-        </div>
+        {/* The living background sits behind every page and persists across navigation. */}
+        <CellFieldProvider>
+          <div className="page">
+            <main className="container">
+              <Nav />
+              <LiveClock />
+              {children}
+              <Footer />
+            </main>
+          </div>
+        </CellFieldProvider>
       </body>
     </html>
   );
 }
+
+const THEME_SCRIPT = `try{if(localStorage.getItem("theme")==="light")document.documentElement.dataset.theme="light"}catch(e){}`;
 
 export const metadata: Metadata = {
   title: {
@@ -37,4 +60,9 @@ export const metadata: Metadata = {
     template: "%s · Nicole Lee",
   },
   description: "Nicole Lee 2026 Portfolio",
+};
+
+export const viewport: Viewport = {
+  themeColor: "#010305",
+  colorScheme: "dark light",
 };
