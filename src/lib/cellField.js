@@ -87,7 +87,7 @@ export function initCellField(container, options = {}){
   float n2(vec2 p){ vec2 i=floor(p), f=fract(p); f=f*f*(3.-2.*f);
     return mix(mix(h(i),h(i+vec2(1,0)),f.x), mix(h(i+vec2(0,1)),h(i+vec2(1,1)),f.x), f.y); }
   float fbm(vec2 p){ float s=0., a=.5; for(int i=0;i<5;i++){ s+=a*n2(p); p=p*2.03+vec2(17.1,9.3); a*=.5; } return s; }
-  float fS(vec2 p){ float s=0.; for(int i=0;i<24;i++){ if(i>=uSN) break; vec2 d=p-uS[i].xy; s+=uS[i].z*uS[i].z/(dot(d,d)+1.); } return s; }
+  float fS(vec2 p){ float s=0.; for(int i=0;i<24;i++){ if(i>=uSN) break; vec2 d=p-uS[i].xy; float k=uS[i].z*uS[i].z/(dot(d,d)+1.); s+=k*k; } return s; }
   float fV(vec2 p){ float s=0.; for(int i=0;i<24;i++){ if(i>=uVN) break; vec2 d=p-uV[i].xy; s+=uV[i].z*uV[i].z/(dot(d,d)+1.); } return s; }
   float fB(vec2 p){ float s=0.; for(int i=0;i<24;i++){ if(i>=uBN) break; vec2 d=p-uB[i].xy; s+=uB[i].z*uB[i].z/(dot(d,d)+1.); } return s; }
 
@@ -137,26 +137,22 @@ export function initCellField(container, options = {}){
     float ge = max(max(step(gf.x,gw), step(1.-gw,gf.x)), max(step(gf.y,gw), step(1.-gw,gf.y)));
     col += gOn*(vec3(.1,.34,.62)*ge*.2 + vec3(.004,.015,.035))*(1. - .9*cm);
 
-    // smooth membranes: see-through, mostly dark bodies with a thin cyan rim, a faint inner contour,
-    // and a grainy, edge-detected speckle that gathers toward the rim (like a filtered micrograph)
+    // smooth membranes: clear, round bubbles. A thin rim, a soft glow just inside it and a faint highlight
+    // toward the upper left; no inner texture. The field (fS) uses a squared falloff so blobs stay round and
+    // merge through short, soft necks, like soap bubbles touching
     float fs = fS(p);
     float fwc = max(fwidth(fs)*uScale, 1e-5);
-    float d1 = abs(fs-1.)/fwc, d2 = abs(fs-1.6)/fwc;
+    float d1 = abs(fs-1.)/fwc;
     float inside = smoothstep(.9,1.1,fs);
-    vec2 q = p*.018;
-    float a = fbm(q + vec2(t*.05,0.)), b = fbm(q*2.6 + vec2(5.,-t*.04));
-    vec3 fill = mix(vec3(.005,.03,.05), vec3(.02,.12,.15), smoothstep(.35,.75,a));
-    fill += vec3(.05,.12,.35)*smoothstep(.55,.8,b)*.5;
-    float rimZone = smoothstep(2.6,1.05,fs);
-    float gr = h(floor(p0*.7) + floor(t*6.)*1.31);
-    float speck = step(.8, gr)*(.35 + .65*rimZone);
-    float fil = fbm(p*.07 + vec2(t*.08,1.));
-    float fd = abs(fil-.5)/max(fwidth(fil)*uScale, 1e-5);
-    fill += vec3(.35,.95,.9)*(speck*.22 + smoothstep(1.2,0.,fd)*.18*rimZone);
-    col = mix(col, fill, inside*.72);
-    float wob = .7 + .3*h(floor(p0*.5) + floor(t*4.));
-    col += vec3(.45,1.,.95)*(smoothstep(1.3,.1,d1)*.85*wob + exp(-d1*.55)*.16*uGlow);
-    col += vec3(.45,1.,.95)*smoothstep(1.,0.,d2)*.16*inside*step(.45, gr);
+    float a = fbm(p*.012 + vec2(t*.04,0.));
+    vec3 fill = mix(vec3(.004,.025,.045), vec3(.015,.08,.12), smoothstep(.35,.75,a));
+    float rimZone = smoothstep(3.,1.05,fs);
+    fill += vec3(.3,.85,.9)*rimZone*.16;
+    vec2 gs = vec2(dFdx(fs), dFdy(fs));
+    float lit = clamp(dot(normalize(gs + 1e-6), vec2(.6,.8)), 0., 1.);
+    fill += vec3(.75,.95,1.)*lit*rimZone*.12;
+    col = mix(col, fill, inside*.68);
+    col += vec3(.45,1.,.95)*(smoothstep(1.3,.1,d1)*.85 + exp(-d1*.55)*.16*uGlow);
 
     // voxel aggregates
     float c = uCell;
