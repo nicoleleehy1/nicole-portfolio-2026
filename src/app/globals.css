@@ -27,7 +27,7 @@
 
 /* Light mode: white page, deep teal ink, and the field inverted so its neon reads as ink on paper */
 :root[data-theme="light"] {
-  --bg: #ffffff;
+  --bg: #fdf8f2;
   --ink: rgba(6, 26, 32, 0.88);
   --ink-strong: #04161b;
   --muted: #4b7076;
@@ -38,15 +38,14 @@
   --edge: rgba(11, 127, 120, 0.32);
   --panel: rgba(250, 253, 253, 0.95);
   --panel-solid: #f7fbfb;
-  --veil: 255, 255, 255;
+  --veil: 253, 248, 242;
   --hi: 4, 22, 27;
   --glow: 11, 127, 120;
   color-scheme: light;
 }
-/* the WebGL layer draws its own pastel-on-white version; the sketch layer sits on it normally instead of screening,
-   and the HUD's white boxes and labels flip to dark ink (hue kept by the 180deg turn) */
-:root[data-theme="light"] .cell-field .cf-org { mix-blend-mode: normal; filter: url(#cf-pastel) saturate(1.7) brightness(0.82); }
-:root[data-theme="light"] .cell-field .cf-hud { filter: invert(1) hue-rotate(180deg); }
+/* the WebGL layer draws its own warm pastel version on paper; the sketch layer sits on it normally instead of
+   screening, with its dark fills dropped and its lines warmed toward honey and rose. The HUD draws nothing in light mode. */
+:root[data-theme="light"] .cell-field .cf-org { mix-blend-mode: normal; filter: url(#cf-pastel) sepia(0.35) saturate(1.5) hue-rotate(-10deg) brightness(0.88); }
 :root[data-theme="light"] .hero-text::after { filter: invert(1); }
 
 html, body {
@@ -159,6 +158,27 @@ ul, ol {
   color: var(--accent);
   text-transform: uppercase;
   letter-spacing: 0.16em;
+}
+.cf-tune summary {
+  transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+  animation: cf-hop 4s ease-in-out 2s infinite;
+}
+/* a small hop every few seconds says it's clickable; it rests while hovered or open */
+.cf-tune summary:hover,
+.cf-tune details[open] summary { animation: none; }
+.cf-tune summary:hover {
+  background: #bfe3ff;
+  border-color: #8fcaff;
+  color: #0b2540;
+}
+@keyframes cf-hop {
+  0%, 12%, 100% { transform: translateY(0); }
+  4% { transform: translateY(-7px); }
+  8% { transform: translateY(0); }
+  10% { transform: translateY(-2px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cf-tune summary { animation: none; }
 }
 .cf-tune summary::-webkit-details-marker { display: none; }
 .cf-tune summary::before { content: "+"; width: 1ch; }

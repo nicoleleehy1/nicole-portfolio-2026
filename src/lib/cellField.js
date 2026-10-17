@@ -91,6 +91,19 @@ export function initCellField(container, options = {}){
   float fV(vec2 p){ float s=0.; for(int i=0;i<24;i++){ if(i>=uVN) break; vec2 d=p-uV[i].xy; s+=uV[i].z*uV[i].z/(dot(d,d)+1.); } return s; }
   float fB(vec2 p){ float s=0.; for(int i=0;i<24;i++){ if(i>=uBN) break; vec2 d=p-uB[i].xy; s+=uB[i].z*uB[i].z/(dot(d,d)+1.); } return s; }
 
+  vec3 pastel(float x){
+    vec3 rose = vec3(.93,.56,.62), apricot = vec3(.97,.67,.46), butter = vec3(.95,.8,.43), sage = vec3(.56,.75,.56),
+         peach = vec3(.97,.63,.53), lavender = vec3(.67,.61,.88), mauve = vec3(.8,.59,.82);
+    if (x < .08) return mix(rose, apricot, x/.08);
+    if (x < .15) return mix(apricot, butter, (x - .08)/.07);
+    if (x < .33) return mix(butter, sage, (x - .15)/.18);
+    if (x < .5) return mix(sage, peach, (x - .33)/.17);
+    if (x < .6) return mix(peach, lavender, (x - .5)/.1);
+    if (x < .75) return mix(lavender, mauve, (x - .6)/.15);
+    if (x < .9) return mix(mauve, rose, (x - .75)/.15);
+    return rose;
+  }
+
   // 1 inside the reading-area rects (fading out over 40px), so the background texture stays quiet behind text
   float calm(vec2 p){ float m=0.; for(int i=0;i<4;i++){ if(i>=uXN) break; vec4 r=uX[i]; vec2 d=max(r.xy-p, p-r.zw); m=max(m, smoothstep(40.,0.,max(d.x,d.y))); } return m; }
 
@@ -218,15 +231,24 @@ export function initCellField(container, options = {}){
     col += (h(p0 + fract(rt*7.)*91.) - .5)*.045;
     vec2 uv = p0/uRes - .5; col *= 1. - .35*dot(uv,uv);
     col = 1. - exp(-col*1.5);
-    // light mode: black space becomes white paper; each pixel keeps its hue as a pastel tint whose strength
-    // follows its brightness, so washes and glows turn soft pastel and the brightest rims stay saturated
+    // light mode: black space becomes warm paper, and each hue is recoloured into a soft, homey pastel set
+    // (cyan cells turn peach, blues lavender, greens sage, oranges apricot and butter, pinks rose)
     if (uLight > .5) {
+      vec3 paper = vec3(.992, .972, .949);
       float m = max(max(col.r, col.g), col.b);
       vec3 hue = col/max(m, 1e-3);
-      // push the hue away from grey and deepen it so pastels hold up against white
-      hue = clamp(mix(vec3(dot(hue, vec3(.333))), hue, 1.6), 0., 1.)*.8;
-      vec3 tint = mix(mix(vec3(1.), hue, .7), hue*.85, smoothstep(.45, 1., m)*.85);
-      col = mix(vec3(1.), tint, smoothstep(.04, .55, m));
+      float mx = max(hue.r, max(hue.g, hue.b)), mn = min(hue.r, min(hue.g, hue.b)), dd = mx - mn;
+      float hh = 0.;
+      if (dd > 1e-4) {
+        if (mx == hue.r) hh = mod((hue.g - hue.b)/dd, 6.);
+        else if (mx == hue.g) hh = (hue.b - hue.r)/dd + 2.;
+        else hh = (hue.r - hue.g)/dd + 4.;
+        hh /= 6.;
+      }
+      vec3 tone = pastel(hh);
+      tone = mix(vec3(.8, .72, .7), tone, smoothstep(.08, .45, dd/max(mx, 1e-3)));
+      vec3 tint = mix(mix(paper, tone, .75), tone*.82, smoothstep(.45, 1., m)*.8);
+      col = mix(paper, tint, smoothstep(.04, .55, m));
     }
     o = vec4(col, 1.);
   }`;
@@ -1397,6 +1419,8 @@ export function initCellField(container, options = {}){
     if (now > gNext){ glitchTex(GT[gIdx]); gIdx = (gIdx + 1) % GT.length; gNext = now + 80; }
     ch.setTransform(ds, 0, 0, ds, 0, 0); ch.globalAlpha = 1; ch.clearRect(0, 0, W, H);
     ch.imageSmoothingEnabled = false; ch.textBaseline = 'alphabetic';
+    // light mode is the calm version: no glitch boxes, trackers, hex/ASCII dust or hover lock
+    if (S.light) return;
     drawDust();
     if (S.track) drawRBoxes(now);
     for (const tk of trackers){
@@ -1427,7 +1451,7 @@ export function initCellField(container, options = {}){
     const hs = hov.s && hov.str > .02 ? hov.s : null;
     gl.uniform2f(U.uRes, W, H); gl.uniform1f(U.uScale, glc.width/W); gl.uniform1f(U.uTime, t); gl.uniform1f(U.uReal, now/1000 % 1000);
     gl.uniform1f(U.uCell, S.cell); gl.uniform1f(U.uGlow, S.glow); gl.uniform1f(U.uLight, S.light ? 1 : 0);
-    gl.uniform4f(U.uHov, hs ? hs.cx : -1e4, hs ? hs.cy : -1e4, hs ? hs.cr*1.05 : 1, hs ? hov.str*Math.min(1, .35 + S.glitch*.4) : 0);
+    gl.uniform4f(U.uHov, hs ? hs.cx : -1e4, hs ? hs.cy : -1e4, hs ? hs.cr*1.05 : 1, hs && !S.light ? hov.str*Math.min(1, .35 + S.glitch*.4) : 0);
     gl.uniform4fv(U.uS, sArr); gl.uniform4fv(U.uV, vArr); gl.uniform4fv(U.uB, bArr); gl.uniform4fv(U.uC, cArr);
     const xn = Math.min(4, exclusion.length);
     exclusion.slice(0, 4).forEach((r, i) => xArr.set([r.l, r.t, r.r, r.b], i*4));
