@@ -1,0 +1,69 @@
+---
+title: "Nobody keeps score: what I found surveying the papers, open-source tools and companies behind AI drug discovery decisions."
+date: 2026-10-16
+summary: "I went looking for anyone who checks whether a drug discovery prediction turned out to be right. I mostly found an absence, and a few gaps nobody is filling."
+kind: "Research"
+draft: true
+---
+
+Every week, drug discovery teams decide which compounds to make and test next. Increasingly, a model's prediction is part of that decision. So here's a simple question: how often does anyone go back, months later, and check whether the prediction was right?
+
+I spent a research pass on this across three areas: the published literature, open-source software, and the companies selling tools to drug discovery teams. The most important thing I found was something I *didn't* find.
+
+## Three absences
+
+1. **No company I surveyed sells "decision history" as a product.** Plenty of software stores what was measured. None of the vendors I could reach advertises recording *why* a compound was chosen and then scoring that choice against the result.
+2. **No open-source project I found records the candidates that were rejected.** Tools record the batch that was chosen. None keeps the ranked list of everything that *wasn't* chosen, and the scores that ruled them out.
+3. **No published study I found measures how often a prediction is checked against its result**, in industry or academia.
+
+I want to be careful with that third one. "I searched and found nothing" is not the same as "it never happens". But three independent gaps pointing the same way is a strong signal that this is a real, unmet need, and it's the bet I'm making with Aster.
+
+The clearest evidence came from a company's own marketing. Certara describes one of its integrations as capturing "knowledge that is otherwise lost in PowerPoint slides" ([Certara](https://www.certara.com/d360-and-design-hub-partnership/)). If a prediction only ever lived in a slide deck, nobody can later compare it to the lab result.
+
+## Who comes closest
+
+**Certara's Design Hub** sells capturing design ideas and the reasoning behind them ([Certara](https://www.certara.com/design-hub/)). It's the product most likely to be confused with Aster. What its public material doesn't claim is linking each prediction to the specific lab result that later tested it.
+
+**Optibrium's Cerella** does the "were we right?" analysis, but as a one-time sales exercise: they replay a customer's past project to show how many compounds Cerella would have needed ([Optibrium](https://optibrium.com/knowledge-base/maximising-the-roi-of-ai-a-comprehensive-evaluation-of-cerella-for-drug-discovery-success/)). That tells me the analysis is valued. It also tells me nobody is running it continuously, as part of everyday work.
+
+## One number per compound is harder than it looks
+
+A lot of tools show one number per compound, such as how strongly it binds a target. The research on measurement noise makes that number less solid than it looks.
+
+When the same compound's potency is combined from different sources, the values typically disagree by about **0.68 log units**, roughly a factor of 5. Within a single lab, repeat measurements disagree by only 0.17 to 0.29 ([Kalliokoski et al., 2013](https://pmc.ncbi.nlm.nih.gov/articles/PMC3628986/)). A later study found that when two database records disagree wildly, it's usually a data-entry mistake, such as the wrong unit or the wrong protein, rather than real biology ([Landrum & Riniker, 2024](https://www.research-collection.ethz.ch/handle/20.500.11850/666099)). So a big disagreement should raise an alert, not get quietly averaged away.
+
+My takeaway: a single number is only defensible if it comes with where it came from and how uncertain it is. Value, source, and error bar, together. I later ran into this directly in my own experiments, where adding published values with that much noise made Aster's picks worse.
+
+## Three gaps nobody is filling
+
+**1. "Greater than 10 µM" results.** Assays often report a limit instead of a number: the compound was so weak that the test couldn't measure it, only that it was weaker than some cutoff. This is called a **censored** value. It's one of the most useful results a model can learn from, because it's a confirmed miss. Yet I found no tool that stores it properly as "greater than, 10, micromolar" and carries that through into the model and the later review. Most tools either throw it away or turn it into a fake exact number.
+
+**2. The rejected candidates.** If you save the full ranked list at the moment of a decision, it's cheap. If you don't, it's gone for good, and you can never fairly ask "what if we'd picked differently?" There are well-developed statistical methods for evaluating a decision strategy from past choices, but they need exactly this record, saved at decision time.
+
+**3. Repeat measurements.** When a compound is tested three times, most tools store the average. But the spread between repeats is what tells you, later, whether a missed prediction was the model's fault or just a noisy assay.
+
+## What the open-source world looks like
+
+The general-purpose tools are healthy and actively maintained: [BoTorch](https://github.com/pytorch/botorch) and [Ax](https://github.com/facebook/Ax) for choosing experiments, [BayBE](https://github.com/emdgroup/baybe) from Merck, which already separates its recommendations from the measurements added back, and [pint](https://github.com/hgrecco/pint) for converting units without silent mistakes.
+
+The chemistry-specific experiment-planning tools tell a different story. Several of the best-known ones were published alongside a paper and then stopped being updated. [MolPAL](https://github.com/coleygroup/molpal), the clearest open implementation of the exact loop Aster runs, hasn't had a commit since 2023. I'll read them to learn from, but I won't depend on them. The pattern I noticed: tools tied to a lab that runs every day survive, and tools tied to a single paper don't.
+
+## On picking strategies, the field disagrees
+
+I'd assumed "just pick the compounds the model likes best" was settled as the strongest strategy. It isn't. One 2026 study found that approach worked best on real measured data ([OpenADMET](https://openadmet.ghost.io/model-take-the-wheel-active-learning-with-pec50-data/)). Another found the opposite on a pool of 3 million molecules scored by simulation ([Williams et al.](https://strathprints.strath.ac.uk/95343/13/Williams-etal-JCIM-2026-how-selection-strategies-influence-active-learning-in-drug-discovery.pdf)). They measured different things on very different pools, so both can be right. For Aster, that means recording which strategy produced each batch, rather than hard-coding one.
+
+## What "were we right?" can honestly mean
+
+The honest version isn't a guess about compounds nobody ever tested. That can't be recovered. It's two narrower things, both buildable now on public data:
+
+- **Calibration in hindsight.** For every compound that *was* tested, did it land where the model said it would, as often as the model said it would?
+- **Replay in real time order.** Using a project's actual history, would a different strategy have found the good compounds with fewer tests?
+
+## Caveats I'd want a reader to know
+
+- Much of the published critique of how teams score compounds comes from one vendor, Optibrium, which sells the alternative. I treat it as useful but not independent.
+- Pricing for almost every company in this space isn't public, so I couldn't compare cost.
+- Several companies I couldn't reach at all, and some software licences I couldn't verify.
+- Every absence above is "not found in this search", not proof that nobody does it.
+
+The biggest thing I took from this survey is that the exciting part of AI drug discovery, the models, is crowded, while the plain part, keeping an honest record of what was predicted and what happened, is almost empty.

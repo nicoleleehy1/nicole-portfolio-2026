@@ -1,0 +1,60 @@
+---
+title: "Before running an experiment, ask whether it can answer you: lessons from my datasets and a hackathon project."
+date: 2026-10-16
+summary: "What data Aster is tested on, what's missing from it, and the habit I borrowed from another project: check whether an experiment can detect anything before paying for it."
+kind: "Research"
+draft: true
+---
+
+It's tempting to judge an experiment by its result. I've learned to judge it first by a duller question: if the effect I'm looking for were real, could this experiment even see it? And is the data it runs on able to answer the question I actually care about?
+
+This piece is about both: the datasets I've been testing Aster on, and a habit I picked up from reading someone else's project.
+
+## What Aster is tested on today
+
+Aster picks which compounds a drug discovery team should test next. To check whether it picks well without a lab, I **replay** public datasets where every compound has already been measured, hiding the answers until Aster picks a compound.
+
+The data so far:
+
+- **One antiviral potency dataset** from the ASAP, Polaris and OpenADMET blind challenge, for a protein from the virus behind COVID-19.
+- **Nine binding-strength tasks** from MoleculeACE, a public benchmark built from the ChEMBL database. Each has roughly 650 to 3,300 compounds tested against one protein, such as the dopamine transporter.
+- **One 3D protein structure**, the dopamine transporter, used for computer docking (simulating how a compound might sit in the protein).
+- **A small collection of measurements from published papers.**
+
+All of it is public, and all of it is **retrospective**: it already happened. That's a sensible place to start, but it leaves three gaps.
+
+## What's missing
+
+**1. Time.** Every test so far splits the data randomly or by chemical family. Neither asks the question Aster's whole pitch rests on: would this decision have been right *at the time it was made*? A **temporal holdout** answers that. You train only on measurements published before a cut-off date, and pick from what came after. That needs data with dates, which is why BindingDB, a database that records them, is the next thing I want to add. One caution: the date a measurement entered a database isn't the date the experiment ran, so the cut-off has to be conservative.
+
+**2. Different kinds of measurement.** All nine tasks measure the same kind of property, binding strength, on the same scale. I say Aster works for "any assay", but until it's tested on something like solubility, with different units and a different range, that's a design goal and not a result.
+
+**3. Real failures.** These datasets contain almost no compounds measured as inactive. A tool that chooses what to test should also be judged on what it decides *not* to test, and without real negatives I can't score that honestly.
+
+## The habit I borrowed: power before spend
+
+While planning the next experiment, I read through [ReBind](https://github.com/jaysahni/ReBind), a HackMIT 2026 project that looks for approved drugs that might be reused for a new disease. It asks a different question from Aster, but one decision in its notes stuck with me.
+
+They had planned a head-to-head comparison, then worked out that with only three known active drugs, the comparison had about a **23% chance** of detecting a real difference even if one existed. So they didn't run it. In their words, it "would have bought a null that meant nothing."
+
+That chance is called **statistical power**: the probability that an experiment detects an effect, if the effect is really there. Low power doesn't just make positive results unlikely. It makes negative results meaningless, because "we found nothing" could simply mean "we couldn't have found anything."
+
+## Applying it
+
+I'd been considering adding a second protein structure to Aster, so that docking could feed into compound selection. Preparing and checking a new structure takes real effort. Before spending it, I ran the power numbers using the variation I'd already measured in my own experiments.
+
+To reliably detect a gain of one extra strong compound per 40 picks, a docking experiment would need about **219 paired tests**. One new structure covers one protein, which with my current setup gives **16**. With 16 tests, the experiment could only detect a gain of almost four compounds, far bigger than anything I'd expect.
+
+So adding one structure would have bought an experiment that couldn't see the effect it was looking for. If I want to test docking properly, it has to cover several proteins at once, or not happen yet. I didn't spend the effort.
+
+## Two more things worth borrowing
+
+**Interaction fingerprints.** Aster describes molecules by which chemical pieces they contain. ReBind's notes point to a different description: which parts of the *protein* a docked compound touches, and how. This idea goes back to [Deng, Chuaqui & Singh, 2004](https://pubs.acs.org/doi/10.1021/jm030331x). ReBind's example of why it matters: the molecules that *look* most like the blood thinner argatroban, by the usual fingerprint, included no drugs that act on argatroban's target. Looking alike isn't the same as binding the same way. If I do test docking, this is a better feature than a single docking score.
+
+**A cautious expectation.** ReBind's headline result was negative: their main structural score didn't separate real binders from decoys. That matches several of my own results, where a sensible-sounding extra signal didn't survive a fair test. It sets my expectations for structural features low, and reminds me to design experiments so that a negative result is still worth publishing.
+
+## The working rule
+
+ReBind's project notes include a short agreement I've adopted: never report a number that wasn't computed, keep negative results in the table with how many tests they came from, and list what wasn't tested and why.
+
+It sounds obvious. In practice it's what makes negative results believable instead of embarrassing, and most of what I've learned building Aster has come from the experiments that didn't work.

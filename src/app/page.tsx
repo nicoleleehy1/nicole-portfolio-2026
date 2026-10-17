@@ -6,7 +6,7 @@ export default function HomePage() {
     <section className="hero">
       {/* No backing box: the text sits in the field, and cells are pushed around it (data-exclude). */}
       <div className="hero-text" data-content data-exclude>
-        <h1 className="hero-name">Hi, I&apos;m Nicole.</h1>
+        <h1 className="hero-name">hi, i&apos;m nicole!</h1>
         <p>
           I&apos;m a junior at UC Berkeley studying Electrical Engineering &amp; Computer Science and
           Bioengineering, supported by a $155K merit scholarship as an{" "}
@@ -17,14 +17,17 @@ export default function HomePage() {
         </p>
 
         <p>
-          I optimized MCP eval tools at{" "}
+          Previously, I optimized MCP eval tools at{" "}
           <a href="https://www.apple.com/" target="_blank" rel="noreferrer" className="link">Apple</a> and ran ML
           research at{" "}
           <a href="https://albalab.ucsf.edu/" target="_blank" rel="noreferrer" className="link">
             UCSF&apos;s Memory and Aging Center
           </a>
           . I&apos;ve also built computer vision pipelines for ALS patients and AI cell segmentation tools for
-          pathology images, which is exactly what this background is doing to itself right now.
+          pathology images. Recently, I built{" "}
+          <a href="https://aster-ruby.vercel.app/" target="_blank" rel="noreferrer" className="link">
+            Aster
+          </a>, an AI decision engine predicting compounds drug discovery labs should test next.
         </p>
 
         <p>
