@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { leadership } from "../metadata";
 import { Gallery, type GalleryItem } from "../../components/gallery";
+import { SectionEyebrow } from "../../components/section-eyebrow";
 
 export const metadata: Metadata = { title: "Leadership" };
 
@@ -24,7 +25,8 @@ const items: GalleryItem[] = leadership.map(l => ({
 
 export default function LeadershipPage() {
   return (
-    <section style={{ padding: "2rem 0 3rem" }}>
+    <section className="section scrim" data-content data-exclude>
+      <SectionEyebrow href="/leadership" count={leadership.length} />
       <Gallery title="Leadership" items={items} />
     </section>
   );

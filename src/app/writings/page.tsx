@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { getWritings } from "@/lib/writings";
+import { SectionEyebrow } from "@/components/section-eyebrow";
 
 export const metadata: Metadata = { title: "Writings" };
 
@@ -9,7 +10,8 @@ const dateFormat = new Intl.DateTimeFormat("en-US", { month: "short", day: "nume
 export default async function WritingsPage() {
   const writings = await getWritings();
   return (
-    <section style={{ padding: "2rem 0 3rem" }}>
+    <section className="section scrim" data-content data-exclude>
+      <SectionEyebrow href="/writings" count={writings.length} />
       <h1 className="page-title">Writings</h1>
       <div>
         {writings.map(w => (
