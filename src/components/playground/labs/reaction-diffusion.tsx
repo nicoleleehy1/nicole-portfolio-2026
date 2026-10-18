@@ -103,8 +103,8 @@ class GrayScott implements Engine {
     this.lut = ramp([p.bg, mix(p.bg, p.c, 0.6), p.a, p.e, p.light ? p.b : p.ink]);
   }
 
-  frame() {
-    for (let s = 0; s < this.speed; s++) this.step();
+  frame(dt: number) {
+    if (dt) for (let s = 0; s < this.speed; s++) this.step();
     const { v, lut, buf } = this;
     for (let i = 0; i < W * H; i++) {
       const t = Math.min(255, Math.max(0, Math.floor(v[i] * 3.2 * 255))) * 3;
@@ -138,7 +138,7 @@ class GrayScott implements Engine {
 const create = (canvas: HTMLCanvasElement) => new GrayScott(canvas);
 
 export default function ReactionDiffusion() {
-  const { canvasRef, simRef } = useSim(create);
+  const { canvasRef, stage, simRef } = useSim(create);
   const [preset, setPreset] = useState<Preset | "custom">("spots");
   const [f, setF] = useState<number>(PRESETS.spots.f);
   const [k, setK] = useState<number>(PRESETS.spots.k);
@@ -160,7 +160,7 @@ export default function ReactionDiffusion() {
   };
 
   return (
-    <Stage canvasRef={canvasRef} hint="Paint on the canvas to drop in chemical V and watch it grow." readout={`f ${f.toFixed(4)} · k ${k.toFixed(4)}`}>
+    <Stage canvasRef={canvasRef} sim={stage} hint="Paint on the canvas to drop in chemical V and watch it grow." readout={`f ${f.toFixed(4)} · k ${k.toFixed(4)}`}>
       <Choice
         label="Pattern"
         value={preset}
@@ -181,7 +181,6 @@ export default function ReactionDiffusion() {
         onChange={setTool}
       />
       <Buttons>
-        <Btn onClick={() => simRef.current?.reset()}>Reseed</Btn>
         <Btn onClick={() => simRef.current?.clear()}>Clear</Btn>
       </Buttons>
     </Stage>

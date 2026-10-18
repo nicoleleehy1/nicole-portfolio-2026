@@ -56,6 +56,11 @@ class WaveTank implements Engine {
     this.notify();
   }
 
+  reset() {
+    this.t = 0;
+    this.preset("pair");
+  }
+
   setFreq(freq: number, all = false) {
     for (const [k, s] of this.sources.entries()) if (all || k === this.selected) s.freq = freq;
   }
@@ -160,7 +165,7 @@ class WaveTank implements Engine {
 const create = (canvas: HTMLCanvasElement) => new WaveTank(canvas);
 
 export default function Waves() {
-  const { canvasRef, simRef } = useSim(create);
+  const { canvasRef, stage, simRef } = useSim(create);
   const [view, setView] = useState<View>("ripples");
   const [sel, setSel] = useState<Selection>({ index: 0, freq: 1.2, count: 2 });
 
@@ -181,6 +186,7 @@ export default function Waves() {
   return (
     <Stage
       canvasRef={canvasRef}
+      sim={stage}
       hint={`Click to add a source (up to ${MAX_SOURCES}), click one to select it, drag to move it.`}
       readout={`${sel.count} source${sel.count === 1 ? "" : "s"}`}
     >

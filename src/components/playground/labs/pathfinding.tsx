@@ -182,6 +182,14 @@ class Pathfinder implements Engine {
     this.refresh();
   }
 
+  // default start and goal, fresh obstacles, and the search replayed from the beginning
+  reset() {
+    this.start = 12 * COLS + 5;
+    this.goal = 12 * COLS + 34;
+    this.scatter();
+    this.play();
+  }
+
   play() {
     this.s = newSearch();
     this.run = search(this.cells, this.start, this.goal, this.algorithm, this.s);
@@ -224,8 +232,8 @@ class Pathfinder implements Engine {
     this.p = p;
   }
 
-  frame() {
-    if (this.run && this.s && !this.s.done) {
+  frame(dt: number) {
+    if (dt && this.run && this.s && !this.s.done) {
       for (let k = 0; k < this.speed && !this.s.done; k++) this.run.next();
       if (this.s.done) this.report(this.algorithm, this.s);
     }
@@ -334,7 +342,7 @@ class Pathfinder implements Engine {
 const create = (canvas: HTMLCanvasElement) => new Pathfinder(canvas);
 
 export default function Pathfinding() {
-  const { canvasRef, simRef } = useSim(create);
+  const { canvasRef, stage, simRef } = useSim(create);
   const [algorithm, setAlgorithm] = useState<Algorithm>("astar");
   const [brush, setBrush] = useState<typeof WALL | typeof MUD>(WALL);
   const [speed, setSpeed] = useState(3);
@@ -355,7 +363,7 @@ export default function Pathfinding() {
   }, [brush, speed, simRef]);
 
   return (
-    <Stage canvasRef={canvasRef} hint="Draw on the grid to add walls or mud, and drag the two dots to move the start and goal.">
+    <Stage canvasRef={canvasRef} sim={stage} hint="Draw on the grid to add walls or mud, and drag the two dots to move the start and goal.">
       <Choice
         label="Algorithm"
         value={algorithm}
@@ -375,7 +383,6 @@ export default function Pathfinding() {
       <Buttons>
         <Btn onClick={() => simRef.current?.play()}>Replay</Btn>
         <Btn onClick={() => simRef.current?.compareAll()}>Compare all</Btn>
-        <Btn onClick={() => simRef.current?.scatter()}>New obstacles</Btn>
         <Btn onClick={() => simRef.current?.clear()}>Clear</Btn>
       </Buttons>
       <table className="lab-table">

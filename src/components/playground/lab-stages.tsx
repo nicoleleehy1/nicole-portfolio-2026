@@ -6,6 +6,7 @@ import dynamic from "next/dynamic";
 const loading = () => <div className="lab-loading" aria-hidden="true" />;
 export const LABS: Record<string, ComponentType> = {
   "cellular-automata": dynamic(() => import("./labs/automata"), { ssr: false, loading }),
+  "neural-ca": dynamic(() => import("./labs/neural-ca"), { ssr: false, loading }),
   boids: dynamic(() => import("./labs/boids"), { ssr: false, loading }),
   "reaction-diffusion": dynamic(() => import("./labs/reaction-diffusion"), { ssr: false, loading }),
   "falling-sand": dynamic(() => import("./labs/sand"), { ssr: false, loading }),

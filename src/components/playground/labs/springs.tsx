@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { css, fit2d, mix, type Engine, type Palette } from "@/lib/playground/runtime";
-import { Btn, Buttons, Choice, Slider, Stage, Toggle, useSim } from "../controls";
+import { Buttons, Choice, Slider, Stage, Toggle, useSim } from "../controls";
 
 type Scene = "cloth" | "rope" | "soft";
 type Stick = { a: number; b: number; len: number; stiff: number; alive: boolean };
@@ -46,6 +46,10 @@ class SpringWorld implements Engine {
 
   private stick(a: number, b: number, stiff = 1) {
     this.sticks.push({ a, b, len: Math.hypot(this.x[a] - this.x[b], this.y[a] - this.y[b]), stiff, alive: true });
+  }
+
+  reset() {
+    this.build();
   }
 
   build() {
@@ -133,7 +137,8 @@ class SpringWorld implements Engine {
     this.p = p;
   }
 
-  frame() {
+  frame(dt: number) {
+    if (!dt) return this.draw();
     const { x, y, px, py, pinned } = this;
     const { gravity, stiffness, tear, scene } = this.params;
     const g = 0.35 * gravity;
@@ -278,7 +283,7 @@ class SpringWorld implements Engine {
 const create = (canvas: HTMLCanvasElement) => new SpringWorld(canvas);
 
 export default function Springs() {
-  const { canvasRef, simRef } = useSim(create);
+  const { canvasRef, stage, simRef } = useSim(create);
   const [scene, setScene] = useState<Scene>("cloth");
   const [gravity, setGravity] = useState(1);
   const [stiffness, setStiffness] = useState(0.5);
@@ -289,7 +294,7 @@ export default function Springs() {
   }, [scene, gravity, stiffness, tear, simRef]);
 
   return (
-    <Stage canvasRef={canvasRef} hint="Grab anything and drag it around. Links turn warmer as they stretch." cursor="grab">
+    <Stage canvasRef={canvasRef} sim={stage} hint="Grab anything and drag it around. Links turn warmer as they stretch." cursor="grab">
       <Choice
         label="Scene"
         value={scene}
@@ -304,7 +309,6 @@ export default function Springs() {
       <Slider label="Stiffness" value={stiffness} min={0} max={1} step={0.05} onChange={setStiffness} format={v => `${Math.round(v * 100)}%`} />
       <Buttons>
         {scene === "cloth" && <Toggle label="Tearable" value={tear} onChange={setTear} />}
-        <Btn onClick={() => simRef.current?.build()}>Reset</Btn>
       </Buttons>
     </Stage>
   );

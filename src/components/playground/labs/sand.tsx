@@ -38,6 +38,10 @@ class SandWorld implements Engine {
   }
 
   // a few stone ledges and a basin to pour things onto
+  reset() {
+    this.landscape();
+  }
+
   landscape() {
     this.clear();
     const r = rng();
@@ -165,10 +169,12 @@ class SandWorld implements Engine {
     ];
   }
 
-  frame() {
+  frame(dt: number) {
     if (this.down) this.pour();
-    this.step();
-    this.step();
+    if (dt) {
+      this.step();
+      this.step();
+    }
     for (let i = 0; i < W * H; i++) {
       const m = this.cell[i];
       const [lo, hi] = this.colors[m];
@@ -189,7 +195,7 @@ class SandWorld implements Engine {
 const create = (canvas: HTMLCanvasElement) => new SandWorld(canvas);
 
 export default function Sand() {
-  const { canvasRef, simRef } = useSim(create);
+  const { canvasRef, stage, simRef } = useSim(create);
   const [material, setMaterial] = useState<Material>(SAND);
   const [brush, setBrush] = useState(4);
 
@@ -201,7 +207,7 @@ export default function Sand() {
   }, [material, brush, simRef]);
 
   return (
-    <Stage canvasRef={canvasRef} hint="Press and drag to pour. Sand piles up, water finds its level, stone stays put.">
+    <Stage canvasRef={canvasRef} sim={stage} hint="Press and drag to pour. Sand piles up, water finds its level, stone stays put.">
       <Choice
         label="Material"
         value={material}
@@ -215,7 +221,6 @@ export default function Sand() {
       />
       <Slider label="Brush" value={brush} min={1} max={10} onChange={setBrush} />
       <Buttons>
-        <Btn onClick={() => simRef.current?.landscape()}>New landscape</Btn>
         <Btn onClick={() => simRef.current?.clear()}>Empty world</Btn>
       </Buttons>
     </Stage>

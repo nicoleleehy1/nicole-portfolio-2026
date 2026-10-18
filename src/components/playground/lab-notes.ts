@@ -11,6 +11,8 @@ export type LabNote = {
   notes: string[];
   // small prompts for things worth trying
   tryThis: string[];
+  // the work an experiment reproduces, credited under its notes
+  cite?: { text: string; href: string };
 };
 
 export const labNotes: LabNote[] = [
@@ -28,6 +30,26 @@ export const labNotes: LabNote[] = [
       "Start Rule 90 from a random row: the triangles still appear, just overlapping.",
       "On Rule 110, click a few cells into an empty row and see which structures survive.",
     ],
+  },
+  {
+    slug: "neural-ca",
+    title: "growing neural cellular automata",
+    play: "Pick a creature, cut pieces off it, and watch it grow back.",
+    idea: "How a single rule, learned instead of designed, can grow a shape and repair it.",
+    notes: [
+      "This is a reproduction of the Distill article Growing Neural Cellular Automata. Like the elementary automata, every cell follows the same local rule, but here the rule is a small neural network. Each cell holds 16 numbers: four are its color and transparency, and the rest are hidden state it can use to signal to its neighbors. Every step, a cell looks at itself and the gradients of its 3×3 neighborhood, runs the network, and nudges its own state.",
+      "The rule was trained so that a single seed cell grows into the target emoji. Growing models learned only that: their shapes often keep growing or fall apart afterwards. Persistent models were trained to hold the shape steady over long runs. Regenerating models were also damaged during training, so they learned to heal, which is what makes cutting into them so satisfying. Cells update at random, about half of them each step, so no global clock is needed.",
+      "Nothing in the network knows where it is or what the whole shape looks like. The form exists only as a pattern of local messages, a little like how cells in an embryo coordinate to build a body and, in some animals, rebuild one.",
+    ],
+    tryThis: [
+      "Cut the lizard's tail off on Regenerating, then try the same cut on Growing.",
+      "Double-click away from the creature to plant a second seed and grow a twin.",
+      "Turn the Rotation slider: the rule still works, because each cell's sense of direction comes from its gradients.",
+    ],
+    cite: {
+      text: "Mordvintsev, Randazzo, Niklasson & Levin, \"Growing Neural Cellular Automata\", Distill, 2020",
+      href: "https://distill.pub/2020/growing-ca/",
+    },
   },
   {
     slug: "boids",

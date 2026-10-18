@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import { css, fit2d, type Engine, type Palette } from "@/lib/playground/runtime";
 import { perlin3 } from "@/lib/playground/noise";
-import { Btn, Buttons, Choice, Slider, Stage, Toggle, useSim } from "../controls";
+import { Buttons, Choice, Slider, Stage, Toggle, useSim } from "../controls";
 
 type Field = "noise" | "curl" | "swirls";
 type Params = { field: Field; scale: number; count: number; trail: number; speed: number; evolve: number; arrows: boolean };
@@ -29,6 +29,10 @@ class FlowField implements Engine {
     this.params = params;
     if (this.w && params.count !== this.x.length) this.spawnAll();
     if (fieldChanged && this.ctx) this.wipe();
+  }
+
+  reset() {
+    this.reseed();
   }
 
   reseed() {
@@ -111,6 +115,8 @@ class FlowField implements Engine {
   }
 
   frame(dt: number) {
+    // paused: keep the last frame, since fading it would erase the trails
+    if (!dt) return;
     const { ctx, p, x, y, life } = this;
     const { trail, speed, evolve, arrows } = this.params;
     this.t += dt;
@@ -171,7 +177,7 @@ class FlowField implements Engine {
 const create = (canvas: HTMLCanvasElement) => new FlowField(canvas);
 
 export default function FlowFields() {
-  const { canvasRef, simRef } = useSim(create);
+  const { canvasRef, stage, simRef } = useSim(create);
   const [field, setField] = useState<Field>("noise");
   const [scale, setScale] = useState(1);
   const [count, setCount] = useState(2500);
@@ -185,7 +191,7 @@ export default function FlowFields() {
   }, [field, scale, count, trail, speed, evolve, arrows, simRef]);
 
   return (
-    <Stage canvasRef={canvasRef} hint="Press and drag to stir the field.">
+    <Stage canvasRef={canvasRef} sim={stage} hint="Press and drag to stir the field.">
       <Choice
         label="Field"
         value={field}
@@ -203,7 +209,6 @@ export default function FlowFields() {
       <Slider label="Drift" value={evolve} min={0} max={2} step={0.05} onChange={setEvolve} format={v => v.toFixed(2)} />
       <Buttons>
         <Toggle label="Show field" value={arrows} onChange={setArrows} />
-        <Btn onClick={() => simRef.current?.reseed()}>New field</Btn>
       </Buttons>
     </Stage>
   );

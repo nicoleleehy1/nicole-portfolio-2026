@@ -66,8 +66,10 @@ export type PointerKind = "down" | "move" | "up";
 export interface Engine {
   // css pixel size of the canvas and the device pixel ratio
   resize(w: number, h: number, dpr: number): void;
-  // dt in seconds (clamped), now in ms
+  // dt in seconds (clamped), now in ms; dt is 0 while paused, and the engine should draw without advancing
   frame(dt: number, now: number): void;
+  // back to the starting state
+  reset(): void;
   setPalette(p: Palette): void;
   pointer?(kind: PointerKind, x: number, y: number, e: PointerEvent): void;
   wheel?(dy: number, x: number, y: number): void;
@@ -117,7 +119,9 @@ export class PixelBuffer {
 }
 
 // Wire an engine to a canvas: resize with its box, follow the theme, run only while on screen, forward pointer input.
-export function mount(canvas: HTMLCanvasElement, engine: Engine): () => void {
+export type Mounted = { destroy: () => void; setPaused: (paused: boolean) => void };
+
+export function mount(canvas: HTMLCanvasElement, engine: Engine): Mounted {
   let w = 0;
   let h = 0;
   const resize = () => {
@@ -136,6 +140,7 @@ export function mount(canvas: HTMLCanvasElement, engine: Engine): () => void {
   mo.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
 
   let visible = true;
+  let paused = false;
   const io = new IntersectionObserver(([entry]) => {
     visible = entry.isIntersecting;
     if (visible) start();
@@ -150,7 +155,7 @@ export function mount(canvas: HTMLCanvasElement, engine: Engine): () => void {
     const dt = last ? Math.min((now - last) / 1000, 1 / 30) : 1 / 60;
     last = now;
     // engines size their buffers in resize(), so wait until the canvas has been laid out
-    if (w) engine.frame(dt, now);
+    if (w) engine.frame(paused ? 0 : dt, now);
     raf = requestAnimationFrame(tick);
   };
   function start() {
@@ -185,7 +190,7 @@ export function mount(canvas: HTMLCanvasElement, engine: Engine): () => void {
   canvas.addEventListener("pointercancel", up);
   canvas.addEventListener("wheel", wheel, { passive: false });
 
-  return () => {
+  const destroy = () => {
     cancelAnimationFrame(raf);
     ro.disconnect();
     mo.disconnect();
@@ -197,6 +202,12 @@ export function mount(canvas: HTMLCanvasElement, engine: Engine): () => void {
     canvas.removeEventListener("pointercancel", up);
     canvas.removeEventListener("wheel", wheel);
     engine.destroy?.();
+  };
+  return {
+    destroy,
+    setPaused: p => {
+      paused = p;
+    },
   };
 }
 

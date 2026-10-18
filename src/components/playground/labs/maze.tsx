@@ -175,12 +175,18 @@ class MazeView implements Engine {
   private steps = 0;
   private done = false;
   private frames = 0;
+  private algorithm: Algorithm = "backtracker";
   speed = 4;
   onStats?: (s: Stats) => void;
 
   constructor(private canvas: HTMLCanvasElement) {}
 
+  reset() {
+    this.start(this.algorithm);
+  }
+
   start(algorithm: Algorithm) {
+    this.algorithm = algorithm;
     this.grid = new Grid();
     this.run = ALGORITHMS[algorithm](this.grid);
     this.steps = 0;
@@ -215,8 +221,8 @@ class MazeView implements Engine {
     this.p = p;
   }
 
-  frame() {
-    if (!this.done) {
+  frame(dt: number) {
+    if (dt && !this.done) {
       for (let s = 0; s < this.speed && !this.done; s++) this.advance();
       if (++this.frames % 6 === 0) this.report();
     }
@@ -275,7 +281,7 @@ class MazeView implements Engine {
 const create = (canvas: HTMLCanvasElement) => new MazeView(canvas);
 
 export default function Maze() {
-  const { canvasRef, simRef } = useSim(create);
+  const { canvasRef, stage, simRef } = useSim(create);
   const [algorithm, setAlgorithm] = useState<Algorithm>("backtracker");
   const [speed, setSpeed] = useState(4);
   const [stats, setStats] = useState<Stats>({ steps: 0, done: false, deadEnds: 0 });
@@ -293,6 +299,7 @@ export default function Maze() {
   return (
     <Stage
       canvasRef={canvasRef}
+      sim={stage}
       hint="Pick an algorithm and watch it carve. Every one makes a perfect maze: exactly one route between any two cells."
       readout={stats.done ? `${stats.steps} steps · ${stats.deadEnds} dead ends` : `${stats.steps} steps`}
     >
@@ -310,7 +317,6 @@ export default function Maze() {
       />
       <Slider label="Speed" value={speed} min={1} max={40} onChange={setSpeed} format={v => `${v} steps/frame`} />
       <Buttons>
-        <Btn onClick={() => simRef.current?.start(algorithm)}>Restart</Btn>
         <Btn onClick={() => simRef.current?.finish()}>Finish now</Btn>
       </Buttons>
     </Stage>

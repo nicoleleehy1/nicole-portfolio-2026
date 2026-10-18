@@ -100,6 +100,10 @@ class Mandelbrot implements Engine {
     this.prog = prog;
   }
 
+  reset() {
+    this.goTo("home");
+  }
+
   goTo(spot: Spot | "home") {
     const s = spot === "home" ? HOME : SPOTS[spot];
     this.target = { x: s.x, y: s.y, scale: s.scale };
@@ -129,13 +133,13 @@ class Mandelbrot implements Engine {
     this.dirty = true;
   }
 
-  frame() {
+  frame(dt: number) {
     const gl = this.gl;
     if (!gl || !this.prog) return;
     const v = this.view;
     const t = this.target;
     const moving = Math.abs(Math.log(v.scale / t.scale)) > 1e-3 || Math.hypot(v.x - t.x, v.y - t.y) > v.scale * 1e-3;
-    if (moving) {
+    if (moving && dt) {
       // ease toward the target, zooming in log space so it feels even at every depth
       const ls = Math.log(v.scale) + (Math.log(t.scale) - Math.log(v.scale)) * 0.15;
       v.scale = Math.exp(ls);
@@ -197,7 +201,7 @@ class Mandelbrot implements Engine {
 const createMandelbrot = (canvas: HTMLCanvasElement) => new Mandelbrot(canvas);
 
 function MandelbrotView({ modes }: { modes: ReactNode }) {
-  const { canvasRef, simRef } = useSim(createMandelbrot);
+  const { canvasRef, stage, simRef } = useSim(createMandelbrot);
   const [iterations, setIterations] = useState(300);
   const [zoom, setZoom] = useState({ zoom: 1, limit: false });
   const [supported, setSupported] = useState(true);
@@ -219,6 +223,7 @@ function MandelbrotView({ modes }: { modes: ReactNode }) {
   return (
     <Stage
       canvasRef={canvasRef}
+      sim={stage}
       hint={supported ? "Click to zoom in, shift-click to zoom out, drag to pan, or scroll." : "This view needs WebGL, which this browser has turned off."}
       readout={`${label}× ${zoom.limit ? "· precision limit" : ""}`}
       cursor="zoom-in"
@@ -232,7 +237,6 @@ function MandelbrotView({ modes }: { modes: ReactNode }) {
           </Btn>
         ))}
         <Btn onClick={() => simRef.current?.zoomBy(3)}>Zoom out</Btn>
-        <Btn onClick={() => simRef.current?.goTo("home")}>Whole set</Btn>
       </Buttons>
     </Stage>
   );
@@ -253,6 +257,10 @@ class Tree implements Engine {
   params: TreeParams = { angle: 24, ratio: 0.72, depth: 11, wander: 0.25, sway: true };
 
   constructor(private canvas: HTMLCanvasElement) {}
+
+  reset() {
+    this.grow();
+  }
 
   grow() {
     this.growth = 0;
@@ -328,7 +336,7 @@ class Tree implements Engine {
 const createTree = (canvas: HTMLCanvasElement) => new Tree(canvas);
 
 function TreeView({ modes }: { modes: ReactNode }) {
-  const { canvasRef, simRef } = useSim(createTree);
+  const { canvasRef, stage, simRef } = useSim(createTree);
   const [angle, setAngle] = useState(24);
   const [ratio, setRatio] = useState(0.72);
   const [depth, setDepth] = useState(11);
@@ -340,7 +348,7 @@ function TreeView({ modes }: { modes: ReactNode }) {
   }, [angle, ratio, depth, wander, sway, simRef]);
 
   return (
-    <Stage canvasRef={canvasRef} hint="Every branch is a smaller copy of the tree. Change the one rule and the whole tree follows." readout={`${2 ** depth - 1} branches`} cursor="default">
+    <Stage canvasRef={canvasRef} sim={stage} hint="Every branch is a smaller copy of the tree. Change the one rule and the whole tree follows." readout={`${2 ** depth - 1} branches`} cursor="default">
       {modes}
       <Slider label="Angle" value={angle} min={0} max={90} onChange={setAngle} format={v => `${v}°`} />
       <Slider label="Shrink" value={ratio} min={0.5} max={0.85} step={0.01} onChange={setRatio} format={v => `${Math.round(v * 100)}%`} />
@@ -348,7 +356,6 @@ function TreeView({ modes }: { modes: ReactNode }) {
       <Slider label="Wander" value={wander} min={0} max={1} step={0.05} onChange={setWander} format={v => `${Math.round(v * 100)}%`} />
       <Buttons>
         <Toggle label="Wind" value={sway} onChange={setSway} />
-        <Btn onClick={() => simRef.current?.grow()}>Grow a new tree</Btn>
       </Buttons>
     </Stage>
   );

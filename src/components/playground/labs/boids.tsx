@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { css, fit2d, type Engine, type Palette } from "@/lib/playground/runtime";
-import { Btn, Buttons, Slider, Stage, Toggle, useSim } from "../controls";
+import { Buttons, Slider, Stage, Toggle, useSim } from "../controls";
 
 type Params = { separation: number; alignment: number; cohesion: number; count: number; radius: number; trails: boolean };
 
@@ -53,6 +53,10 @@ class Flock implements Engine {
     this.n = count;
   }
 
+  reset() {
+    this.scatter();
+  }
+
   scatter() {
     this.n = 0;
     this.populate(this.params.count);
@@ -83,6 +87,7 @@ class Flock implements Engine {
   }
 
   frame(dt: number) {
+    if (!dt) return this.draw();
     const { separation, alignment, cohesion, radius } = this.params;
     const { x, y, vx, vy, n, w, h } = this;
     const cell = radius;
@@ -222,7 +227,7 @@ const create = (canvas: HTMLCanvasElement) => {
 };
 
 export default function Boids() {
-  const { canvasRef, simRef } = useSim(create);
+  const { canvasRef, stage, simRef } = useSim(create);
   const [separation, setSeparation] = useState(1.5);
   const [alignment, setAlignment] = useState(1);
   const [cohesion, setCohesion] = useState(1);
@@ -236,7 +241,7 @@ export default function Boids() {
 
   const fmt = (v: number) => v.toFixed(1);
   return (
-    <Stage canvasRef={canvasRef} hint="Move the pointer through the flock to startle it; hold to scare them harder.">
+    <Stage canvasRef={canvasRef} sim={stage} hint="Move the pointer through the flock to startle it; hold to scare them harder.">
       <Slider label="Separation" value={separation} min={0} max={4} step={0.1} onChange={setSeparation} format={fmt} />
       <Slider label="Alignment" value={alignment} min={0} max={4} step={0.1} onChange={setAlignment} format={fmt} />
       <Slider label="Cohesion" value={cohesion} min={0} max={4} step={0.1} onChange={setCohesion} format={fmt} />
@@ -244,7 +249,6 @@ export default function Boids() {
       <Slider label="Birds" value={count} min={20} max={600} step={10} onChange={setCount} />
       <Buttons>
         <Toggle label="Trails" value={trails} onChange={setTrails} />
-        <Btn onClick={() => simRef.current?.scatter()}>Scatter</Btn>
       </Buttons>
     </Stage>
   );

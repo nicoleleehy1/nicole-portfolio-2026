@@ -35,6 +35,10 @@ class Automaton implements Engine {
     this.restart();
   }
 
+  reset() {
+    this.restart();
+  }
+
   restart() {
     this.cells.fill(0);
     this.cells.set(this.seedRow);
@@ -99,7 +103,7 @@ const create = (canvas: HTMLCanvasElement) => new Automaton(canvas);
 const PATTERNS = [7, 6, 5, 4, 3, 2, 1, 0];
 
 export default function Automata() {
-  const { canvasRef, simRef } = useSim(create);
+  const { canvasRef, stage, simRef } = useSim(create);
   const [rule, setRule] = useState(30);
   const [speed, setSpeed] = useState(40);
 
@@ -114,7 +118,7 @@ export default function Automata() {
   }, [speed, simRef]);
 
   return (
-    <Stage canvasRef={canvasRef} hint="Click or drag along the canvas to flip cells in the starting row." readout={`Rule ${rule}`}>
+    <Stage canvasRef={canvasRef} sim={stage} hint="Click or drag along the canvas to flip cells in the starting row." readout={`Rule ${rule}`}>
       <Choice
         label="Rule"
         value={[30, 90, 110].includes(rule) ? rule : -1}

@@ -1316,3 +1316,7 @@ html:has(.peek[open]) { overflow: hidden; }
   .lab-loading { aspect-ratio: 4 / 3; }
   .lab-meta { flex-direction: column; gap: 0.25rem; }
 }
+.lab-btn-primary { color: var(--accent); min-width: 5rem; }
+/* emoji choices (the neural CA's patterns) need room to be seen */
+.lab-choice[aria-label="Creature"] .lab-btn { font-size: 1.05rem; line-height: 1; padding: 0.3rem 0.45rem; letter-spacing: 0; }
+.pg-cite { margin-top: 1.4rem; font-size: 0.78rem; color: var(--muted); }

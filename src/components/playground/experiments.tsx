@@ -90,6 +90,15 @@ export const experiments: Experiment[] = [
             <li key={t}>{t}</li>
           ))}
         </ul>
+        {n.cite && (
+          <p className="pg-cite">
+            Based on{" "}
+            <a href={n.cite.href} target="_blank" rel="noreferrer" className="link">
+              {n.cite.text}
+            </a>
+            . Models and shader code from the article, used under CC BY 4.0 and Apache 2.0.
+          </p>
+        )}
       </>
     ),
   })),
