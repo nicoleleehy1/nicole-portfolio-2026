@@ -1,0 +1,159 @@
+"use client";
+import { useEffect, useRef, useState, type ReactNode, type RefObject } from "react";
+import { mount, type Engine, type Mounted } from "@/lib/playground/runtime";
+
+// The pause / reset controls every experiment shares.
+export type StageHandle = {
+  paused: boolean;
+  togglePause: () => void;
+  reset: () => void;
+};
+
+// Create an engine for a canvas once, and keep a handle to it for the controls to talk to.
+export function useSim<S extends Engine>(create: (canvas: HTMLCanvasElement) => S) {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const simRef = useRef<S | null>(null);
+  const mountedRef = useRef<Mounted | null>(null);
+  const [paused, setPaused] = useState(false);
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const sim = create(canvas);
+    simRef.current = sim;
+    const mounted = mount(canvas, sim);
+    mountedRef.current = mounted;
+    return () => {
+      mounted.destroy();
+      mountedRef.current = null;
+      simRef.current = null;
+    };
+  }, [create]);
+  useEffect(() => {
+    mountedRef.current?.setPaused(paused);
+  }, [paused]);
+  const stage: StageHandle = {
+    paused,
+    togglePause: () => setPaused(p => !p),
+    reset: () => simRef.current?.reset(),
+  };
+  return { canvasRef, simRef, stage };
+}
+
+// The canvas, a one-line hint about how to interact, and the control panel beneath, led by pause and reset.
+export function Stage({
+  canvasRef,
+  sim,
+  hint,
+  readout,
+  children,
+  cursor = "crosshair",
+}: {
+  canvasRef: RefObject<HTMLCanvasElement | null>;
+  sim: StageHandle;
+  hint: string;
+  readout?: ReactNode;
+  children: ReactNode;
+  cursor?: string;
+}) {
+  return (
+    <div className="lab-stage">
+      <div className="lab-frame">
+        <canvas ref={canvasRef} className="lab-canvas" style={{ cursor }} />
+      </div>
+      <div className="lab-meta">
+        <span>{hint}</span>
+        {readout && <span className="lab-readout">{readout}</span>}
+      </div>
+      <div className="lab-controls">
+        <div className="lab-buttons">
+          <button type="button" className="lab-btn lab-btn-primary" onClick={sim.togglePause} aria-pressed={sim.paused}>
+            {sim.paused ? "Play" : "Pause"}
+          </button>
+          <button type="button" className="lab-btn" onClick={sim.reset}>
+            Reset
+          </button>
+        </div>
+        {children}
+      </div>
+    </div>
+  );
+}
+
+export function Slider({
+  label,
+  value,
+  min,
+  max,
+  step = 1,
+  onChange,
+  format = v => String(v),
+}: {
+  label: string;
+  value: number;
+  min: number;
+  max: number;
+  step?: number;
+  onChange: (v: number) => void;
+  format?: (v: number) => string;
+}) {
+  return (
+    <label className="lab-slider">
+      <span className="lab-label">{label}</span>
+      <input type="range" min={min} max={max} step={step} value={value} onChange={e => onChange(Number(e.target.value))} />
+      <output>{format(value)}</output>
+    </label>
+  );
+}
+
+export function Choice<T extends string | number>({
+  label,
+  value,
+  options,
+  onChange,
+}: {
+  label: string;
+  value: T;
+  options: readonly { value: T; label: string }[];
+  onChange: (v: T) => void;
+}) {
+  return (
+    <div className="lab-choice" role="radiogroup" aria-label={label}>
+      <span className="lab-label">{label}</span>
+      <div className="lab-segments">
+        {options.map(o => (
+          <button
+            key={o.value}
+            type="button"
+            role="radio"
+            aria-checked={o.value === value}
+            className={`lab-btn${o.value === value ? " is-on" : ""}`}
+            onClick={() => onChange(o.value)}
+          >
+            {o.label}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+export function Toggle({ label, value, onChange }: { label: string; value: boolean; onChange: (v: boolean) => void }) {
+  return (
+    <label className="lab-toggle">
+      <input type="checkbox" checked={value} onChange={e => onChange(e.target.checked)} />
+      <span className="lab-label">{label}</span>
+    </label>
+  );
+}
+
+export function Buttons({ children }: { children: ReactNode }) {
+  return <div className="lab-buttons">{children}</div>;
+}
+
+export function Btn({ onClick, children }: { onClick: () => void; children: ReactNode }) {
+  return (
+    <button type="button" className="lab-btn" onClick={onClick}>
+      {children}
+    </button>
+  );
+}

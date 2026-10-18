@@ -1,5 +1,7 @@
-import type { ReactNode } from "react";
+import type { ComponentType, ReactNode } from "react";
 import { GameOfLife } from "./game-of-life";
+import { labNotes } from "./lab-notes";
+import { LABS } from "./lab-stages";
 
 // Playground experiments, newest last. Each pairs something to play with (left) with notes on what I'm learning (right).
 // To add one: build its component next to game-of-life.tsx and append an entry here.
@@ -8,7 +10,7 @@ export type Experiment = {
   title: string;
   // Short mono tag shown in the switcher, e.g. "EXP-01".
   tag: string;
-  Stage: () => ReactNode;
+  Stage: ComponentType;
   // One-line hint for how to interact with the stage.
   howTo: string;
   notes: ReactNode;
@@ -39,7 +41,7 @@ export const experiments: Experiment[] = [
           <strong>initial thoughts.</strong> 
         </p>
         <p>
-          <strong>how does a repeating block become a building block for computation?</strong> conway's game of life
+          <strong>how does a repeating block become a building block for computation?</strong> conway&apos;s game of life
           can be broken down into oscillators (giving repetition), gliders (carrying )
         </p>
 
@@ -67,4 +69,37 @@ export const experiments: Experiment[] = [
       </>
     ),
   },
+  // the lab experiments: copy in lab-notes.ts, canvases in labs/
+  ...labNotes.map((n, i) => ({
+    slug: n.slug,
+    title: n.title,
+    tag: `EXP-${String(i + 2).padStart(2, "0")}`,
+    Stage: LABS[n.slug],
+    howTo: n.play,
+    notes: (
+      <>
+        <p>
+          <strong>{n.idea}</strong>
+        </p>
+        {n.notes.map(p => (
+          <p key={p}>{p}</p>
+        ))}
+        <h3>Things to try</h3>
+        <ul className="pg-list">
+          {n.tryThis.map(t => (
+            <li key={t}>{t}</li>
+          ))}
+        </ul>
+        {n.cite && (
+          <p className="pg-cite">
+            Based on{" "}
+            <a href={n.cite.href} target="_blank" rel="noreferrer" className="link">
+              {n.cite.text}
+            </a>
+            . Models and shader code from the article, used under CC BY 4.0 and Apache 2.0.
+          </p>
+        )}
+      </>
+    ),
+  })),
 ];
