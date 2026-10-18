@@ -1005,29 +1005,63 @@ html:has(.peek[open]) { overflow: hidden; }
 /* Playground is set entirely in the site serif, labels and buttons included */
 .pg-section,
 .pg-section .page-title,
-.pg-section :is(.pg-tab, .pg-btn, .pg-readout, .pg-speed, .pg-notes-title, .pg-notes-body h3) {
+.pg-section :is(.pg-nav-item, .pg-btn, .pg-readout, .pg-speed, .pg-notes-title, .pg-notes-body h3) {
   font-family: var(--serif);
 }
 .pg-intro { max-width: 40rem; margin-bottom: 1.75rem; font-size: 0.92rem; }
-.pg-tabs {
-  display: flex;
-  flex-wrap: wrap;
+/* Switcher: previous / list / next, with the list dropping down under the middle button */
+.pg-nav {
+  position: relative;
+  display: inline-flex;
   gap: 0.4rem;
   margin-bottom: 1rem;
 }
-.pg-tab {
-  font: 500 0.66rem/1.6 var(--mono);
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  padding: 0.35rem 0.7rem;
+.pg-nav-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  padding: 0;
   border: 1px solid var(--rule);
   background: none;
   color: var(--muted);
   cursor: pointer;
-  transition: border-color 0.12s ease, color 0.12s ease;
+  transition: border-color 0.12s ease, color 0.12s ease, background 0.12s ease;
 }
-.pg-tab:hover { color: var(--ink-strong); border-color: var(--edge); }
-.pg-tab.active { color: var(--accent); border-color: var(--edge); }
+.pg-nav-btn svg { width: 0.95rem; height: 0.95rem; display: block; }
+.pg-nav-btn:hover,
+.pg-nav-btn.active { color: var(--ink-strong); border-color: var(--edge); background: rgba(var(--glow), 0.06); }
+.pg-nav-menu {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  z-index: 10;
+  min-width: 18rem;
+  max-height: min(24rem, 70vh);
+  overflow-y: auto;
+  padding: 6px;
+  background: var(--panel);
+  border: 1px solid var(--edge);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+}
+.pg-nav-item {
+  display: block;
+  width: 100%;
+  padding: 6px 8px;
+  border: none;
+  background: none;
+  font: 500 0.66rem/1.6 var(--mono);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  text-align: left;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.pg-nav-item:hover { background: rgba(var(--glow), 0.08); color: var(--ink-strong); }
+.pg-nav-item.active { color: var(--accent); }
 .pg-tab-tag { color: var(--warm); }
 
 .pg-layout {
