@@ -378,7 +378,7 @@ export default function Pathfinding() {
         <Btn onClick={() => simRef.current?.scatter()}>New obstacles</Btn>
         <Btn onClick={() => simRef.current?.clear()}>Clear</Btn>
       </Buttons>
-      <table className="pg-table">
+      <table className="lab-table">
         <thead>
           <tr>
             <th>Algorithm</th>

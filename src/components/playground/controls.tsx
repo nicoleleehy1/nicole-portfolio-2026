@@ -35,15 +35,15 @@ export function Stage({
   cursor?: string;
 }) {
   return (
-    <div className="pg-stage">
-      <div className="pg-frame">
-        <canvas ref={canvasRef} className="pg-canvas" style={{ cursor }} />
+    <div className="lab-stage">
+      <div className="lab-frame">
+        <canvas ref={canvasRef} className="lab-canvas" style={{ cursor }} />
       </div>
-      <div className="pg-meta">
+      <div className="lab-meta">
         <span>{hint}</span>
-        {readout && <span className="pg-readout">{readout}</span>}
+        {readout && <span className="lab-readout">{readout}</span>}
       </div>
-      <div className="pg-controls">{children}</div>
+      <div className="lab-controls">{children}</div>
     </div>
   );
 }
@@ -66,8 +66,8 @@ export function Slider({
   format?: (v: number) => string;
 }) {
   return (
-    <label className="pg-slider">
-      <span className="pg-label">{label}</span>
+    <label className="lab-slider">
+      <span className="lab-label">{label}</span>
       <input type="range" min={min} max={max} step={step} value={value} onChange={e => onChange(Number(e.target.value))} />
       <output>{format(value)}</output>
     </label>
@@ -86,16 +86,16 @@ export function Choice<T extends string | number>({
   onChange: (v: T) => void;
 }) {
   return (
-    <div className="pg-choice" role="radiogroup" aria-label={label}>
-      <span className="pg-label">{label}</span>
-      <div className="pg-segments">
+    <div className="lab-choice" role="radiogroup" aria-label={label}>
+      <span className="lab-label">{label}</span>
+      <div className="lab-segments">
         {options.map(o => (
           <button
             key={o.value}
             type="button"
             role="radio"
             aria-checked={o.value === value}
-            className={`pg-btn${o.value === value ? " is-on" : ""}`}
+            className={`lab-btn${o.value === value ? " is-on" : ""}`}
             onClick={() => onChange(o.value)}
           >
             {o.label}
@@ -108,20 +108,20 @@ export function Choice<T extends string | number>({
 
 export function Toggle({ label, value, onChange }: { label: string; value: boolean; onChange: (v: boolean) => void }) {
   return (
-    <label className="pg-toggle">
+    <label className="lab-toggle">
       <input type="checkbox" checked={value} onChange={e => onChange(e.target.checked)} />
-      <span className="pg-label">{label}</span>
+      <span className="lab-label">{label}</span>
     </label>
   );
 }
 
 export function Buttons({ children }: { children: ReactNode }) {
-  return <div className="pg-buttons">{children}</div>;
+  return <div className="lab-buttons">{children}</div>;
 }
 
 export function Btn({ onClick, children }: { onClick: () => void; children: ReactNode }) {
   return (
-    <button type="button" className="pg-btn" onClick={onClick}>
+    <button type="button" className="lab-btn" onClick={onClick}>
       {children}
     </button>
   );

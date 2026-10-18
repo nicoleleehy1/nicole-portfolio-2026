@@ -125,25 +125,25 @@ export default function Automata() {
         ]}
         onChange={setRule}
       />
-      <div className="pg-choice">
-        <span className="pg-label">Rule table · click an outcome to flip it</span>
-        <div className="pg-rule-bits">
+      <div className="lab-choice">
+        <span className="lab-label">Rule table · click an outcome to flip it</span>
+        <div className="lab-rule-bits">
           {PATTERNS.map(p => {
             const on = (rule >> p) & 1;
             return (
               <button
                 key={p}
                 type="button"
-                className="pg-rule-bit"
+                className="lab-rule-bit"
                 aria-label={`Neighborhood ${p.toString(2).padStart(3, "0")} becomes ${on ? "alive" : "empty"}`}
                 onClick={() => setRule(rule ^ (1 << p))}
               >
-                <span className="pg-rule-in">
+                <span className="lab-rule-in">
                   {[4, 2, 1].map(m => (
                     <i key={m} className={p & m ? "on" : ""} />
                   ))}
                 </span>
-                <span className="pg-rule-out">
+                <span className="lab-rule-out">
                   <i className={on ? "on" : ""} />
                 </span>
               </button>

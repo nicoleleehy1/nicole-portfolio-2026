@@ -1000,84 +1000,207 @@ html:has(.peek[open]) { overflow: hidden; }
 }
 .theme-toggle svg { width: 0.95rem; height: 0.95rem; display: block; }
 
-/* ── Playground: index cards, the experiment stage and its controls ── */
-.pg-intro { max-width: 60ch; color: var(--muted); margin-bottom: 1.5rem; }
-.pg-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 0.75rem;
+/* ── Playground: experiment on the left, learning notes on the right ── */
+/* Stays in the page column, so the content lines up with the nav ("Nicole Lee" to the theme toggle) */
+/* Playground is set entirely in the site serif, labels and buttons included */
+.pg-section,
+.pg-section .page-title,
+.pg-section :is(.pg-tab, .pg-btn, .pg-readout, .pg-speed, .pg-notes-title, .pg-notes-body h3) {
+  font-family: var(--serif);
 }
-.pg-card {
+.pg-intro { max-width: 40rem; margin-bottom: 1.75rem; font-size: 0.92rem; }
+.pg-tabs {
   display: flex;
-  flex-direction: column;
-  gap: 0.2rem;
-  height: 100%;
-  padding: 0.85rem 1rem 1rem;
-  border: 1px solid var(--rule);
-  background: rgba(var(--veil), 0.5);
-  text-decoration: none;
-  transition: border-color 0.15s ease, background 0.15s ease;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-bottom: 1rem;
 }
-.pg-card:hover { border-color: var(--edge); background: rgba(var(--glow), 0.05); }
-.pg-card-num { font-family: var(--mono); font-size: 0.62rem; letter-spacing: 0.12em; color: var(--accent); }
-.pg-card-title { font-weight: 600; font-size: 1.05rem; line-height: 1.3; color: var(--ink-strong); }
-.pg-card:hover .pg-card-title { color: var(--accent); }
-.pg-card-play { font-size: 0.88rem; line-height: 1.45; color: var(--muted); }
+.pg-tab {
+  font: 500 0.66rem/1.6 var(--mono);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 0.35rem 0.7rem;
+  border: 1px solid var(--rule);
+  background: none;
+  color: var(--muted);
+  cursor: pointer;
+  transition: border-color 0.12s ease, color 0.12s ease;
+}
+.pg-tab:hover { color: var(--ink-strong); border-color: var(--edge); }
+.pg-tab.active { color: var(--accent); border-color: var(--edge); }
+.pg-tab-tag { color: var(--warm); }
 
-.pg-stage { margin-top: 1.25rem; }
-.pg-frame {
+.pg-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.75fr) minmax(0, 1fr);
+  gap: clamp(1.25rem, 3vw, 2.5rem);
+}
+@media (max-width: 900px) {
+  .pg-layout { grid-template-columns: minmax(0, 1fr); }
+}
+
+/* The screen */
+.pg-stage { min-width: 0; }
+.pg-canvas {
+  display: block;
+  width: 100%;
+  height: auto;
+  background: rgba(var(--veil), 0.85);
+  border: 1px solid var(--edge);
+  box-shadow: 0 0 0 4px rgba(var(--glow), 0.04), 0 0 40px rgba(var(--glow), 0.06) inset;
+  cursor: crosshair;
+  touch-action: none;
+}
+.pg-readout {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 0.5rem;
+  font: 500 0.62rem/1.6 var(--mono);
+  letter-spacing: 0.1em;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+.pg-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem 1.5rem;
+  margin-top: 0.9rem;
+}
+.pg-group { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+.pg-btn {
+  font: 500 0.66rem/1.6 var(--mono);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 0.35rem 0.75rem;
+  border: 1px solid var(--edge);
+  background: none;
+  color: var(--ink-strong);
+  cursor: pointer;
+  transition: background 0.12s ease, color 0.12s ease, border-color 0.12s ease;
+}
+.pg-btn:hover:not(:disabled) { background: rgba(var(--glow), 0.1); }
+.pg-btn:disabled { opacity: 0.4; cursor: default; }
+.pg-btn-primary { color: var(--accent); min-width: 5.5rem; }
+.pg-btn-ghost { border-color: var(--rule); color: var(--muted); }
+.pg-btn-ghost:hover { color: var(--ink-strong); }
+.pg-speed {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font: 500 0.62rem/1.6 var(--mono);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.pg-speed input { width: 7rem; accent-color: var(--accent); }
+.pg-speed-value { min-width: 2.5rem; font-variant-numeric: tabular-nums; }
+
+/* The notes */
+.pg-notes {
+  border-left: 1px solid var(--rule);
+  padding-left: clamp(1rem, 2vw, 1.75rem);
+  font-size: 0.86rem;
+  line-height: 1.6;
+  /* height 0 + min-height 100%: the stage alone sets the row height, and the notes scroll inside it */
+  height: 0;
+  min-height: 100%;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: var(--edge) transparent;
+}
+@media (max-width: 900px) {
+  .pg-notes { border-left: 0; border-top: 1px solid var(--rule); padding: 1.5rem 0 0; height: auto; overflow: visible; }
+}
+.pg-notes-title {
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: 1.15rem;
+  line-height: 1.2;
+  color: var(--ink-strong);
+  margin-bottom: 0.6rem;
+}
+.pg-howto { font-size: 0.8rem; color: var(--muted); font-style: italic; margin-bottom: 1.25rem; }
+.pg-notes-body p + p,
+.pg-notes-body p + ol,
+.pg-notes-body ol + h3,
+.pg-notes-body p + h3,
+.pg-notes-body h3 + p,
+.pg-notes-body h3 + ul { margin-top: 0.8rem; }
+.pg-notes-body h3 {
+  font: 500 0.66rem/1.6 var(--mono);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-top: 1.6rem;
+}
+.pg-notes-body strong { color: var(--ink-strong); font-weight: 600; }
+.pg-rules { list-style: decimal; padding-left: 1.3rem; }
+.pg-list { list-style: disc; padding-left: 1.3rem; }
+.pg-rules li + li,
+.pg-list li + li { margin-top: 0.35rem; }
+.pg-rules li::marker { color: var(--warm); font-family: var(--mono); font-size: 0.8em; }
+.pg-list li::marker { color: var(--muted); }
+
+/* ── Playground lab stages: the canvas, its hint and readout, and the control panel under it ── */
+/* set in the site serif inside the playground, like the Game of Life controls */
+.pg-section :is(.lab-btn, .lab-label, .lab-readout, .lab-slider output, .lab-table th) {
+  font-family: var(--serif);
+}
+.lab-frame {
   position: relative;
   border: 1px solid var(--edge);
   background: var(--panel-solid);
-  box-shadow: 0 0 0 1px rgba(var(--glow), 0.04), 0 18px 40px -24px rgba(var(--glow), 0.35);
+  box-shadow: 0 0 0 4px rgba(var(--glow), 0.04), 0 0 40px rgba(var(--glow), 0.06) inset;
 }
-:root[data-theme="light"] .pg-frame { box-shadow: 0 14px 34px -22px rgba(120, 80, 50, 0.35); }
-.pg-canvas {
+.lab-canvas {
   display: block;
   width: 100%;
   aspect-ratio: 16 / 10;
   touch-action: none;
   user-select: none;
 }
-.pg-loading { aspect-ratio: 16 / 10; border: 1px solid var(--rule); background: var(--panel-solid); margin-top: 1.25rem; }
-.pg-meta {
+.lab-loading { aspect-ratio: 16 / 10; border: 1px solid var(--rule); background: var(--panel-solid); }
+.lab-meta {
   display: flex;
   justify-content: space-between;
   gap: 1rem;
   margin-top: 0.5rem;
-  font-size: 0.82rem;
+  font-size: 0.8rem;
   line-height: 1.45;
   color: var(--muted);
 }
-.pg-readout {
+.lab-readout {
   flex-shrink: 0;
   font-family: var(--mono);
-  font-size: 0.66rem;
-  letter-spacing: 0.08em;
+  font-size: 0.62rem;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--accent);
   font-variant-numeric: tabular-nums;
   padding-top: 0.15rem;
 }
-.pg-controls {
+.lab-controls {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 0.9rem 1.5rem;
-  margin-top: 1rem;
-  padding: 1rem;
+  gap: 0.9rem 1.25rem;
+  margin-top: 0.9rem;
+  padding: 0.9rem;
   border: 1px solid var(--rule);
   background: rgba(var(--veil), 0.5);
 }
-.pg-label {
+.lab-label {
   font-family: var(--mono);
   font-size: 0.62rem;
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--muted);
 }
-.pg-slider { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 0.15rem 0.75rem; }
-.pg-slider input { grid-column: 1 / -1; grid-row: 2; width: 100%; accent-color: var(--accent); margin: 0; }
-.pg-slider output {
+.lab-slider { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 0.15rem 0.75rem; }
+.lab-slider input { grid-column: 1 / -1; grid-row: 2; width: 100%; accent-color: var(--accent); margin: 0; }
+.lab-slider output {
   grid-row: 1;
   grid-column: 2;
   font-family: var(--mono);
@@ -1086,32 +1209,32 @@ html:has(.peek[open]) { overflow: hidden; }
   font-variant-numeric: tabular-nums;
 }
 /* choices, button rows and tables span the full width of the panel */
-.pg-choice,
-.pg-buttons,
-.pg-table { grid-column: 1 / -1; }
-.pg-choice { display: flex; flex-direction: column; gap: 0.35rem; }
-.pg-segments,
-.pg-buttons { display: flex; flex-wrap: wrap; gap: 0.4rem; align-items: center; }
-.pg-btn {
+.lab-choice,
+.lab-buttons,
+.lab-table { grid-column: 1 / -1; }
+.lab-choice { display: flex; flex-direction: column; gap: 0.35rem; }
+.lab-segments,
+.lab-buttons { display: flex; flex-wrap: wrap; gap: 0.4rem; align-items: center; }
+.lab-btn {
   font-family: var(--mono);
   font-size: 0.66rem;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  padding: 0.4rem 0.7rem;
+  padding: 0.35rem 0.7rem;
   border: 1px solid var(--edge);
   background: transparent;
   color: var(--ink);
   cursor: pointer;
   transition: background 0.12s ease, color 0.12s ease, border-color 0.12s ease;
 }
-.pg-btn:hover { background: rgba(var(--glow), 0.1); color: var(--ink-strong); }
-.pg-btn.is-on { background: var(--accent); border-color: var(--accent); color: var(--bg); }
-.pg-toggle { display: inline-flex; align-items: center; gap: 0.45rem; margin-right: 0.5rem; cursor: pointer; }
-.pg-toggle input { accent-color: var(--accent); margin: 0; }
+.lab-btn:hover { background: rgba(var(--glow), 0.1); color: var(--ink-strong); }
+.lab-btn.is-on { background: var(--accent); border-color: var(--accent); color: var(--bg); }
+.lab-toggle { display: inline-flex; align-items: center; gap: 0.45rem; margin-right: 0.5rem; cursor: pointer; }
+.lab-toggle input { accent-color: var(--accent); margin: 0; }
 
 /* the rule table for the cellular automata: neighborhood on top, outcome below */
-.pg-rule-bits { display: flex; flex-wrap: wrap; gap: 0.5rem; }
-.pg-rule-bit {
+.lab-rule-bits { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+.lab-rule-bit {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -1121,15 +1244,15 @@ html:has(.peek[open]) { overflow: hidden; }
   background: transparent;
   cursor: pointer;
 }
-.pg-rule-bit:hover { border-color: var(--edge); }
-.pg-rule-in,
-.pg-rule-out { display: flex; gap: 2px; }
-.pg-rule-bit i { width: 10px; height: 10px; border: 1px solid var(--edge); }
-.pg-rule-bit i.on { background: var(--ink-strong); border-color: var(--ink-strong); }
-.pg-rule-out i.on { background: var(--warm); border-color: var(--warm); }
+.lab-rule-bit:hover { border-color: var(--edge); }
+.lab-rule-in,
+.lab-rule-out { display: flex; gap: 2px; }
+.lab-rule-bit i { width: 10px; height: 10px; border: 1px solid var(--edge); }
+.lab-rule-bit i.on { background: var(--ink-strong); border-color: var(--ink-strong); }
+.lab-rule-out i.on { background: var(--warm); border-color: var(--warm); }
 
-.pg-table { width: 100%; border-collapse: collapse; font-size: 0.82rem; font-variant-numeric: tabular-nums; }
-.pg-table th {
+.lab-table { width: 100%; border-collapse: collapse; font-size: 0.8rem; font-variant-numeric: tabular-nums; }
+.lab-table th {
   font-family: var(--mono);
   font-size: 0.6rem;
   font-weight: 500;
@@ -1140,30 +1263,12 @@ html:has(.peek[open]) { overflow: hidden; }
   padding: 0.3rem 0.5rem 0.3rem 0;
   border-bottom: 1px solid var(--rule);
 }
-.pg-table td { padding: 0.3rem 0.5rem 0.3rem 0; border-bottom: 1px solid var(--rule); }
-.pg-table tr.is-on td { color: var(--accent); }
-
-.pg-notes { margin-top: 2.25rem; }
-.pg-notes h2 { margin-top: 0; }
-.pg-pager {
-  display: flex;
-  justify-content: space-between;
-  gap: 1rem;
-  margin-top: 2.5rem;
-  padding-top: 1rem;
-  border-top: 1px solid var(--rule);
-  font-family: var(--mono);
-  font-size: 0.66rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-.pg-pager a { color: var(--muted); text-decoration: none; }
-.pg-pager a:hover { color: var(--accent); }
+.lab-table td { padding: 0.3rem 0.5rem 0.3rem 0; border-bottom: 1px solid var(--rule); }
+.lab-table tr.is-on td { color: var(--accent); }
 
 @media (max-width: 600px) {
-  .pg-grid,
-  .pg-controls { grid-template-columns: minmax(0, 1fr); }
-  .pg-canvas,
-  .pg-loading { aspect-ratio: 4 / 3; }
-  .pg-meta { flex-direction: column; gap: 0.25rem; }
+  .lab-controls { grid-template-columns: minmax(0, 1fr); }
+  .lab-canvas,
+  .lab-loading { aspect-ratio: 4 / 3; }
+  .lab-meta { flex-direction: column; gap: 0.25rem; }
 }

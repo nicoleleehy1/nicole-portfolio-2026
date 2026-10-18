@@ -1,9 +1,9 @@
-// Playground experiments, in display order. The slug is the URL and picks the interactive component in
-// components/playground/experiment.tsx; the rest is the copy on the index card and the detail page.
-export type Experiment = {
+// Copy for the lab experiments that follow Game of Life in the switcher, in display order.
+// The slug picks the interactive component in labs.tsx; experiments.tsx turns each entry into notes.
+export type LabNote = {
   slug: string;
   title: string;
-  // what visitors can do, one line, shown on the card
+  // what visitors can do, one line, shown under the notes title
   play: string;
   // the idea the experiment is about, one line
   idea: string;
@@ -13,10 +13,10 @@ export type Experiment = {
   tryThis: string[];
 };
 
-export const experiments: Experiment[] = [
+export const labNotes: LabNote[] = [
   {
     slug: "cellular-automata",
-    title: "Elementary cellular automata",
+    title: "elementary cellular automata",
     play: "Switch between Rule 30, Rule 90 and Rule 110, and change the starting cells.",
     idea: "How tiny rule changes produce dramatically different patterns.",
     notes: [
@@ -31,7 +31,7 @@ export const experiments: Experiment[] = [
   },
   {
     slug: "boids",
-    title: "Boids / flocking",
+    title: "boids / flocking",
     play: "Adjust separation, alignment and cohesion, and startle the flock with the pointer.",
     idea: "How coordinated movement emerges without a leader.",
     notes: [
@@ -46,7 +46,7 @@ export const experiments: Experiment[] = [
   },
   {
     slug: "reaction-diffusion",
-    title: "Reaction–diffusion",
+    title: "reaction–diffusion",
     play: "Paint onto the canvas and watch spots and stripes form.",
     idea: "How local chemical interactions can create organic patterns.",
     notes: [
@@ -61,7 +61,7 @@ export const experiments: Experiment[] = [
   },
   {
     slug: "falling-sand",
-    title: "Sand simulation",
+    title: "sand simulation",
     play: "Drop sand, water and stone into a little world.",
     idea: "How simple material rules create believable behavior.",
     notes: [
@@ -76,7 +76,7 @@ export const experiments: Experiment[] = [
   },
   {
     slug: "maze-generation",
-    title: "Maze generation",
+    title: "maze generation",
     play: "Watch different algorithms build a maze.",
     idea: "How different approaches shape the same problem.",
     notes: [
@@ -91,7 +91,7 @@ export const experiments: Experiment[] = [
   },
   {
     slug: "pathfinding",
-    title: "Pathfinding",
+    title: "pathfinding",
     play: "Draw walls and mud, move the start and goal, and compare the routes.",
     idea: "The tradeoffs between exploring broadly and moving toward a goal.",
     notes: [
@@ -106,7 +106,7 @@ export const experiments: Experiment[] = [
   },
   {
     slug: "flow-fields",
-    title: "Flow fields",
+    title: "flow fields",
     play: "Change the field, the particle count and the trails.",
     idea: "How noise can create movement that feels natural.",
     notes: [
@@ -121,7 +121,7 @@ export const experiments: Experiment[] = [
   },
   {
     slug: "spring-systems",
-    title: "Spring systems",
+    title: "spring systems",
     play: "Drag a cloth, a rope or a soft body.",
     idea: "How forces and constraints produce motion.",
     notes: [
@@ -136,7 +136,7 @@ export const experiments: Experiment[] = [
   },
   {
     slug: "fractals",
-    title: "Fractals",
+    title: "fractals",
     play: "Zoom into the Mandelbrot set or grow branching trees.",
     idea: "Recursion, self-similarity, and complexity across scales.",
     notes: [
@@ -151,7 +151,7 @@ export const experiments: Experiment[] = [
   },
   {
     slug: "wave-interference",
-    title: "Wave interference",
+    title: "wave interference",
     play: "Place wave sources and adjust their frequency.",
     idea: "How simple waves combine into unexpected patterns.",
     notes: [
