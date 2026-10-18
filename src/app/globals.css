@@ -999,3 +999,147 @@ html:has(.peek[open]) { overflow: hidden; }
   cursor: pointer;
 }
 .theme-toggle svg { width: 0.95rem; height: 0.95rem; display: block; }
+
+/* ── Playground: experiment on the left, learning notes on the right ── */
+/* Stays in the page column, so the content lines up with the nav ("Nicole Lee" to the theme toggle) */
+/* Playground is set entirely in the site serif, labels and buttons included */
+.pg-section,
+.pg-section .page-title,
+.pg-section :is(.pg-tab, .pg-btn, .pg-readout, .pg-speed, .pg-notes-title, .pg-notes-body h3) {
+  font-family: var(--serif);
+}
+.pg-intro { max-width: 40rem; margin-bottom: 1.75rem; font-size: 0.92rem; }
+.pg-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-bottom: 1rem;
+}
+.pg-tab {
+  font: 500 0.66rem/1.6 var(--mono);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 0.35rem 0.7rem;
+  border: 1px solid var(--rule);
+  background: none;
+  color: var(--muted);
+  cursor: pointer;
+  transition: border-color 0.12s ease, color 0.12s ease;
+}
+.pg-tab:hover { color: var(--ink-strong); border-color: var(--edge); }
+.pg-tab.active { color: var(--accent); border-color: var(--edge); }
+.pg-tab-tag { color: var(--warm); }
+
+.pg-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.75fr) minmax(0, 1fr);
+  gap: clamp(1.25rem, 3vw, 2.5rem);
+}
+@media (max-width: 900px) {
+  .pg-layout { grid-template-columns: minmax(0, 1fr); }
+}
+
+/* The screen */
+.pg-stage { min-width: 0; }
+.pg-canvas {
+  display: block;
+  width: 100%;
+  height: auto;
+  background: rgba(var(--veil), 0.85);
+  border: 1px solid var(--edge);
+  box-shadow: 0 0 0 4px rgba(var(--glow), 0.04), 0 0 40px rgba(var(--glow), 0.06) inset;
+  cursor: crosshair;
+  touch-action: none;
+}
+.pg-readout {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 0.5rem;
+  font: 500 0.62rem/1.6 var(--mono);
+  letter-spacing: 0.1em;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+.pg-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem 1.5rem;
+  margin-top: 0.9rem;
+}
+.pg-group { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+.pg-btn {
+  font: 500 0.66rem/1.6 var(--mono);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 0.35rem 0.75rem;
+  border: 1px solid var(--edge);
+  background: none;
+  color: var(--ink-strong);
+  cursor: pointer;
+  transition: background 0.12s ease, color 0.12s ease, border-color 0.12s ease;
+}
+.pg-btn:hover:not(:disabled) { background: rgba(var(--glow), 0.1); }
+.pg-btn:disabled { opacity: 0.4; cursor: default; }
+.pg-btn-primary { color: var(--accent); min-width: 5.5rem; }
+.pg-btn-ghost { border-color: var(--rule); color: var(--muted); }
+.pg-btn-ghost:hover { color: var(--ink-strong); }
+.pg-speed {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font: 500 0.62rem/1.6 var(--mono);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.pg-speed input { width: 7rem; accent-color: var(--accent); }
+.pg-speed-value { min-width: 2.5rem; font-variant-numeric: tabular-nums; }
+
+/* The notes */
+.pg-notes {
+  border-left: 1px solid var(--rule);
+  padding-left: clamp(1rem, 2vw, 1.75rem);
+  font-size: 0.86rem;
+  line-height: 1.6;
+  /* height 0 + min-height 100%: the stage alone sets the row height, and the notes scroll inside it */
+  height: 0;
+  min-height: 100%;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: var(--edge) transparent;
+}
+@media (max-width: 900px) {
+  .pg-notes { border-left: 0; border-top: 1px solid var(--rule); padding: 1.5rem 0 0; height: auto; overflow: visible; }
+}
+.pg-notes-title {
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: 1.15rem;
+  line-height: 1.2;
+  color: var(--ink-strong);
+  margin-bottom: 0.6rem;
+}
+.pg-howto { font-size: 0.8rem; color: var(--muted); font-style: italic; margin-bottom: 1.25rem; }
+.pg-notes-body p + p,
+.pg-notes-body p + ol,
+.pg-notes-body ol + h3,
+.pg-notes-body p + h3,
+.pg-notes-body h3 + p,
+.pg-notes-body h3 + ul { margin-top: 0.8rem; }
+.pg-notes-body h3 {
+  font: 500 0.66rem/1.6 var(--mono);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-top: 1.6rem;
+}
+.pg-notes-body strong { color: var(--ink-strong); font-weight: 600; }
+.pg-rules { list-style: decimal; padding-left: 1.3rem; }
+.pg-list { list-style: disc; padding-left: 1.3rem; }
+.pg-rules li + li,
+.pg-list li + li { margin-top: 0.35rem; }
+.pg-rules li::marker { color: var(--warm); font-family: var(--mono); font-size: 0.8em; }
+.pg-list li::marker { color: var(--muted); }

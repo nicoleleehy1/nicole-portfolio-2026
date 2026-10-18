@@ -7,6 +7,7 @@ export const sections = [
   { label: "Projects", href: "/projects" },
   { label: "Awards", href: "/awards" },
   { label: "Writings", href: "/writings" },
+  { label: "Playground", href: "/playground" },
 ];
 export const skills = [
   "Java","Python","Go","C/C++","TypeScript","Rust","SQL",
