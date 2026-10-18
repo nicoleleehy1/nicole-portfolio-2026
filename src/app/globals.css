@@ -1009,12 +1009,22 @@ html:has(.peek[open]) { overflow: hidden; }
   font-family: var(--serif);
 }
 .pg-intro { max-width: 40rem; margin-bottom: 1.75rem; font-size: 0.92rem; }
+/* intro on the left, experiment switcher on the right of the same line */
+.pg-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.75rem 1.5rem;
+  flex-wrap: wrap;
+  margin-bottom: 1.25rem;
+}
+.pg-header .pg-intro { margin: 0; }
 /* Switcher: previous / list / next, with the list dropping down under the middle button */
 .pg-nav {
   position: relative;
   display: inline-flex;
+  flex-shrink: 0;
   gap: 0.4rem;
-  margin-bottom: 1rem;
 }
 .pg-nav-btn {
   display: inline-flex;
@@ -1035,7 +1045,7 @@ html:has(.peek[open]) { overflow: hidden; }
 .pg-nav-menu {
   position: absolute;
   top: calc(100% + 6px);
-  left: 0;
+  right: 0;
   z-index: 10;
   min-width: 18rem;
   max-height: min(24rem, 70vh);

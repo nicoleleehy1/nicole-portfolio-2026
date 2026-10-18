@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import { experiments } from "./experiments";
 
 // SF Symbols-style glyphs (chevron.left, list.bullet, chevron.right), drawn as rounded strokes to match
@@ -23,7 +23,8 @@ const listBullet = (
 );
 
 // Interactive learning journal: the experiment runs on the left, my notes on it read on the right.
-export function Playground() {
+// The intro line sits in the header, with the experiment switcher at its right end.
+export function Playground({ intro }: { intro: ReactNode }) {
   const [index, setIndex] = useState(experiments.length - 1);
   const [listOpen, setListOpen] = useState(false);
   const navRef = useRef<HTMLDivElement>(null);
@@ -53,44 +54,47 @@ export function Playground() {
 
   return (
     <div className="pg">
-      {experiments.length > 1 && (
-        <div className="pg-nav" ref={navRef}>
-          <button type="button" className="pg-nav-btn" onClick={() => go(index - 1)} aria-label="Previous experiment" title="Previous">
-            {chevronLeft}
-          </button>
-          <button
-            type="button"
-            className={`pg-nav-btn${listOpen ? " active" : ""}`}
-            onClick={() => setListOpen(o => !o)}
-            aria-label="All experiments"
-            aria-expanded={listOpen}
-            aria-haspopup="menu"
-            title="All experiments"
-          >
-            {listBullet}
-          </button>
-          <button type="button" className="pg-nav-btn" onClick={() => go(index + 1)} aria-label="Next experiment" title="Next">
-            {chevronRight}
-          </button>
-          {listOpen && (
-            <ul className="pg-nav-menu" role="menu" aria-label="Experiments">
-              {experiments.map((e, i) => (
-                <li key={e.slug}>
-                  <button
-                    type="button"
-                    role="menuitem"
-                    aria-current={i === index}
-                    className={`pg-nav-item${i === index ? " active" : ""}`}
-                    onClick={() => go(i)}
-                  >
-                    <span className="pg-tab-tag">{e.tag}</span> {e.title}
-                  </button>
-                </li>
-              ))}
-            </ul>
-          )}
-        </div>
-      )}
+      <div className="pg-header">
+        {intro}
+        {experiments.length > 1 && (
+          <div className="pg-nav" ref={navRef}>
+            <button type="button" className="pg-nav-btn" onClick={() => go(index - 1)} aria-label="Previous experiment" title="Previous">
+              {chevronLeft}
+            </button>
+            <button
+              type="button"
+              className={`pg-nav-btn${listOpen ? " active" : ""}`}
+              onClick={() => setListOpen(o => !o)}
+              aria-label="All experiments"
+              aria-expanded={listOpen}
+              aria-haspopup="menu"
+              title="All experiments"
+            >
+              {listBullet}
+            </button>
+            <button type="button" className="pg-nav-btn" onClick={() => go(index + 1)} aria-label="Next experiment" title="Next">
+              {chevronRight}
+            </button>
+            {listOpen && (
+              <ul className="pg-nav-menu" role="menu" aria-label="Experiments">
+                {experiments.map((e, i) => (
+                  <li key={e.slug}>
+                    <button
+                      type="button"
+                      role="menuitem"
+                      aria-current={i === index}
+                      className={`pg-nav-item${i === index ? " active" : ""}`}
+                      onClick={() => go(i)}
+                    >
+                      <span className="pg-tab-tag">{e.tag}</span> {e.title}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        )}
+      </div>
 
       <div className="pg-layout">
         <div className="pg-stage">
