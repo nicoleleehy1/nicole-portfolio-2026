@@ -111,16 +111,19 @@ export const labNotes: LabNote[] = [
   {
     slug: "maze-generation",
     title: "maze generation",
-    play: "Watch different algorithms build a maze.",
-    idea: "How different approaches shape the same problem.",
-    notes: [
-      "Every algorithm here produces a perfect maze: a spanning tree of the grid, with exactly one route between any two cells. Yet you can tell them apart at a glance. The recursive backtracker digs one long corridor until it gets stuck, so its mazes have long winding passages and few branches. Prim's grows outward from a point and leaves many short dead ends. Kruskal's joins random walls all over the grid at once.",
-      "Wilson's algorithm uses random walks that erase their own loops. It's slow to start but picks every possible maze with equal probability, which makes it the unbiased one. The binary tree algorithm is the opposite: each cell only opens north or east, so it's fast and simple but leaves a clear diagonal grain and two long open edges.",
+    play: "pick an algorithm and watch it build a maze!",
+    premise:
+      "premise: every maze here is perfect, meaning there's exactly one route between any two cells. the algorithms all solve the same problem but leave different fingerprints.",
+    rules: [
+      "recursive backtracker: dig in a random direction until you're stuck, then back up.",
+      "prim's: grow out from one cell, opening a random wall on the edge.",
+      "kruskal's: knock down random walls anywhere, as long as it doesn't make a loop.",
+      "wilson's: take random walks, erasing any loops, until you hit the maze.",
+      "binary tree: every cell opens either north or east.",
     ],
-    tryThis: [
-      "Compare the dead-end counts: Prim's usually has the most, the backtracker the fewest.",
-      "Watch the start of Wilson's at a slow speed, then speed it up once the maze takes hold.",
-      "Look for the long straight corridors on the top and right of a binary tree maze.",
+    thoughts: [
+      "you can tell the algorithms apart at a glance. the backtracker makes long winding corridors, prim's leaves lots of short dead ends, and binary tree always has a long open corridor along the top and right edges with a diagonal lean to everything. wilson's is the fair one: it picks every possible maze with equal probability, slow to start and then filling in all at once.",
+      "underneath, every one of them is building a spanning tree, the same math as connecting cities with the least amount of cable. i also wondered whether a messier-looking maze takes longer to solve. prim's looks harder, but its dead ends are so short they barely slow you down.",
     ],
   },
   {

@@ -300,7 +300,7 @@ export default function Maze() {
     <Stage
       canvasRef={canvasRef}
       sim={stage}
-      hint="Pick an algorithm and watch it carve. Every one makes a perfect maze: exactly one route between any two cells."
+      hint="pick an algorithm and watch it carve. every one makes a perfect maze: exactly one route between any two cells."
       readout={stats.done ? `${stats.steps} steps · ${stats.deadEnds} dead ends` : `${stats.steps} steps`}
     >
       <Choice
