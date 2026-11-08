@@ -518,11 +518,11 @@ ul, ol {
   font-size: 0.95rem;
   color: var(--muted);
 }
-/* entry titles (company | role) set in Times New Roman */
+/* entry titles (company | role) in the same face as the row descriptions */
 .xp-title .entry-role,
 .xp-title .xp-sep,
 .xp-title .xp-co {
-  font-family: "Times New Roman", Times, serif;
+  font-family: var(--serif);
 }
 .xp-arrow {
   display: inline-flex;
