@@ -129,16 +129,18 @@ export const labNotes: LabNote[] = [
   {
     slug: "pathfinding",
     title: "pathfinding",
-    play: "Draw walls and mud, move the start and goal, and compare the routes.",
-    idea: "The tradeoffs between exploring broadly and moving toward a goal.",
-    notes: [
-      "All four searches keep a frontier of cells they could visit next; they differ only in which one they pick. Breadth-first takes the fewest steps first and spreads evenly in every direction. Dijkstra picks the cheapest so far, so it walks around mud. Greedy best-first heads straight for the goal and explores very little, but it can be fooled into long detours. A* adds the cost so far to an estimate of the distance left, and gets the cheapest route while exploring far less than Dijkstra.",
-      "The table keeps score: how many cells each one looked at, and what its route costs. Breadth-first and Greedy can return routes that wade through mud; Dijkstra and A* never do, but pay for it in cells explored.",
+    play: "draw walls and mud, drag the start and goal, and compare the routes!",
+    premise:
+      "premise: every search keeps a frontier, the cells it could visit next. they only differ in which one they pick.",
+    rules: [
+      "breadth-first: whichever was found first, so it spreads evenly.",
+      "dijkstra: whichever is cheapest so far, so it walks around mud.",
+      "greedy: whichever looks closest to the goal.",
+      "a*: cheapest so far plus a guess of the distance left.",
     ],
-    tryThis: [
-      "Build a cup-shaped wall facing the start and watch Greedy walk into it.",
-      "Put a mud patch between start and goal and compare route costs.",
-      "Clear the grid: on open ground A* and Greedy barely explore at all.",
+    thoughts: [
+      "greedy is fast and easy to fool: put a cup-shaped wall facing the start and it walks right in. a* is basically dijkstra with a hint. it finds the same cheapest route while exploring way fewer cells, and as long as its guess never overestimates, it always finds the best path. mud splits them up too, since breadth-first and greedy wade straight through it while dijkstra and a* go around.",
+      "a* was invented in 1968 for shakey, one of the first robots that could plan its own moves. one thing i'm still thinking about is the best guess when diagonal moves are allowed. straight-line distance works but undersells the real cost, so a* ends up exploring more than it needs to.",
     ],
   },
   {

@@ -363,7 +363,7 @@ export default function Pathfinding() {
   }, [brush, speed, simRef]);
 
   return (
-    <Stage canvasRef={canvasRef} sim={stage} hint="Draw on the grid to add walls or mud, and drag the two dots to move the start and goal.">
+    <Stage canvasRef={canvasRef} sim={stage} hint="draw on the grid to add walls or mud, and drag the two dots to move the start and goal.">
       <Choice
         label="Algorithm"
         value={algorithm}
