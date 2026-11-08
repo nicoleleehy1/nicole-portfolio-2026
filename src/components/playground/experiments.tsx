@@ -38,34 +38,24 @@ export const experiments: Experiment[] = [
 
         <h3>-</h3>
         <p>
-          <strong>initial thoughts.</strong> 
+          <strong>initial thoughts.</strong>
         </p>
         <p>
-          <strong>how does a repeating block become a building block for computation?</strong> conway&apos;s game of life
-          can be broken down into oscillators (giving repetition), gliders (carrying )
-        </p>
-
-        <p>
-          <strong>Update everything at once.</strong> My first instinct was to change cells in place, which
-          quietly breaks the rules: later cells see neighbors that already moved on. The fix is to read from this
-          generation and write into a fresh one.
+          the thing i keep coming back to is how a few repeating pieces turn into a computer. the game breaks down
+          into oscillators that repeat in place (like the blinker), gliders that carry information across the grid,
+          and guns that keep producing gliders. the gosper gun fires a new one every 30 generations, which is how bill
+          gosper showed a finite pattern can grow forever, and by crashing glider streams into each other people built
+          logic gates and eventually showed the whole game is turing complete. small seeds tell long stories too: the
+          r-pentomino is only five cells and takes over a thousand generations to settle.
         </p>
         <p>
-          <strong>Edges are a choice.</strong> The grid here wraps around, so a glider leaving the right side
-          comes back on the left. Hard walls would make it crash into a block instead, and the same pattern
-          behaves differently.
+          building it taught me that every cell has to update at once. my first instinct was to change cells in place,
+          which quietly breaks the rules because later cells see neighbors that already moved on, so the fix is to read
+          from this generation and write into a fresh one. edges turned out to be a choice as well. the grid here wraps
+          around, so a glider leaving the right side comes back on the left, while hard walls would make it crash into a
+          block. next i want to see what happens if a cell is also born with six neighbors (the highlife rule, which has
+          a pattern that copies itself), and whether only checking cells near something alive makes it faster.
         </p>
-        <p>
-          <strong>Small seeds, long stories.</strong> The R-pentomino is five cells and takes over a thousand
-          generations to settle. The Gosper gun never settles at all: it fires a new glider every 30 generations,
-          which is how Bill Gosper showed a finite pattern can grow forever.
-        </p>
-
-        <h3>Next questions</h3>
-        <ul className="pg-list">
-          <li>What changes if a cell is born with six neighbors too (the HighLife rule)?</li>
-          <li>Can I make the update faster by only checking cells near something alive?</li>
-        </ul>
       </>
     ),
   },
