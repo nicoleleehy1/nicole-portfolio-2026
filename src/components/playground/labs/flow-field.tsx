@@ -191,7 +191,7 @@ export default function FlowFields() {
   }, [field, scale, count, trail, speed, evolve, arrows, simRef]);
 
   return (
-    <Stage canvasRef={canvasRef} sim={stage} hint="Press and drag to stir the field.">
+    <Stage canvasRef={canvasRef} sim={stage} hint="press and drag to stir the field.">
       <Choice
         label="Field"
         value={field}

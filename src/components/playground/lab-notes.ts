@@ -146,16 +146,17 @@ export const labNotes: LabNote[] = [
   {
     slug: "flow-fields",
     title: "flow fields",
-    play: "Change the field, the particle count and the trails.",
-    idea: "How noise can create movement that feels natural.",
-    notes: [
-      "A flow field assigns a direction to every point on the canvas, and particles simply follow it. Pure randomness would make them jitter, but Perlin noise is smooth: nearby points get similar values, so the directions bend gradually and the paths look like wind, water or hair.",
-      "Curl noise takes the same noise and rotates its slope by a right angle. The result has no sources or sinks, so particles circulate in eddies instead of piling up in valleys, which is why it's popular for smoke and fluid effects. Letting the noise drift over time makes the whole field breathe.",
+    play: "change the field, the number of particles and the trails!",
+    premise: "premise: every point on the canvas gets a direction, and particles just follow it.",
+    rules: [
+      "sample noise at each point and turn it into an angle.",
+      "each particle moves a little in the direction under it.",
+      "it leaves a fading trail behind.",
+      "the noise slowly drifts over time.",
     ],
-    tryThis: [
-      "Turn on Show field to see the arrows the particles are following.",
-      "Push Trails to the top and lower Speed for long, painterly strokes.",
-      "Compare Perlin and Curl: watch where particles gather in one and not the other.",
+    thoughts: [
+      "pure randomness just jitters. perlin noise is smooth, so nearby points face the same way and the paths bend like wind or hair. ken perlin made it after working on tron, and won a technical oscar for it in 1997. curl noise turns the slope 90°, which leaves the field with nowhere to collect, so particles swirl instead of pooling. that's how a lot of movie smoke is made.",
+      "flow fields have become a whole art form, and tyler hobbs has a good essay on how he uses them in generative art. it makes me want to paint a field by hand, so the particles would draw whatever picture was hidden in it.",
     ],
   },
   {
