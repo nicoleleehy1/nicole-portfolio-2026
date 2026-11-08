@@ -13,7 +13,10 @@ export default function HomePage() {
           <a href="https://hkses.edb.gov.hk/en/index.html" target="_blank" rel="noreferrer" className="link">
             HKSES Scholar
           </a>
-          . I work on AI mechanistic interpretability, and lately on how models represent biological systems.
+          . I'm broadly interested in the intersection of computation and social impact. More recently, I&apos;ve been
+          exploring AI mechanistic interpretability, 
+          
+          work on AI mechanistic interpretability, and lately on how models represent biological systems.
         </p>
 
         <p>
