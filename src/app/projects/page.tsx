@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { projects } from "../metadata";
 import { Gallery, type GalleryItem } from "../../components/gallery";
-import { SectionEyebrow } from "../../components/section-eyebrow";
 
 export const metadata: Metadata = { title: "Projects" };
 
@@ -25,7 +24,6 @@ const items: GalleryItem[] = projects.map(p => ({
 export default function ProjectsPage() {
   return (
     <section className="section scrim" data-content data-exclude>
-      <SectionEyebrow href="/projects" count={projects.length} />
       <Gallery title="Selected Projects" items={items} filterLabel="Type" />
     </section>
   );

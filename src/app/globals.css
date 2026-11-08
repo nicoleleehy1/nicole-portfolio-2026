@@ -74,8 +74,7 @@ ul, ol {
 ::selection { background: rgba(var(--glow), 0.3); color: var(--ink-strong); }
 :focus-visible { outline: 1px solid var(--warm); outline-offset: 2px; }
 
-/* Mono HUD type: nav, labels, eyebrows, metadata */
-.eyebrow,
+/* Mono HUD type: nav, labels, metadata */
 .hud-readout,
 .nav-name,
 .nav-link,
@@ -357,15 +356,6 @@ ul, ol {
   font-size: 1.1rem;
   font-weight: 600;
   margin-bottom: 1.25rem;
-}
-
-/* Mono eyebrow above a title */
-.eyebrow {
-  font-size: 0.68rem;
-  line-height: 1.6;
-  color: var(--accent);
-  opacity: 0.85;
-  margin-bottom: 1rem;
 }
 
 /* Sections and hero */

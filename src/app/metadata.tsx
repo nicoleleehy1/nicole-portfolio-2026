@@ -1,6 +1,6 @@
 export const RESUME_URL = "/Nicole_Lee_Resume";
 
-// Site sections, in nav order; the order also numbers each page's "SECTION 0N" eyebrow.
+// Site sections, in nav order.
 export const sections = [
   { label: "Experience", href: "/experience" },
   { label: "Leadership", href: "/leadership" },
