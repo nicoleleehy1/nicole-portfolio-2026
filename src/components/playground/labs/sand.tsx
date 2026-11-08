@@ -207,7 +207,7 @@ export default function Sand() {
   }, [material, brush, simRef]);
 
   return (
-    <Stage canvasRef={canvasRef} sim={stage} hint="Press and drag to pour. Sand piles up, water finds its level, stone stays put.">
+    <Stage canvasRef={canvasRef} sim={stage} hint="press and drag to pour. sand piles up, water finds its level, stone stays put.">
       <Choice
         label="Material"
         value={material}

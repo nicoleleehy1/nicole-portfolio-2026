@@ -95,16 +95,17 @@ export const labNotes: LabNote[] = [
   {
     slug: "falling-sand",
     title: "sand simulation",
-    play: "Drop sand, water and stone into a little world.",
-    idea: "How simple material rules create believable behavior.",
-    notes: [
-      "Every grain only checks the cells right next to it. Sand falls if the space below is free, otherwise it tries to slide diagonally. Water does the same, and if it still can't move it spreads sideways. Stone never moves. That's all.",
-      "Out of those rules you get piles with a consistent slope, water that levels itself out and fills basins, and sand that sinks through water because it's allowed to swap places with it. None of that is programmed directly: the behavior you recognize as \"sand\" is what the neighborhood rules add up to.",
+    play: "pick sand, water or stone and draw!",
+    premise: "premise: every grain only looks at the cells right next to it.",
+    rules: [
+      "sand falls if the space below is empty, otherwise it slides diagonally.",
+      "sand sinks through water by swapping places with it.",
+      "water falls the same way, and if it's stuck it spreads sideways.",
+      "stone never moves.",
     ],
-    tryThis: [
-      "Pour sand onto a ledge and watch the pile settle to the same angle every time.",
-      "Fill a basin with water, then pour sand into it.",
-      "Build a funnel out of stone and pour through it.",
+    thoughts: [
+      "piles always settle at the same angle. real sand does this too (the angle of repose), but here it comes out around 45°, because grains can only slide one cell diagonally. water filling a basin evenly isn't programmed anywhere either, it just falls out of the spread-sideways rule.",
+      "the order you update in matters more than i expected. if you always scan left to right, everything drifts to one side, and alternating the direction each frame hides it. whole games run on rules like these: noita simulates every pixel of its world this way. i'd like to try fire next, which might only need one more rule: spread to anything flammable, then burn out.",
     ],
   },
   {
