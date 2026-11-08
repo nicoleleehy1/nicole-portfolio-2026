@@ -7,7 +7,7 @@ export type XpEntry = {
   link?: string;
 };
 
-// Expandable rows: role | company and date, with bullets revealed on click.
+// Expandable rows: company | role and date, with bullets revealed on click.
 export function XpList({ entries }: { entries: XpEntry[] }) {
   return (
     <div>
@@ -16,9 +16,9 @@ export function XpList({ entries }: { entries: XpEntry[] }) {
           <summary className="xp-summary">
             <div className="xp-head">
               <span className="xp-title">
-                <span className="entry-role">{e.role}</span>
+                <span className="entry-role">{e.co.trim()}</span>
                 <span className="xp-sep"> | </span>
-                <span className="xp-co">{e.co}</span>
+                <span className="xp-co">{e.role}</span>
                 {e.link && (
                   <a
                     className="xp-arrow"
