@@ -66,6 +66,8 @@ export function GameOfLife() {
   // Per-cell glow that fades after a cell dies, so recent history shows as a trail.
   const trailRef = useRef<Float32Array>(new Float32Array(COLS * ROWS));
   const paintRef = useRef<0 | 1 | null>(null);
+  // The pattern the current run started from, so Reset can replay it from generation 0.
+  const seedRef = useRef<Uint8Array>(new Uint8Array(COLS * ROWS));
   const [running, setRunning] = useState(false);
   const [speed, setSpeed] = useState(12);
   const [generation, setGeneration] = useState(0);
@@ -116,6 +118,7 @@ export function GameOfLife() {
   }
 
   function reset(cells: Uint8Array) {
+    seedRef.current = cells.slice();
     cellsRef.current = cells;
     trailRef.current = new Float32Array(COLS * ROWS);
     sync(0);
@@ -224,6 +227,9 @@ export function GameOfLife() {
           </button>
           <button type="button" className="pg-btn" onClick={advance} disabled={running}>
             Step
+          </button>
+          <button type="button" className="pg-btn" onClick={() => reset(seedRef.current.slice())}>
+            Reset
           </button>
           <button type="button" className="pg-btn" onClick={() => reset(randomCells())}>
             Random
