@@ -294,7 +294,7 @@ export default function Springs() {
   }, [scene, gravity, stiffness, tear, simRef]);
 
   return (
-    <Stage canvasRef={canvasRef} sim={stage} hint="Grab anything and drag it around. Links turn warmer as they stretch." cursor="grab">
+    <Stage canvasRef={canvasRef} sim={stage} hint="grab anything and drag it around. links turn warmer as they stretch." cursor="grab">
       <Choice
         label="Scene"
         value={scene}

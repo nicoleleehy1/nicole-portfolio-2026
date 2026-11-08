@@ -162,16 +162,17 @@ export const labNotes: LabNote[] = [
   {
     slug: "spring-systems",
     title: "spring systems",
-    play: "Drag a cloth, a rope or a soft body.",
-    idea: "How forces and constraints produce motion.",
-    notes: [
-      "Each scene is just points joined by sticks. The points use Verlet integration: rather than storing velocity, each point remembers where it was last frame and keeps going by the same amount, plus gravity. Then every stick nudges its two ends back toward its rest length.",
-      "One pass of that correction leaves things stretchy; repeating it many times per frame makes them stiff, which is what the Stiffness slider changes. Cloth is a grid of sticks, rope is a chain, and the soft bodies are rings with weak springs to their centres. The color of each link shows how stretched it is.",
+    play: "drag the cloth, the rope or the soft body!",
+    premise: "premise: everything is just points connected by sticks.",
+    rules: [
+      "each point remembers where it was last frame and keeps moving by the same amount.",
+      "gravity pulls every point down.",
+      "every stick pulls its two ends back toward its resting length.",
+      "repeat step 3 a few times per frame. more passes means stiffer.",
     ],
-    tryThis: [
-      "Turn on Tearable and pull the cloth hard.",
-      "Drop stiffness to zero and drag a rope: it stretches like elastic.",
-      "Throw a soft body against the wall, then turn gravity off.",
+    thoughts: [
+      "there's no velocity stored anywhere. speed is just the gap between where a point is and where it was, which feels like cheating but turns out to be really stable (verlet integration). stiffness is just repetition: one pass is stretchy like elastic, and a lot of passes is stiff like rope. the color shows stretch, so with tearable on you can see where the cloth is about to rip.",
+      "thomas jakobsen wrote up this method in 2001 for the ragdoll bodies in hitman: codename 47. i also wanted to know the least a soft body needs to hold its shape. here it's a ring plus weak springs to its center, and without those it folds flat.",
     ],
   },
   {
