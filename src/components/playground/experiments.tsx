@@ -66,13 +66,13 @@ export const experiments: Experiment[] = [
     tag: `EXP-${String(i + 2).padStart(2, "0")}`,
     Stage: LABS[n.slug],
     howTo: n.play,
-    notes: n.premise ? (
+    notes: (
       <>
         <p>
           {n.premise} rules:
         </p>
         <ol className="pg-rules">
-          {(n.rules ?? []).map(r => (
+          {n.rules.map(r => (
             <li key={r}>{r}</li>
           ))}
         </ol>
@@ -81,7 +81,7 @@ export const experiments: Experiment[] = [
         <p>
           <strong>initial thoughts.</strong>
         </p>
-        {(n.thoughts ?? []).map(t => (
+        {n.thoughts.map(t => (
           <p key={t}>{t}</p>
         ))}
         {n.cite && (
@@ -91,30 +91,6 @@ export const experiments: Experiment[] = [
               {n.cite.text}
             </a>
             . models and shader code from the article, used under cc by 4.0 and apache 2.0.
-          </p>
-        )}
-      </>
-    ) : (
-      <>
-        <p>
-          <strong>{n.idea}</strong>
-        </p>
-        {(n.notes ?? []).map(p => (
-          <p key={p}>{p}</p>
-        ))}
-        <h3>Things to try</h3>
-        <ul className="pg-list">
-          {(n.tryThis ?? []).map(t => (
-            <li key={t}>{t}</li>
-          ))}
-        </ul>
-        {n.cite && (
-          <p className="pg-cite">
-            Based on{" "}
-            <a href={n.cite.href} target="_blank" rel="noreferrer" className="link">
-              {n.cite.text}
-            </a>
-            . Models and shader code from the article, used under CC BY 4.0 and Apache 2.0.
           </p>
         )}
       </>

@@ -7,15 +7,11 @@ export type LabNote = {
   // what visitors can do, one line, shown under the notes title
   play: string;
   // what the experiment is, a sentence or two, ending right before the rules
-  premise?: string;
+  premise: string;
   // the instructions that create the pattern
-  rules?: string[];
+  rules: string[];
   // initial thoughts: a few continuous paragraphs on what I found
-  thoughts?: string[];
-  // old-style notes, for entries not yet rewritten
-  idea?: string;
-  notes?: string[];
-  tryThis?: string[];
+  thoughts: string[];
   // the work an experiment reproduces, credited under its notes
   cite?: { text: string; href: string };
 };
@@ -194,16 +190,17 @@ export const labNotes: LabNote[] = [
   {
     slug: "wave-interference",
     title: "wave interference",
-    play: "Place wave sources and adjust their frequency.",
-    idea: "How simple waves combine into unexpected patterns.",
-    notes: [
-      "Each source sends out circular ripples, and the canvas shows the sum of all of them. Where two crests arrive together they add up; where a crest meets a trough they cancel. With two sources at the same frequency this gives the fan of bright and dark bands from Young's double-slit experiment.",
-      "The Loudness view shows how strongly each point vibrates over time, which makes the quiet lines easy to see. Put several sources in a row and they act like a phased array, sending a narrow beam in one direction. Give two sources slightly different frequencies and the pattern sweeps slowly, the same effect as beats between two nearly matched notes.",
+    play: "place wave sources, drag them around and change their frequency!",
+    premise:
+      "premise: each source sends out circular ripples, and the canvas shows all of them added together.",
+    rules: [
+      "where two crests meet, they add up.",
+      "where a crest meets a trough, they cancel.",
+      "every point is just the sum of every source.",
     ],
-    tryThis: [
-      "Drag two sources apart and watch the number of quiet lines grow.",
-      "Try A line (beam) and switch to Loudness.",
-      "Set two sources to 1.20 Hz and 1.25 Hz and watch the pattern sweep.",
+    thoughts: [
+      "two sources at the same frequency make the same fan of bright and dark bands thomas young saw with light around 1801, which showed light is a wave. dragging them apart adds more quiet lines, which are easiest to count in loudness. a row of sources makes a beam, which is how radar and 5g antennas steer with no moving parts.",
+      "slightly different frequencies make the pattern sweep. 1.20 hz and 1.25 hz drift in and out, like two guitar strings that are a little out of tune. noise-cancelling headphones are this exact trick: play the opposite wave and the two cancel out.",
     ],
   },
 ];

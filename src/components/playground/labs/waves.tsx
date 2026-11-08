@@ -187,7 +187,7 @@ export default function Waves() {
     <Stage
       canvasRef={canvasRef}
       sim={stage}
-      hint={`Click to add a source (up to ${MAX_SOURCES}), click one to select it, drag to move it.`}
+      hint={`click to add a source (up to ${MAX_SOURCES}), click one to select it, drag to move it.`}
       readout={`${sel.count} source${sel.count === 1 ? "" : "s"}`}
     >
       <Choice
