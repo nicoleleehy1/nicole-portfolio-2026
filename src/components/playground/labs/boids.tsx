@@ -241,7 +241,7 @@ export default function Boids() {
 
   const fmt = (v: number) => v.toFixed(1);
   return (
-    <Stage canvasRef={canvasRef} sim={stage} hint="Move the pointer through the flock to startle it; hold to scare them harder.">
+    <Stage canvasRef={canvasRef} sim={stage} hint="move the pointer through the flock to startle it; hold to scare them harder.">
       <Slider label="Separation" value={separation} min={0} max={4} step={0.1} onChange={setSeparation} format={fmt} />
       <Slider label="Alignment" value={alignment} min={0} max={4} step={0.1} onChange={setAlignment} format={fmt} />
       <Slider label="Cohesion" value={cohesion} min={0} max={4} step={0.1} onChange={setCohesion} format={fmt} />

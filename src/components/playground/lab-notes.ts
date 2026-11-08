@@ -62,16 +62,17 @@ export const labNotes: LabNote[] = [
   {
     slug: "boids",
     title: "boids / flocking",
-    play: "Adjust separation, alignment and cohesion, and startle the flock with the pointer.",
-    idea: "How coordinated movement emerges without a leader.",
-    notes: [
-      "Every bird follows three rules about the neighbors it can see: don't crowd them (separation), head the way they're heading (alignment), and drift toward their centre (cohesion). No bird knows where the flock is going, and there is no leader. Craig Reynolds described this in 1987, and variations of it still animate crowds and herds in films.",
-      "The interesting part is the balance. Turn cohesion up and the flock collapses into tight balls; turn alignment up and it streams in parallel lanes; remove separation and birds stack on top of each other. Flocking only looks natural in a fairly narrow band where all three pull against each other.",
+    play: "move the sliders to change the flock, and use the pointer to scare it!",
+    premise:
+      "premise: every bird only sees the neighbors close to it. there's no leader and nobody knows where the flock is going. craig reynolds came up with this in 1987.",
+    rules: [
+      "separation: don't crowd your neighbors.",
+      "alignment: steer the way they're heading.",
+      "cohesion: steer toward their average position.",
     ],
-    tryThis: [
-      "Set alignment to zero: birds still clump, but they mill around instead of travelling.",
-      "Shrink the vision radius and watch one big flock break into many small ones.",
-      "Hold the pointer in the middle of a flock and watch it split and rejoin around you.",
+    thoughts: [
+      "flocking only looks natural in a surprisingly narrow band. too much cohesion and the birds collapse into balls, too much alignment and they stream in lanes, and without separation they stack on top of each other. even with alignment at zero they still clump, they just mill around instead of going anywhere, and shrinking the vision radius breaks one big flock into lots of little ones.",
+      "real starlings seem to work a bit differently. a 2008 study of murmurations found each bird tracks about six or seven nearest neighbors, however far away they are, rather than everyone within some distance. reynolds' version has been good enough for film since 1992, when it animated the bat swarms and penguin armies in batman returns. it makes me wonder what the fewest rules are that still read as alive.",
     ],
   },
   {
