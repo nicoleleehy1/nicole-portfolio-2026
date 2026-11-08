@@ -74,8 +74,7 @@ ul, ol {
 ::selection { background: rgba(var(--glow), 0.3); color: var(--ink-strong); }
 :focus-visible { outline: 1px solid var(--warm); outline-offset: 2px; }
 
-/* Mono HUD type: nav, labels, eyebrows, metadata */
-.eyebrow,
+/* Mono HUD type: nav, labels, metadata */
 .hud-readout,
 .nav-name,
 .nav-link,
@@ -359,15 +358,6 @@ ul, ol {
   margin-bottom: 1.25rem;
 }
 
-/* Mono eyebrow above a title */
-.eyebrow {
-  font-size: 0.68rem;
-  line-height: 1.6;
-  color: var(--accent);
-  opacity: 0.85;
-  margin-bottom: 1rem;
-}
-
 /* Sections and hero */
 .section { margin-bottom: 1.25rem; }
 
@@ -527,6 +517,12 @@ ul, ol {
 .xp-co {
   font-size: 0.95rem;
   color: var(--muted);
+}
+/* entry titles (company | role) in the same face as the row descriptions */
+.xp-title .entry-role,
+.xp-title .xp-sep,
+.xp-title .xp-co {
+  font-family: var(--serif);
 }
 .xp-arrow {
   display: inline-flex;

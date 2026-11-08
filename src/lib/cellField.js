@@ -318,8 +318,19 @@ export function initCellField(container, options = {}){
     });
   }
   // f picks how far into the free space a point lands; pass a fixed one to get the same answer every frame
+  // Pushing out of one rect can land in another (the hero pushes up into the nav, the nav pushes back down), so a few
+  // passes settle the point. A point that is already clear comes back unchanged, which keeps seeded cells still.
   function push(p, f){
     let [x, y] = p;
+    for (let pass = 0; pass < 4; pass++){
+      const [nx, ny] = pushOnce(x, y, f);
+      if (nx === x && ny === y) break;
+      x = nx; y = ny;
+    }
+    return [x, y];
+  }
+  const blocked = (x, y) => { const [nx, ny] = pushOnce(x, y, .5); return nx !== x || ny !== y; };
+  function pushOnce(x, y, f){
     for (const r of exclusion){
       if (x < r.l - PAD || x > r.r + PAD || y < r.t - PAD || y > r.b + PAD) continue;
       const room = [r.l - PAD, W - r.r - PAD, r.t - PAD, H - r.b - PAD]; // free space left, right, above, below
@@ -352,6 +363,8 @@ export function initCellField(container, options = {}){
     for (let i = 0; i < 12; i++){
       const p = gen(); let d = 1e9;
       for (const q of placed) d = Math.min(d, Math.hypot(p[0] - q[0], p[1] - q[1]));
+      // a spot still under text would be shoved away on the first frame; take any clear one over it
+      if (blocked(p[0], p[1])) d -= 1e9;
       if (d > bd){ bd = d; best = p; }
     }
     placed.push(best);
@@ -520,6 +533,17 @@ export function initCellField(container, options = {}){
     nextAcq = t;
     for (const a of anchors) vesicles.push(a.s);
     placed = null;
+    // fonts and layout can still shift the text for a moment after the first paint
+    snapUntil = performance.now() + 1500;
+  }
+
+  /* A new page: every structure stays exactly where it is instead of sliding out of the way of the new text.
+     Decorations take their current spot as home; cells keep drifting and only pick text-free spots when they next wander. */
+  function holdAll(){
+    for (const o of [...clusters, ...vesicles]) o.held = true;
+    for (const arr of [donuts, fans, foams, dust, proteins, stars, rods, bursts, dots]) for (const o of arr){
+      o.hx = o.bx; o.hy = o.by; o.held = true;
+    }
   }
 
   function spawn(x, y){
@@ -634,13 +658,21 @@ export function initCellField(container, options = {}){
     else if (t > o.next){
       // wander along its own side, occasionally crossing to the other
       const side = (o.x > W/2) !== (Math.random() < .12) ? 1 : 0;
-      [o.tx, o.ty] = sidePos(side); o.next = t + rnd(6,14);
+      [o.tx, o.ty] = sidePos(side); o.next = t + rnd(6,14); o.held = false;
     }
     if (o.anchor){ /* position handled above */ }
     else if (ptr.drag === o){ const k = Math.min(1, rdt*8); o.x += (ptr.x - o.x)*k; o.y += (ptr.y - o.y)*k; o.tx = o.x; o.ty = o.y; o.next = t + 4; }
     else {
-      // keep targets out of the reading area as it moves (scroll, resize); a cell dragged under text drifts back out
-      [o.tx, o.ty] = push([o.tx, o.ty], o.pf ??= rnd(.15,.85));
+      // keep targets out of the reading area as it moves (scroll, resize); a cell dragged under text drifts back out.
+      // A cell held over from the last page stays where it is until it wanders off on its own or the text clears it.
+      const [gx, gy] = push([o.tx, o.ty], o.pf ??= rnd(.15,.85));
+      if (o.held && (gx !== o.tx || gy !== o.ty)){ /* stay put */ }
+      else {
+        o.held = false;
+        // while the page is still settling right after load, jump instead of gliding across the screen
+        if (snapping){ o.x += gx - o.tx; o.y += gy - o.ty; }
+        o.tx = gx; o.ty = gy;
+      }
       o.x += (o.tx - o.x)*ease; o.y += (o.ty - o.y)*ease;
     }
     o.grow = o.dying ? o.grow - rdt*1.4 : Math.min(1, o.grow + rdt*.9);
@@ -649,7 +681,7 @@ export function initCellField(container, options = {}){
 
   /* epithelial life cycle: every few seconds one colony is born, divides, merges into a neighbour,
      grows or shrinks, or fades away, keeping between 2 and 5 of them on screen */
-  let nextLife = 0;
+  let nextLife = 0, snapUntil = 0, snapping = false, route = null;
   function lifeEvent(){
     const ep = clusters.filter(c => c.type === 1 && !c.dying && !c.merge), r = Math.random();
     const born = () => { const [x, y] = sidePos(); const c = makeCluster(1, x, y); c.grow = 0; c.s = .4; c.sc = rnd(.8, 1.2); clusters.push(c); };
@@ -674,6 +706,7 @@ export function initCellField(container, options = {}){
   }
 
   function update(dt, rdt, now){
+    snapping = now < snapUntil;
     const ease = 1 - Math.pow(1 - .006, dt*60);
     if (!S.paused && now > nextLife){ lifeEvent(); nextLife = now + rnd(2500, 5000); }
     for (const c of clusters){
@@ -712,10 +745,13 @@ export function initCellField(container, options = {}){
     vesicles = vesicles.filter(v => !(v.dying && v.grow <= 0));
 
     // drifting decorations ease their base out of the reading area, and back home once it moves away
-    const sk = Math.min(1, rdt*2);
+    const sk = snapping ? 1 : Math.min(1, rdt*2);
     for (const arr of [donuts, fans, foams, dust, proteins, stars, rods, bursts, dots]) for (const o of arr){
       o.hx ??= o.bx; o.hy ??= o.by;
       const [gx, gy] = push([o.hx, o.hy], o.pf ??= rnd(.15,.85));
+      // held over from the last page: stay put while the new text covers home
+      if (o.held && (gx !== o.hx || gy !== o.hy)) continue;
+      o.held = false;
       o.bx += (gx - o.bx)*sk; o.by += (gy - o.by)*sk;
     }
     for (const d of donuts){ d.x = d.bx + Math.sin(t*.08 + d.ph)*40; d.y = d.by + Math.cos(t*.06 + d.ph)*30; d.cx = d.x; d.cy = d.y; d.cr = Math.max(12, d.r*K*1.6); }
@@ -1514,6 +1550,7 @@ export function initCellField(container, options = {}){
 
   function setOptions(o = {}){
     for (const k in o) if (k in S) S[k] = o[k];
+    if ('route' in o){ if (route !== null && o.route !== route) holdAll(); route = o.route; }
     if ('exclusionRects' in o) setExclusion(o.exclusionRects);
     if ('readout' in o) readout = o.readout || null;
     if ('readoutLabel' in o) readoutLabel = o.readoutLabel || '';

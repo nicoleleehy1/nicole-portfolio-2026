@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { getWritings } from "@/lib/writings";
-import { SectionEyebrow } from "@/components/section-eyebrow";
 
 export const metadata: Metadata = { title: "Writings" };
 
@@ -11,7 +10,6 @@ export default async function WritingsPage() {
   const writings = await getWritings();
   return (
     <section className="section scrim" data-content data-exclude>
-      <SectionEyebrow href="/writings" count={writings.length} />
       <h1 className="page-title">Writings</h1>
       <div>
         {writings.map(w => (

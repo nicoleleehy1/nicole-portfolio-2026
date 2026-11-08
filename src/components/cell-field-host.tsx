@@ -37,6 +37,7 @@ export default function FieldHost({ onReady }: { onReady: (field: CellField | nu
         if (cancelled) return;
         const field = initCellField(el, {
           ...intensity(window.location.pathname),
+          route: window.location.pathname,
           exclusionRects: readingRects(),
           // smaller structures than the standalone piece, so they frame the text instead of crowding it
           scale: 0.6,
@@ -56,7 +57,10 @@ export default function FieldHost({ onReady }: { onReady: (field: CellField | nu
     let frame = 0;
     const relayout = () => {
       cancelAnimationFrame(frame);
-      frame = requestAnimationFrame(() => fieldRef.current?.setOptions({ exclusionRects: readingRects() }));
+      // route rides along so a new page holds the structures in place even if this measures before the pathname effect
+      frame = requestAnimationFrame(() =>
+        fieldRef.current?.setOptions({ route: window.location.pathname, exclusionRects: readingRects() }),
+      );
     };
     const observer = new ResizeObserver(relayout);
     observer.observe(document.body);
@@ -81,9 +85,10 @@ export default function FieldHost({ onReady }: { onReady: (field: CellField | nu
   }, [onReady]);
 
   useEffect(() => {
-    // a new route brings new text blocks; measure once it has rendered
+    // a new route brings new text blocks; measure once it has rendered. The structures stay where they are rather
+    // than sliding out of the way of the new page's text.
     const frame = requestAnimationFrame(() =>
-      fieldRef.current?.setOptions({ ...intensity(pathname), exclusionRects: readingRects() }),
+      fieldRef.current?.setOptions({ ...intensity(pathname), route: pathname, exclusionRects: readingRects() }),
     );
     return () => cancelAnimationFrame(frame);
   }, [pathname]);
