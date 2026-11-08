@@ -128,7 +128,7 @@ export default function NeuralCellularAutomata() {
     <Stage
       canvasRef={canvasRef}
       sim={stage}
-      hint={supported ? "Click or drag to cut away part of the creature and watch it grow back. Double-click to plant a new seed." : "This experiment needs WebGL, which this browser has turned off."}
+      hint={supported ? "click or drag to cut away part of the creature and watch it grow back. double-click to plant a new seed." : "this experiment needs webgl, which this browser has turned off."}
       readout={`step ${steps}`}
     >
       <Choice label="Creature" value={emoji} options={EMOJI.map((e, i) => ({ value: i, label: e }))} onChange={setEmoji} />

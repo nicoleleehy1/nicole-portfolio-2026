@@ -41,20 +41,21 @@ export const labNotes: LabNote[] = [
   {
     slug: "neural-ca",
     title: "growing neural cellular automata",
-    play: "Pick a creature, cut pieces off it, and watch it grow back.",
-    idea: "How a single rule, learned instead of designed, can grow a shape and repair it.",
-    notes: [
-      "This is a reproduction of the Distill article Growing Neural Cellular Automata. Like the elementary automata, every cell follows the same local rule, but here the rule is a small neural network. Each cell holds 16 numbers: four are its color and transparency, and the rest are hidden state it can use to signal to its neighbors. Every step, a cell looks at itself and the gradients of its 3×3 neighborhood, runs the network, and nudges its own state.",
-      "The rule was trained so that a single seed cell grows into the target emoji. Growing models learned only that: their shapes often keep growing or fall apart afterwards. Persistent models were trained to hold the shape steady over long runs. Regenerating models were also damaged during training, so they learned to heal, which is what makes cutting into them so satisfying. Cells update at random, about half of them each step, so no global clock is needed.",
-      "Nothing in the network knows where it is or what the whole shape looks like. The form exists only as a pattern of local messages, a little like how cells in an embryo coordinate to build a body and, in some animals, rebuild one.",
+    play: "pick a creature, then drag across it to cut pieces off. double-click to plant a new seed!",
+    premise:
+      "premise: every cell runs the same tiny neural network. each cell holds 16 numbers: four for its color and transparency, and twelve hidden ones it uses to talk to its neighbors. the network was trained so one seed cell grows into an emoji.",
+    rules: [
+      "each cell looks at itself and how its 3×3 neighborhood is changing.",
+      "it runs that through the network and gets a small update.",
+      "it adds the update to its own state.",
+      "only about half the cells update each step, at random, so there's no global clock.",
     ],
-    tryThis: [
-      "Cut the lizard's tail off on Regenerating, then try the same cut on Growing.",
-      "Double-click away from the creature to plant a second seed and grow a twin.",
-      "Turn the Rotation slider: the rule still works, because each cell's sense of direction comes from its gradients.",
+    thoughts: [
+      "the part that stuck with me is that no cell knows the shape. nothing in the network knows where it is or what a lizard looks like, so the creature only exists as a pattern of local messages passed between neighbors. what each model can do depends entirely on how it was trained. growing models only learned to grow, so they often keep spreading or fall apart. persistent ones learned to hold still, and regenerating ones were damaged during training, which is why they can grow a tail back.",
+      "that's close to real biology, which isn't an accident: michael levin, one of the authors, studies how real cells coordinate like this, and planarian flatworms can regrow an entire head. rotation works too, because each cell's sense of direction comes from its gradients, so rotating them turns the whole creature without retraining. i keep wondering whether one rule could grow different shapes if the seed carried a message picking which one.",
     ],
     cite: {
-      text: "Mordvintsev, Randazzo, Niklasson & Levin, \"Growing Neural Cellular Automata\", Distill, 2020",
+      text: "mordvintsev, randazzo, niklasson & levin, \"growing neural cellular automata\", distill, 2020",
       href: "https://distill.pub/2020/growing-ca/",
     },
   },
