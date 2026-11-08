@@ -118,7 +118,7 @@ export default function Automata() {
   }, [speed, simRef]);
 
   return (
-    <Stage canvasRef={canvasRef} sim={stage} hint="Click or drag along the canvas to flip cells in the starting row." readout={`Rule ${rule}`}>
+    <Stage canvasRef={canvasRef} sim={stage} hint="click or drag along the canvas to flip cells in the starting row." readout={`Rule ${rule}`}>
       <Choice
         label="Rule"
         value={[30, 90, 110].includes(rule) ? rule : -1}

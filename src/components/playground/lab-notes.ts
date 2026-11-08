@@ -1,16 +1,21 @@
 // Copy for the lab experiments that follow Game of Life in the switcher, in display order.
-// The slug picks the interactive component in labs.tsx; experiments.tsx turns each entry into notes.
+// The slug picks the interactive component in labs.tsx; experiments.tsx turns each entry into notes
+// laid out like game of life: premise + numbered rules, then "initial thoughts."
 export type LabNote = {
   slug: string;
   title: string;
   // what visitors can do, one line, shown under the notes title
   play: string;
-  // the idea the experiment is about, one line
-  idea: string;
-  // the write-up under the canvas
-  notes: string[];
-  // small prompts for things worth trying
-  tryThis: string[];
+  // what the experiment is, a sentence or two, ending right before the rules
+  premise?: string;
+  // the instructions that create the pattern
+  rules?: string[];
+  // initial thoughts: a few continuous paragraphs on what I found
+  thoughts?: string[];
+  // old-style notes, for entries not yet rewritten
+  idea?: string;
+  notes?: string[];
+  tryThis?: string[];
   // the work an experiment reproduces, credited under its notes
   cite?: { text: string; href: string };
 };
@@ -19,16 +24,18 @@ export const labNotes: LabNote[] = [
   {
     slug: "cellular-automata",
     title: "elementary cellular automata",
-    play: "Switch between Rule 30, Rule 90 and Rule 110, and change the starting cells.",
-    idea: "How tiny rule changes produce dramatically different patterns.",
-    notes: [
-      "Each row is one generation of a line of cells. A cell's next state depends only on itself and its two neighbors, so there are just eight possible neighborhoods, and a rule is nothing more than eight yes-or-no answers. Read those answers as a binary number and you get the rule's name.",
-      "Rule 90 draws a perfect Sierpiński triangle. Rule 30 looks like noise, random enough that it was once used to generate random numbers. Rule 110 sits in between, with structures that move and collide, and it has been proven capable of universal computation. The three differ by a few bits in the rule table.",
+    play: "pick a rule, then click along the canvas to flip cells in the starting row!",
+    premise:
+      "premise: a single row of cells, each on or off. every generation is a new row underneath. a cell only looks at itself and its two neighbors, so there are just eight possible neighborhoods, and a rule is eight yes/no answers.",
+    rules: [
+      "look at a cell and its left and right neighbors.",
+      "find that pattern in the rule's table to get on or off.",
+      "write the answer into the row below.",
+      "read the eight answers as a binary number and that's the rule's name (rule 30 is 00011110).",
     ],
-    tryThis: [
-      "Flip a single outcome in the rule table and watch the whole pattern change character.",
-      "Start Rule 90 from a random row: the triangles still appear, just overlapping.",
-      "On Rule 110, click a few cells into an empty row and see which structures survive.",
+    thoughts: [
+      "what surprised me most is how little separates these three. rule 30, 90 and 110 differ by only two or three entries in their tables, yet one draws a perfect sierpiński triangle, one looks like static, and one sits somewhere in between. rule 90 makes sense once you notice each new cell is just the xor of its two neighbors, which is pascal's triangle with the odd numbers colored in.",
+      "rule 30 is random enough that stephen wolfram used its center column as a random number generator in mathematica. rule 110 goes further: in 2004 matthew cook proved it's turing complete, using the little structures that drift across it and crash into each other as signals. i still find it strange that the calmer-looking rule is the one that can compute anything, while nobody has shown the same for rule 30.",
     ],
   },
   {
