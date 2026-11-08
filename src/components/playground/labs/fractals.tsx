@@ -224,7 +224,7 @@ function MandelbrotView({ modes }: { modes: ReactNode }) {
     <Stage
       canvasRef={canvasRef}
       sim={stage}
-      hint={supported ? "Click to zoom in, shift-click to zoom out, drag to pan, or scroll." : "This view needs WebGL, which this browser has turned off."}
+      hint={supported ? "click to zoom in, shift-click to zoom out, drag to pan, or scroll." : "this view needs webgl, which this browser has turned off."}
       readout={`${label}× ${zoom.limit ? "· precision limit" : ""}`}
       cursor="zoom-in"
     >
@@ -348,7 +348,7 @@ function TreeView({ modes }: { modes: ReactNode }) {
   }, [angle, ratio, depth, wander, sway, simRef]);
 
   return (
-    <Stage canvasRef={canvasRef} sim={stage} hint="Every branch is a smaller copy of the tree. Change the one rule and the whole tree follows." readout={`${2 ** depth - 1} branches`} cursor="default">
+    <Stage canvasRef={canvasRef} sim={stage} hint="every branch is a smaller copy of the tree. change the one rule and the whole tree follows." readout={`${2 ** depth - 1} branches`} cursor="default">
       {modes}
       <Slider label="Angle" value={angle} min={0} max={90} onChange={setAngle} format={v => `${v}°`} />
       <Slider label="Shrink" value={ratio} min={0.5} max={0.85} step={0.01} onChange={setRatio} format={v => `${Math.round(v * 100)}%`} />

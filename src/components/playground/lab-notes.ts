@@ -178,16 +178,17 @@ export const labNotes: LabNote[] = [
   {
     slug: "fractals",
     title: "fractals",
-    play: "Zoom into the Mandelbrot set or grow branching trees.",
-    idea: "Recursion, self-similarity, and complexity across scales.",
-    notes: [
-      "The Mandelbrot set comes from one line: start at zero, square the number and add c, and repeat. If it stays small forever, c is in the set. The boundary between staying small and escaping is infinitely detailed, and zooming in keeps turning up spirals, seahorses and small copies of the whole set. The colors count how fast each point escapes.",
-      "The tree is recursion you can see: a branch ends in two smaller branches, each of which ends in two smaller branches, down to the depth you choose. Two numbers, the angle between branches and how much each one shrinks, decide whether you get a pine, a bush or a fern-like spray.",
+    play: "click to zoom into the mandelbrot set, or switch to the branching tree!",
+    premise: "premise: a fractal looks similar at every scale. here are two ways to make one.",
+    rules: [
+      "mandelbrot: start at zero, square it and add c. repeat.",
+      "if it stays small forever, c is in the set. the color is how fast it escapes.",
+      "tree: a branch ends in two smaller branches.",
+      "repeat until you hit the depth you picked.",
     ],
-    tryThis: [
-      "Keep clicking the same point near the edge of the Mandelbrot set until you hit the precision limit.",
-      "Raise Detail when zoomed deep; the edges sharpen.",
-      "Set the tree's angle to 90° and shrink to about 70% for an H-tree.",
+    thoughts: [
+      "the edge of the mandelbrot set never ends. zooming keeps turning up spirals, seahorses and tiny copies of the whole set, but the computer gives out first: after zooming in about ten trillion times, normal numbers run out of precision and everything turns blocky. benoit mandelbrot got there by asking how long the coast of britain is, in 1967. the answer depends on how small your ruler is, and he coined the word fractal a few years later.",
+      "the tree shows how much two numbers can do. the angle and the shrink decide whether you get a pine or a fern, and 90° with about 70% gives an h-tree, which is how chips spread their clock signal evenly.",
     ],
   },
   {
