@@ -78,16 +78,18 @@ export const labNotes: LabNote[] = [
   {
     slug: "reaction-diffusion",
     title: "reaction–diffusion",
-    play: "Paint onto the canvas and watch spots and stripes form.",
-    idea: "How local chemical interactions can create organic patterns.",
-    notes: [
-      "This is the Gray–Scott model: two chemicals spread across a surface, and one consumes the other to make more of itself. The fed chemical diffuses quickly while the catalyst diffuses slowly, so wherever the catalyst gathers it starves its own surroundings. That tension between local growth and inhibition around it is what produces stable spots and stripes.",
-      "Alan Turing proposed this mechanism in 1952 as an explanation for how an embryo could form patterns from a uniform start, and similar dynamics are now thought to shape things like zebrafish stripes and the spacing of hair follicles. Two numbers, the feed rate and the kill rate, choose which pattern you get.",
+    play: "paint on the canvas and watch spots and stripes grow!",
+    premise:
+      "premise: two chemicals, a and b, spread across a surface. b eats a to make more of itself. a spreads fast and b spreads slow, so wherever b gathers it starves the area around it. this is the gray–scott model.",
+    rules: [
+      "a is fed in everywhere at a steady rate (feed).",
+      "b is removed everywhere at a steady rate (kill).",
+      "where a meets two b's, it turns into b.",
+      "both spread to their neighbors, a about twice as fast as b.",
     ],
-    tryThis: [
-      "Paint a line on Spots and watch it break up into a row of dots.",
-      "Switch presets mid-way: the existing pattern reorganizes into the new one.",
-      "Nudge Feed slowly in Custom and find where spots turn into stripes.",
+    thoughts: [
+      "alan turing predicted this in 1952, suggesting it's how an embryo could get patterns from a blank start (the same turing who broke enigma). the whole range of behavior comes down to two numbers: feed and kill choose between spots, stripes, mazes or nothing at all, and john pearson mapped those regions out in 1993. painting a line on spots shows it nicely, since the line splits into a neat row of dots.",
+      "it seems to happen in real animals too. zebrafish stripes look like they come from pigment cells pushing and pulling on each other in a turing-like way. james murray took it further and argued that body shape matters: a thin tail only has room for stripes, which might be why leopards have spotted bodies and striped tails.",
     ],
   },
   {

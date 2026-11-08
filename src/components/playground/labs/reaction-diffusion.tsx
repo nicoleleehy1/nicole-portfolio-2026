@@ -160,7 +160,7 @@ export default function ReactionDiffusion() {
   };
 
   return (
-    <Stage canvasRef={canvasRef} sim={stage} hint="Paint on the canvas to drop in chemical V and watch it grow." readout={`f ${f.toFixed(4)} · k ${k.toFixed(4)}`}>
+    <Stage canvasRef={canvasRef} sim={stage} hint="paint on the canvas to drop in chemical b and watch it grow." readout={`f ${f.toFixed(4)} · k ${k.toFixed(4)}`}>
       <Choice
         label="Pattern"
         value={preset}
