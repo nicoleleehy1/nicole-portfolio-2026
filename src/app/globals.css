@@ -885,6 +885,8 @@ ul, ol {
   color: var(--ink-strong);
 }
 .prose h2 { font-size: 1.35rem; font-weight: 600; margin-top: 2.75rem; }
+/* section anchors (e.g. /blog/playground-thoughts#boids) land below the fixed nav */
+.prose h2[id] { scroll-margin-top: 6rem; }
 .prose h3 { font-size: 1.1rem; font-weight: 600; margin-top: 2rem; }
 .prose h4 { font-size: 1rem; font-weight: 600; margin-top: 1.5rem; }
 .prose strong { color: var(--ink-strong); }
@@ -897,6 +899,10 @@ ul, ol {
   margin: 1.5rem auto;
 }
 .prose p.center { text-align: center; }
+/* screenshots in a post: images stacked, small caption underneath */
+.prose figure { margin: 2rem 0; }
+.prose figure img { margin: 0 auto 0.75rem; border: 1px solid var(--faint); }
+.prose figcaption { font-size: 0.82rem; color: var(--muted); text-align: center; max-width: 34rem; margin-inline: auto; }
 .prose a { word-break: break-word; }
 .prose ul,
 .prose ol { padding-left: 1.5rem; }
@@ -1581,3 +1587,5 @@ html:has(.peek[open]) { overflow: hidden; }
 /* emoji choices (the neural CA's patterns) need room to be seen */
 .lab-choice[aria-label="Creature"] .lab-btn { font-size: 1.05rem; line-height: 1; padding: 0.3rem 0.45rem; letter-spacing: 0; }
 .pg-cite { margin-top: 1.4rem; font-size: 0.78rem; color: var(--muted); }
+/* link from each experiment's initial thoughts to its section of the playground thoughts writing */
+.pg-more { margin-top: 1rem; font-size: 0.85rem; }
