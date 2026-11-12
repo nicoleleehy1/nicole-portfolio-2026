@@ -456,6 +456,9 @@ export const awards: Award[] = [
 export type Project = {
   name: string;
   event: string;
+  // Short "what is it" points, shown in a callout at the top of the popup.
+  summary?: string[];
+  // In depth: what I built, shown under "What I did".
   desc: string[];
   stack: string;
   link?: string;
@@ -465,6 +468,8 @@ export type Project = {
   writeup?: string;
   // Optional award shown as a badge on the cover, e.g. "1st Place · HackMIT".
   award?: string;
+  // Extra screenshots in /public, shown under "What I did".
+  images?: string[];
 };
 
 export const projects: Project[] = [
@@ -473,6 +478,10 @@ export const projects: Project[] = [
     event: "Personal Project",
     link: "https://github.com/nicoleleehy1/pokerlab",
     image: "/projects/pokerlab.jpg",
+    summary: [
+      "An iOS app that teaches game-theory-optimal poker.",
+      "Works out the best play on the phone itself, in real time, with a solver engine I wrote in Swift.",
+    ],
     desc: [
       "Built a native iOS game-theory-optimal poker tutor powered by a custom Swift solver engine (hand evaluator, Monte Carlo equity engine, CFR/DCFR solvers and Metal GPU kernels) that computes Nash equilibria on device in real time.",
       "Wrote a hand evaluator running 216M evaluations/s on a single core (4,000x faster than brute force), verified against textbook counts on all 133M seven-card hands.",
@@ -486,6 +495,12 @@ export const projects: Project[] = [
     event: "Personal Project",
     link: "https://aster-ruby.vercel.app/",
     writeup: "/projects/aster",
+    image: "/projects/aster.png",
+    summary: [
+      "A decision record for drug discovery.",
+      "Chooses which compounds to assay next from a few dozen measurements.",
+      "Records why each was picked, so it can be checked against the result later.",
+    ],
     desc: [
       "Goal: a record of experimental decisions for any assay and any endpoint. A campaign declares its endpoint, unit and direction, and every round stores the full ranked slate — including the candidates that were rejected — with the acquisition policy, locks and exclusions in force, so a decisions API can read any pick back joined to its basis at the time and to its result.",
       "Approach: machine learning and active learning rather than deep learning. Chirality-aware Morgan fingerprints (radius 2, 2,048 bits) with standardized ridge regression, ranked greedily by predicted activity and refit each round from a starting set of 32 to 64 measured compounds.",
@@ -502,6 +517,12 @@ export const projects: Project[] = [
     name: "CodeMRI",
     event: "Personal Project",
     link: "https://github.com/nicoleleehy1/CodeMRI",
+    image: "/projects/codemri.jpg",
+    summary: [
+      "A static-analysis tool and context compiler for coding agents.",
+      "Maps a repo into architecture and symbol graphs, so an agent only reads the code a change touches.",
+    ],
+    // TODO(nicole): add more on what you built (how the graphs are stored, how impact analysis works, how the 83% was measured).
     desc: [
       "A static-analysis + context compiler for coding agents, parsing repository-wide ASTs into persistent architecture and symbol graphs with call/import dependencies, source navigation, and change-impact analysis.",
       "Compiles change-scoped context, reducing repository-reading tokens by 83% and enabling graph-guided code modifications.",
@@ -512,6 +533,11 @@ export const projects: Project[] = [
     name: "Flusk",
     event: "Personal Project",
     link: "https://web-production-5c042.up.railway.app/",
+    summary: [
+      "A key-value storage engine in Java, built on an LSM tree.",
+      "Served over a small REST API.",
+    ],
+    // TODO(nicole): add detail on what you did (design choices, compaction strategy, any benchmarks).
     desc: [
       "A Java LSM-tree storage engine with a full write path (WAL, MemTable, SSTable, 4-tier compaction with tombstone GC, Bloom filters and sparse indexing), exposed through 7 REST endpoints for low-latency reads/writes.",
     ],
@@ -521,6 +547,11 @@ export const projects: Project[] = [
     name: "Stoich",
     event: "Personal Project",
     link: "https://stoich.vercel.app/",
+    summary: [
+      "A research tool for reading chemistry papers.",
+      "Shows each reaction as a linked graph, equation, mechanism and 3D structure.",
+    ],
+    // TODO(nicole): add detail on what you did (the LLM pipeline, how hallucinations were measured).
     desc: [
       "A chemistry research tool built on a multi-LLM pipeline and cross-paper vector search, reducing atom-index hallucinations from 67% to under 15%; renders synchronized reaction graphs, equation and mechanism views, annotations, and 3D molecular structures.",
     ],
@@ -530,6 +561,10 @@ export const projects: Project[] = [
     name: "Synapse AI",
     event: "HackMIT 2025",
     link: "https://github.com/nicoleleehy1/synapse",
+    summary: [
+      "A study tool that turns PDFs into interactive knowledge graphs.",
+      "Built at HackMIT 2025.",
+    ],
     desc: [
       "Built an NLP pipeline parsing PDFs into structured knowledge graphs, extracting 200+ concept nodes and typed relationships per document into a Neo4j graph database.",
       "Engineered a React + D3.js frontend rendering 8 synchronized visualization modes (force-directed graph, kanban, timeline, mind map, etc.) with real-time bidirectional edits across all views.",
@@ -540,6 +575,11 @@ export const projects: Project[] = [
   {
     name: "ASL Live Translator",
     event: "TreeHacks 2025",
+    summary: [
+      "Reads ASL letters from a webcam and turns them into speech and captions.",
+      "Built at TreeHacks 2025 for nonverbal users.",
+    ],
+    // TODO(nicole): replace with what you built (model, how letters become words, your part of the team).
     desc: [
       "Real-time ASL letter recognition converting sign language to speech and live captions for nonverbal users.",
     ],
@@ -548,6 +588,11 @@ export const projects: Project[] = [
   {
     name: "Insurmate",
     event: "Bolt Hacks 2025",
+    summary: [
+      "An AI insurance agent that reads policy documents and answers questions about coverage.",
+      "Built at Bolt Hacks 2025.",
+    ],
+    // TODO(nicole): replace with what you built.
     desc: [
       "AI insurance agent — document parsing, policy comparison, and natural language Q&A over coverage details.",
     ],
@@ -557,6 +602,11 @@ export const projects: Project[] = [
     name: "Webinet",
     event: "Young Founders' Summit Asia 2020",
     award: "Semi-Finalist · YFS Asia",
+    summary: [
+      "An app that collects university webinars and courses for students.",
+      "Semi-finalist at Young Founders' Summit Asia 2020.",
+    ],
+    // TODO(nicole): replace with what you did.
     desc: [
       "An app that surfaces university webinars and courses so students can grow through e-learning, in support of accessible quality education for all (SDG 4).",
     ],

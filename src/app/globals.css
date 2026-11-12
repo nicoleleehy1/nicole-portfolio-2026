@@ -85,7 +85,8 @@ ul, ol {
 .list-date,
 .badge,
 .gallery-menu,
-.peek-props dt {
+.peek-props dt,
+.peek-label {
   font-family: var(--mono);
   font-weight: 500;
   text-transform: uppercase;
@@ -942,6 +943,43 @@ html:has(.peek[open]) { overflow: hidden; }
 }
 .peek-desc li::marker { color: var(--muted); }
 .peek-desc li + li { margin-top: 0.4rem; }
+
+/* Wide variant (projects): full cover image, summary callout, "what I did" */
+.peek.peek-wide { width: min(940px, calc(100vw - 2rem)); }
+.peek-hero {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 60vh;
+  object-fit: cover;
+  object-position: top;
+  border-bottom: 1px solid var(--rule);
+}
+.peek-callout {
+  margin-bottom: 1.5rem;
+  padding: 0.9rem 1.1rem;
+  border: 1px solid var(--rule);
+  border-left: 2px solid var(--accent);
+  background: rgba(var(--glow), 0.05);
+  font-size: 0.95rem;
+  line-height: 1.55;
+}
+.peek-callout ul { list-style: disc; padding-left: 1.1rem; }
+.peek-callout li::marker { color: var(--accent); }
+.peek-callout li + li { margin-top: 0.25rem; }
+.peek-label {
+  margin-bottom: 0.6rem;
+  font-size: 0.64rem;
+  font-weight: 500;
+  color: var(--muted);
+}
+.peek-shots {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+  gap: 0.75rem;
+  margin-top: 1.75rem;
+}
+.peek-shots img { display: block; width: 100%; height: auto; border: 1px solid var(--rule); }
 
 /* List view (awards) */
 .list { border-top: 1px solid var(--rule); }

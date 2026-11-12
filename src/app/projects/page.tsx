@@ -18,13 +18,16 @@ const items: GalleryItem[] = projects.map(p => ({
       ? { label: "Link", value: p.link.includes("github.com") ? "Code" : "Live", href: p.link }
       : { label: "Link", value: "Private" },
   ],
+  summary: p.summary,
+  bulletsLabel: "What I did",
   bullets: p.desc,
+  images: p.images,
 }));
 
 export default function ProjectsPage() {
   return (
     <section className="section scrim" data-content data-exclude>
-      <Gallery title="Selected Projects" items={items} filterLabel="Type" />
+      <Gallery title="Selected Projects" items={items} filterLabel="Type" wide />
     </section>
   );
 }
