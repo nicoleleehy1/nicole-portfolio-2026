@@ -99,7 +99,10 @@ ul, ol {
   inset: 0;
   z-index: 0;
   pointer-events: none;
+  transition: opacity 0.9s ease;
 }
+/* section pages: the field fades back to a quiet texture behind the text */
+.cell-field[data-calm] { opacity: 0.4; }
 .cell-field canvas {
   position: absolute;
   inset: 0;
@@ -125,12 +128,30 @@ ul, ol {
 }
 
 /* Calm reading surface behind text blocks: no card, just a darkened, blurred patch of the field */
+/* The veil behind section text has no hard edge: it sits on a pseudo-element that reaches past the box
+   and fades out on every side, so the text area melts into the field instead of reading as a dark card. */
 .scrim {
-  background: rgba(var(--veil), 0.55);
-  -webkit-backdrop-filter: blur(6px);
-  backdrop-filter: blur(6px);
+  --feather: clamp(2.5rem, 6vw, 4.5rem);
+  position: relative;
+  isolation: isolate;
   padding: calc(var(--pad) * 1.25) var(--pad);
   margin-inline: calc(var(--pad) * -1);
+}
+.scrim::before {
+  content: "";
+  position: absolute;
+  inset: calc(var(--feather) * -1);
+  z-index: -1;
+  pointer-events: none;
+  background: rgba(var(--veil), 0.45);
+  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px);
+  --fade-x: linear-gradient(to right, transparent, #000 calc(var(--feather) * 1.6), #000 calc(100% - var(--feather) * 1.6), transparent);
+  --fade-y: linear-gradient(to bottom, transparent, #000 calc(var(--feather) * 1.6), #000 calc(100% - var(--feather) * 1.6), transparent);
+  -webkit-mask-image: var(--fade-x), var(--fade-y);
+  mask-image: var(--fade-x), var(--fade-y);
+  -webkit-mask-composite: source-in;
+  mask-composite: intersect;
 }
 
 /* Tune box: collapsed toggle in the bottom-right corner (T hides it, ?tune opens it) */

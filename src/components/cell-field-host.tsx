@@ -3,9 +3,10 @@ import { useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
 import type { CellField, CellFieldOptions } from "@/lib/cellField";
 
-// Full strength on the home page; calmer behind long-form section pages.
-const FULL: CellFieldOptions = { glitch: 0.45, speed: 0.25, maxTrackers: 6, edgeBoxes: true };
-const CALM: CellFieldOptions = { glitch: 0.25, speed: 0.2, maxTrackers: 4, edgeBoxes: true };
+// Full strength on the home page. Section pages drop the HUD (tracker boxes, labels, glitch boxes, ascii)
+// and the field fades back (.cell-field[data-calm] in globals.css), so only the slow cells remain behind the text.
+const FULL: CellFieldOptions = { glitch: 0.45, speed: 0.25, maxTrackers: 6, edgeBoxes: true, track: true, ascii: true };
+const CALM: CellFieldOptions = { glitch: 0.2, speed: 0.2, maxTrackers: 0, edgeBoxes: false, track: false, ascii: false };
 const intensity = (pathname: string) => (pathname === "/" ? FULL : CALM);
 
 // Text blocks marked data-exclude, clipped to the viewport: cells spawn and wander around them, not under them.
@@ -43,6 +44,8 @@ export default function FieldHost({ onReady }: { onReady: (field: CellField | nu
           scale: 0.6,
           // fewer pieces than the standalone piece so the frame stays airy, with a brighter neon glow
           density: 0.65,
+          // no small scatter: the larger cells, corals and membranes carry the look on their own
+          confetti: false,
           glow: 1.25,
           light: isLight(),
           fontFamily: getComputedStyle(document.documentElement).getPropertyValue("--font-plex-mono").trim(),
@@ -95,7 +98,7 @@ export default function FieldHost({ onReady }: { onReady: (field: CellField | nu
 
   return (
     <>
-      <div ref={ref} className="cell-field" aria-hidden="true" />
+      <div ref={ref} className="cell-field" data-calm={pathname === "/" ? undefined : ""} aria-hidden="true" />
       {/* light mode: fades the sketch layer's dark fills out by brightness, so only its pastel lines show on white */}
       <svg width="0" height="0" aria-hidden="true" style={{ position: "absolute" }}>
         <filter id="cf-pastel" colorInterpolationFilters="sRGB">
