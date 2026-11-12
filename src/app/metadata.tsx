@@ -467,6 +467,19 @@ export type Project = {
 
 export const projects: Project[] = [
   {
+    name: "PokerLab",
+    event: "Personal Project",
+    link: "https://github.com/nicoleleehy1/pokerlab",
+    image: "/projects/pokerlab.jpg",
+    desc: [
+      "Built a native iOS game-theory-optimal poker tutor powered by a custom Swift solver engine (hand evaluator, Monte Carlo equity engine, CFR/DCFR solvers and Metal GPU kernels) that computes Nash equilibria on device in real time.",
+      "Wrote a hand evaluator running 216M evaluations/s on a single core (4,000x faster than brute force), verified against textbook counts on all 133M seven-card hands.",
+      "Cut push/fold Nash solves from 2.3 s to 79 ms (29.6x) with SIMD and Metal compute kernels, with GPU and CPU strategies agreeing within 0.01%.",
+      "Solves full-range rivers in under 0.3 s (46–279 ms) using under 7 MB of memory; showed DCFR reaches equilibrium in 4.5x fewer iterations than CFR+, backed by 145 engine and 12 UI tests.",
+    ],
+    stack: "Swift · SwiftUI · Metal · SwiftData · CloudKit",
+  },
+  {
     name: "Aster",
     event: "Personal Project",
     link: "https://aster-ruby.vercel.app/",
