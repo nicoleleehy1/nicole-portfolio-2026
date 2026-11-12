@@ -3,7 +3,8 @@ export const RESUME_URL = "/Nicole_Lee_Resume";
 // Site sections, in nav order.
 export const sections = [
   { label: "Experience", href: "/experience" },
-  { label: "Leadership", href: "/leadership" },
+  // Hidden for now. To restore: uncomment this and rename src/app/_leadership back to src/app/leadership.
+  // { label: "Leadership", href: "/leadership" },
   { label: "Projects", href: "/projects" },
   { label: "Awards", href: "/awards" },
   { label: "Writings", href: "/writings" },
