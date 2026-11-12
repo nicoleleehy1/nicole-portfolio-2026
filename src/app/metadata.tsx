@@ -627,33 +627,33 @@ export const projects: Project[] = [
     ],
     stack: "Python · React · OpenCV · MediaPipe · TensorFlow.js",
   },
-  {
-    name: "Insurmate",
-    event: "Bolt Hacks 2025",
-    summary: [
-      "An AI insurance agent that reads policy documents and answers questions about coverage.",
-      "Built at Bolt Hacks 2025.",
-    ],
-    // TODO(nicole): replace with what you built.
-    desc: [
-      "AI insurance agent — document parsing, policy comparison, and natural language Q&A over coverage details.",
-    ],
-    stack: "React · TensorFlow.js · LangChain",
-  },
-  {
-    name: "Webinet",
-    event: "Young Founders' Summit Asia 2020",
-    award: "Semi-Finalist · YFS Asia",
-    summary: [
-      "An app that collects university webinars and courses for students.",
-      "Semi-finalist at Young Founders' Summit Asia 2020.",
-    ],
-    // TODO(nicole): replace with what you did.
-    desc: [
-      "An app that surfaces university webinars and courses so students can grow through e-learning, in support of accessible quality education for all (SDG 4).",
-    ],
-    stack: "Mobile App · EdTech · SDG 4",
-  },
+  // {
+  //   name: "Insurmate",
+  //   event: "Bolt Hacks 2025",
+  //   summary: [
+  //     "An AI insurance agent that reads policy documents and answers questions about coverage.",
+  //     "Built at Bolt Hacks 2025.",
+  //   ],
+  //   // TODO(nicole): replace with what you built.
+  //   desc: [
+  //     "AI insurance agent — document parsing, policy comparison, and natural language Q&A over coverage details.",
+  //   ],
+  //   stack: "React · TensorFlow.js · LangChain",
+  // },
+  // {
+  //   name: "Webinet",
+  //   event: "Young Founders' Summit Asia 2020",
+  //   award: "Semi-Finalist · YFS Asia",
+  //   summary: [
+  //     "An app that collects university webinars and courses for students.",
+  //     "Semi-finalist at Young Founders' Summit Asia 2020.",
+  //   ],
+  //   // TODO(nicole): replace with what you did.
+  //   desc: [
+  //     "An app that surfaces university webinars and courses so students can grow through e-learning, in support of accessible quality education for all (SDG 4).",
+  //   ],
+  //   stack: "Mobile App · EdTech · SDG 4",
+  // },
 ];
 
 // Archived essays converted from Google Docs; each body is src/content/writings/<slug>.html.
