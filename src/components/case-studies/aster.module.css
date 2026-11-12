@@ -1,12 +1,8 @@
 /* Document layout for the Aster case study: a reading column with figures, tables and
    a print stylesheet, so the page saves as a PDF with the same structure it has on screen. */
 
-.doc {
-  --measure: 46rem;
-  max-width: var(--measure);
-  margin: 0 auto;
-  padding: clamp(2rem, 6vw, 4.5rem) var(--pad) 6rem;
-}
+/* Sits inside the project popup, so it takes the popup's width and padding. */
+.doc { margin-top: 0.5rem; }
 
 /* --- cover block ------------------------------------------------------- */
 
@@ -172,10 +168,7 @@
 .figure {
   counter-increment: fig;
   margin: 1.75rem 0 2rem;
-  /* figures are allowed to breathe past the reading column */
-  width: min(100%, 56rem);
-  margin-left: 50%;
-  transform: translateX(-50%);
+  width: 100%;
 }
 
 .figure img {
@@ -215,21 +208,15 @@
 
 @media (max-width: 40rem) {
   .pair { grid-template-columns: 1fr; }
-  .figure { width: 100%; margin-left: 0; transform: none; }
 }
 
 /* --- tables ------------------------------------------------------------ */
 
 .tableWrap {
   counter-increment: tbl;
-  width: min(100%, 56rem);
-  margin: 1.75rem 50% 2rem;
-  transform: translateX(-50%);
+  width: 100%;
+  margin: 1.75rem 0 2rem;
   overflow-x: auto;
-}
-
-@media (max-width: 40rem) {
-  .tableWrap { width: 100%; margin: 1.75rem 0 2rem; transform: none; }
 }
 
 .table {

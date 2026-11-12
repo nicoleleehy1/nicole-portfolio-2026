@@ -1,5 +1,5 @@
 "use client";
-import { Fragment, useRef, useState } from "react";
+import { Fragment, useRef, useState, type ReactNode } from "react";
 import { useCollection } from "./collection";
 
 export type GalleryItem = {
@@ -20,6 +20,8 @@ export type GalleryItem = {
   // Heading over the bullets when a summary is shown, e.g. "What I did".
   bulletsLabel?: string;
   bullets: string[];
+  // Long-form case study; replaces the bullets in the popup when present.
+  body?: ReactNode;
   // Extra screenshots shown under the bullets.
   images?: string[];
 };
@@ -128,7 +130,7 @@ export function Gallery({
                   </ul>
                 </aside>
               )}
-              {active.bullets.length > 0 && (
+              {active.body ?? (active.bullets.length > 0 && (
                 <>
                   {active.summary && active.bulletsLabel && (
                     <h3 className="peek-label">{active.bulletsLabel}</h3>
@@ -139,7 +141,7 @@ export function Gallery({
                     ))}
                   </ul>
                 </>
-              )}
+              ))}
               {active.images && active.images.length > 0 && (
                 <div className="peek-shots">
                   {active.images.map(src => (

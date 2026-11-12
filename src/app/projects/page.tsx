@@ -1,6 +1,10 @@
 import type { Metadata } from "next";
 import { projects } from "../metadata";
 import { Gallery, type GalleryItem } from "../../components/gallery";
+import { AsterCaseStudy } from "../../components/case-studies/aster";
+
+// Case studies shown in the popup in place of "What I did", keyed by Project.caseStudy.
+const caseStudies = { aster: <AsterCaseStudy /> };
 
 export const metadata: Metadata = { title: "Projects" };
 
@@ -21,6 +25,7 @@ const items: GalleryItem[] = projects.map(p => ({
   summary: p.summary,
   bulletsLabel: "What I did",
   bullets: p.desc,
+  body: p.caseStudy && caseStudies[p.caseStudy],
   images: p.images,
 }));
 

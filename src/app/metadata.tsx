@@ -464,8 +464,8 @@ export type Project = {
   link?: string;
   // Optional cover photo in /public; a generated texture is used otherwise.
   image?: string;
-  // Optional long-form case study in the app, e.g. "/projects/aster".
-  writeup?: string;
+  // Optional case study shown in the popup instead of desc (see src/components/case-studies).
+  caseStudy?: "aster";
   // Optional award shown as a badge on the cover, e.g. "1st Place · HackMIT".
   award?: string;
   // Extra screenshots in /public, shown under "What I did".
@@ -494,7 +494,7 @@ export const projects: Project[] = [
     name: "Aster",
     event: "Personal Project",
     link: "https://aster-ruby.vercel.app/",
-    writeup: "/projects/aster",
+    caseStudy: "aster",
     image: "/projects/aster.png",
     summary: [
       "A decision record for drug discovery.",
