@@ -1,6 +1,6 @@
 ---
 title: "★ what i've been up to!"
-date: 2026-11-08
+date: 2026-11-12
 summary: "[last updated: nov 2026] a running log of what i've been up to!"
 kind: "update"
 pinned: true
@@ -8,17 +8,66 @@ draft: true
 ---
 
 {/* a running post: rewrite it each month and bump `date` above, and the title's
-    "last updated" follows. delete `draft: true` once it's ready to go live. */}
+    "last updated" follows. delete `draft: true` once it's ready to go live.
+    project buttons link to /projects#<name>, which opens that project's popup. */}
 
-## recently
+one of my biggest involvements during my college career is hosting the largest collegiate hackathon in the world, cal hacks. this year, i'm so grateful to be building tech infrastructure alongside the tech team for over 4,000+ hackers and 60+ sponsors at cal hacks 13.0!
 
-one of the biggest involvements in my college career is hosting the largest collegiate hackathon, cal hacks. 
--
+<figure>
+  <img src="/writings/what-ive-been-up-to/cal-hacks-13.jpg" alt="cal hacks 13.0 organizer group picture on stage" />
+  <figcaption>[cal hacks 13.0] group picture, the fifth hackathon, october 2026</figcaption>
+</figure>
 
-## what i'm reading
+<figure>
+  <img src="/writings/what-ive-been-up-to/cal-hacks-11.jpg" alt="cal hacks 11.0 organizer group picture on stage" />
+  <figcaption>[cal hacks 11.0] group picture, the first hackathon i hosted, october 2024</figcaption>
+</figure>
 
--
+## what have i been building?
 
-## what's on my mind
+### aster
 
--
+<p className="post-stack">Python · RDKit · scikit-learn · AutoDock Vina · FastAPI · Next.js</p>
+
+in my ongoing progress to learn how ai can help biological research, i researched blind spots that alphafold currently has not considered. one main issue is how alphafold can't tell you what happens when you mutate amino acids in the protein - subsequently making it hard for researchers to figure out what compounds to test next. in my attempt to research the ways ai can automate this decision process, i built an ai decision engine that picks which compounds drug-discovery labs should test next from just a few dozen measurements, and records why each one was picked so it can be checked against the result later
+
+<p><a className="post-button" href="/projects#aster">see the project →</a></p>
+
+### pokerlab
+
+<p className="post-stack">Swift · SwiftUI · Metal · SwiftData · CloudKit</p>
+
+as an absolute fiend for poker and having been bullied to losing money in cal hacks (jokes), i built a native ios game-theory-optimal poker tutor powered by a custom swift solver engine (hand evaluator, monte carlo equity engine, cfr/dcfr solvers and metal gpu kernels) that computes nash equilibria on device in real time
+
+<p><a className="post-button" href="/projects#pokerlab">see the project →</a></p>
+
+### after you (baymax's cafe) @ la hacks 2026 + build something ai cannot do @ cal
+
+<p className="post-stack">TypeScript · React Three Fiber · Three.js · Web Workers · Vitest</p>
+
+out of spontaneity, i entered in diversatech's "build something ai cannot do" hackathon. with ai coding harnesses being progressively autonomous, it's so easy to fall into the loop of building meaningless slop. so - what is something ai software cannot simply achieve?
+
+that's when i started to explore physical ai and how we can incorporate meaningful, sentient human interactions to our physical robotics. i built a socially-aware robot navigation simulator that replans paths around predicted human movement and conversations via active preference learning + bradley-terry reward model
+
+<p><a className="post-button" href="/projects#after-you">see the project →</a></p>
+
+### codemri @ hackmit 2026
+
+<p className="post-stack">Python · TypeScript · Tree-sitter · FastAPI</p>
+
+built a static-analysis context compiler for coding agents that turns a whole repository into persistent architecture and symbol graphs, so agents only read the code a change actually touches
+
+<p><a className="post-button" href="/projects#codemri">see the project →</a></p>
+
+<figure>
+  <img src="/writings/what-ive-been-up-to/hackmit-2026.jpg" alt="the cal hacks tech team holding giant playing cards at hackmit" />
+  <figcaption>group picture of cal hacks' tech team @ hackmit!</figcaption>
+</figure>
+
+## other cool things!
+
+i recently joined notion as a campus ambassador! i had an amazing time joining the campus ambassador summit and so excited for what's to come&lt;3
+
+<figure>
+  <img src="/writings/what-ive-been-up-to/notion-summit.jpg" alt="the notion ambassador summit backdrop" />
+</figure>

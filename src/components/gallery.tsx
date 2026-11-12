@@ -1,5 +1,5 @@
 "use client";
-import { Fragment, useRef, useState, type ReactNode } from "react";
+import { Fragment, useEffect, useRef, useState, type ReactNode } from "react";
 import { useCollection } from "./collection";
 import { AsciiCover } from "./ascii-cover";
 import type { CoverKind } from "@/lib/ascii-covers";
@@ -29,6 +29,9 @@ export type GalleryItem = {
   // ASCII-art cover, used when there's no image.
   ascii?: CoverKind;
 };
+
+// "After You" -> "after-you"; the #anchor that opens a card's popup, e.g. /projects#aster.
+export const gallerySlug = (title: string) => title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
 
 // Photo cover, or a plain light-gray panel when there's no image yet.
 function Cover({ item }: { item: GalleryItem }) {
@@ -65,6 +68,29 @@ export function Gallery({
     dialogRef.current?.showModal();
   }
 
+  // Links like /projects#aster (e.g. from a blog post) open that card's popup.
+  useEffect(() => {
+    const fromHash = () => {
+      const id = decodeURIComponent(window.location.hash.slice(1));
+      const item = id && items.find(i => gallerySlug(i.title) === id);
+      if (!item) return;
+      setActive(item);
+      if (!dialogRef.current?.open) dialogRef.current?.showModal();
+    };
+    const frame = requestAnimationFrame(fromHash);
+    window.addEventListener("hashchange", fromHash);
+    return () => {
+      cancelAnimationFrame(frame);
+      window.removeEventListener("hashchange", fromHash);
+    };
+  }, [items]);
+
+  function close() {
+    setActive(null);
+    // Drop the #anchor so the same link opens the popup again.
+    if (window.location.hash) history.replaceState(null, "", window.location.pathname + window.location.search);
+  }
+
   return (
     <>
       {header}
@@ -92,7 +118,7 @@ export function Gallery({
       <dialog
         ref={dialogRef}
         className={wide ? "peek peek-wide" : "peek"}
-        onClose={() => setActive(null)}
+        onClose={close}
         // A click landing on the dialog element itself is a click on the backdrop.
         onClick={ev => ev.target === dialogRef.current && dialogRef.current.close()}
       >
