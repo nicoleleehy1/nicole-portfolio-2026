@@ -1,0 +1,68 @@
+---
+title: "Nobody can tell you why that compound was tested: building a decision record for drug discovery."
+date: 2026-11-12
+summary: "Five attempts to make my selection model smarter all failed, and the retest explained why. So Aster's product thesis moved from the prediction to the record around it: the declared endpoint, the full ranked slate including the compounds that were rejected, and an API that answers why did we test this, and were we right."
+kind: "Research"
+cover: "field"
+draft: true
+---
+
+Pick any compound a lab assayed six months ago and ask why that one. You will usually get an answer from memory, or a spreadsheet, or nothing. What you almost never get is the thing that would let anyone check the reasoning: the other candidates that were available at that moment, how they were ranked, what rule did the ranking, and what the prediction said before the result came back.
+
+That absence is what Aster is now built around. This piece is about why I moved the product there from the model, what the record actually stores, and which version of "were we right?" is answerable with the data a lab has.
+
+## Why I stopped trying to make the model smarter
+
+Aster's job is **low-data batch selection**: given a few dozen measured compounds on one protein target and a pool of a few hundred untested ones, choose the next eight to assay. Its ranker is about the simplest thing in cheminformatics, chirality-aware Morgan fingerprints with a ridge regression on top, ranked greedily by predicted activity.
+
+I did not choose that out of conviction. I chose it as a baseline, and then five separate attempts to beat it lost: a pretrained molecular encoder frozen, the same encoder fine-tuned, acquisition that samples where the model is uncertain, a diversity penalty inside the batch, and appending published measurements from the literature to the training set. I wrote those up separately ([the synthesis](/blog/low-data-compound-selection-synthesis), [the encoder comparison](/blog/why-a-simple-model-keeps-winning)).
+
+The last of those, milestone 9, is the one that changed my mind, because the retest explained the whole pattern. I made evidence supply a controlled variable: withhold measurements from the replay task, then hand them back as external evidence, so I could set how much evidence existed instead of hoping the corpus had some. Nine Ki targets, two protocols, two donor regimes, three supply levels, eight seeds, 864 paired cases per arm. With 150 pool-external structures supplied at donor precision, evidence was worth +2.80 top-decile compounds per 40 picks. Then I added cross-source noise of 0.68 log units, which is what [Kalliokoski et al. (2013)](https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0061007) measured between literature sources reporting the same binding affinity, and the gain reversed to −0.99.
+
+So the binding constraint is not model capacity. It is **signal per label against the noise that label carries**. At 32 to 64 labels, anything that adds rows also adds noise, and a least-squares fit cannot discount a noisy row. Every one of the five failures is an instance of that.
+
+The product conclusion follows directly. A measurement whose provenance you do not know is dangerous inside a prediction and valuable beside a decision, where it is read by a person who can see where it came from. Stop averaging it into a number. Store it, with its source, next to the pick it influenced.
+
+## What a campaign declares before it ranks anything
+
+The first thing that had to change was an assumption buried in the code. Aster originally hard-coded its endpoint: values were pKi or pIC50, higher was better, and the valid range was `[0, 14]`. That is fine for one benchmark and useless for a lab, where the next campaign might be measuring solubility in µM and lower might be better.
+
+A campaign now **declares its endpoint**: a name, a unit, and a direction, either `higher_is_better` or `lower_is_better`. Ranking, exports and round summaries all read the declaration rather than assuming. The `[0, 14]` sanity bound became the measured range plus one standard deviation, derived per campaign. Campaigns created before the declaration existed still load, with the old assumption recorded explicitly as their declaration rather than left implicit.
+
+This sounds like plumbing, and it is, but it is the part that makes the record interpretable later. A stored value of 7.4 means nothing in six months. A stored value of 7.4 with the endpoint name, the unit and the direction it was being optimised in is a fact.
+
+## The rejected slate is the part nobody keeps
+
+Here is the piece I think is genuinely missing from the field. When a round proposes eight compounds, Aster now stores the **full ranked slate**, not the eight. Every candidate that was in the pool at that moment, with its predicted value, its rank, its nearest measured analogue and the Tanimoto similarity to it, and whether it was chosen, passed over, locked in by hand or explicitly excluded. Alongside it goes the acquisition policy that produced the ranking and the constraints that were in force.
+
+Two reasons to keep the losers.
+
+The first is that it is the only version that is recoverable. After the round, the pool has changed, the model has been refit on new labels, and the counterfactual ranking is gone. If you did not write down what the alternatives looked like at decision time, no amount of later analysis reconstructs it.
+
+The second is that greedy is contested. I kept greedy because it won on my pools, but on a three-million-molecule docking-scored pool, uncertainty sampling beat it decisively ([Williams et al., JCIM 2026](https://strathprints.strath.ac.uk/95343/13/Williams-etal-JCIM-2026-how-selection-strategies-influence-active-learning-in-drug-discovery.pdf)). Which rule wins depends on the pool, the metric and whether labels are measured or docked. A system that hard-codes one rule and does not log which rule ran cannot be audited across that disagreement, and cannot be evaluated off-policy later, which needs the selection propensities that only the logged slate carries.
+
+Reading the record back is a separate module, `aster/decisions.py`, served over HTTP at `/campaigns/{id}/decisions`, with `/decisions/{compound_id}` for one pick and `/decisions/review` for the campaign. It joins each pick to its basis at the time (prediction, rank, nearest analogue, policy, constraints) and to its result, if a result has since come in. It computes nothing new. Everything it returns is read from what was stored, which is the point: if the answer required a re-run, it would be a re-derivation, not a record.
+
+## Which "were we right?" is actually answerable
+
+This is where I had to be careful, because the honest version is narrower than the pitch.
+
+**Answerable now.** Calibration in hindsight on compounds that were tested: for every pick that came back with a measurement, you have the prediction that justified it, so you can report signed error, whether the pick cleared the campaign's own activity threshold, and how that drifted round by round. Also chronological replay on a closed pool: order the pool by measurement date, let the selector see only what existed before a cutoff, and score what it would have picked against what was actually found later.
+
+**Not answerable.** What the untested compounds would have done. There is no counterfactual for a compound nobody assayed, and no amount of record-keeping produces one. Any product claiming otherwise is modelling, not recording.
+
+And the replay I most want, I cannot run yet: a **temporal holdout** needs dated measurements, and the benchmark collections I use carry no measurement dates. BindingDB with dates is the next data addition. Until then "was this decision right at the time?" — the exact claim the record is for — is a claim I can state the mechanism for but not yet demonstrate.
+
+## What this costs, and what is still broken
+
+Three gaps I know about and have not closed.
+
+**Censored values.** Assays routinely report "greater than 10 µM". That is a confirmed negative, and today Aster cannot store it faithfully: values must be numbers, so a limit either becomes a fake point value or is dropped. It should be a structured `{relation, value, unit}` triple that propagates into both the record and the likelihood. This is the next data-model gap, and it is ahead of the fancier ideas in my queue.
+
+**One blended number per compound is unreadable.** My own objection to the current dashboard: a single scalar hides whether it came from a measurement or a prediction, how uncertain it is, and whether it clears the criterion that matters. The direction I want is a per-endpoint strip, each endpoint shown in its real unit with its uncertainty, marked measured, predicted or untested, against its own target criterion, and the only scalar being the probability of meeting the whole profile. And measurements of the same endpoint from different assays should never be pooled into one value.
+
+**Nothing is shared.** Storage is a single SQLite file per campaign, which is correct for one person and wrong the moment two people share a record. That is a real migration, and I am deliberately not doing it until there is a second person.
+
+I also looked for prior art before committing to any of this, across vendors, open-source tools and the active-learning literature. Three absences held up: no vendor sells decision provenance as a category (the closest, Certara's Design Hub, captures design ideas but does not claim prediction-to-result linkage); no open-source project records the rejected slate alongside the chosen batch; and no published study measures how often a recorded prediction is later checked against its result. The first two are gaps I can build into. The third is the one that bothers me, because it means the practice I am building infrastructure for has never been measured.
+
+Everything above is retrospective, on public data, with no prospective lab result behind it. The record is built; what it is for is not yet proven. But I would rather have a system that can be wrong legibly than one more model that is slightly better on a benchmark and silent about why it chose anything.

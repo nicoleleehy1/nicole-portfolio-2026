@@ -1,12 +1,15 @@
+import type { CoverKind } from "@/lib/ascii-covers";
+
 export const RESUME_URL = "/Nicole_Lee_Resume";
 
 // Site sections, in nav order.
 export const sections = [
   { label: "Experience", href: "/experience" },
-  { label: "Leadership", href: "/leadership" },
+  // Hidden for now. To restore: uncomment this and rename src/app/_leadership back to src/app/leadership.
+  // { label: "Leadership", href: "/leadership" },
   { label: "Projects", href: "/projects" },
   { label: "Awards", href: "/awards" },
-  { label: "Writings", href: "/writings" },
+  { label: "Blog", href: "/blog" },
   { label: "Playground", href: "/playground" },
 ];
 export const skills = [
@@ -456,43 +459,122 @@ export const awards: Award[] = [
 export type Project = {
   name: string;
   event: string;
+  // Short "what is it" points, shown in a callout at the top of the popup.
+  summary?: string[];
+  // In depth: what I built, shown under "What I did".
   desc: string[];
   stack: string;
   link?: string;
   // Optional cover photo in /public; a generated texture is used otherwise.
   image?: string;
+  // Optional case study shown in the popup instead of desc (see src/components/case-studies).
+  caseStudy?: "aster" | "codemri" | "pokerlab";
   // Optional award shown as a badge on the cover, e.g. "1st Place · HackMIT".
   award?: string;
+  // Extra screenshots in /public, shown under "What I did".
+  images?: string[];
+  // ASCII-art cover (see src/lib/ascii-covers.ts), used when there's no image.
+  ascii?: CoverKind;
 };
 
 export const projects: Project[] = [
   {
+    name: "Hackathons @ Berkeley",
+    event: "Cal Hacks",
+    image: "/projects/hackathons-cover.jpg",
+    summary: [
+      "The iOS app, operations platform and sponsorship pipeline behind Cal Hacks.",
+    ],
+    desc: [
+      "Shipped the official iOS app (React Native, 10K+ installs) with a 3D venue map (React Three Fiber, Gaussian splatting) embedded across 3 surfaces; GPU-profiled it to cut draw calls 74% and triangles 84% via instancing and render-on-demand.",
+      "Built the Hive operations platform (Next.js) for 4,000+ hackers and 652 projects, with hardware checkout (5,000+ orders) and souvenir shop (3,500+ units) on transactional Postgres RPCs with row locking, 1-hr stock holds, and partial fulfillment.",
+      "Built an automated sponsorship outreach pipeline reaching 14,000+ contacts at 2,000+ companies, raising $1,250,000+.",
+    ],
+    stack: "React Native · React Three Fiber · Next.js · Postgres",
+  },
+  {
+    name: "PokerLab",
+    event: "Personal Project",
+    link: "https://github.com/nicoleleehy1/pokerlab",
+    image: "/projects/pokerlab.jpg",
+    caseStudy: "pokerlab",
+    summary: [
+      "An iOS app that teaches game-theory-optimal poker.",
+      "Works out the best play on the phone itself, in real time, with a solver engine I wrote in Swift.",
+    ],
+    desc: [
+      "Built a native iOS game-theory-optimal poker tutor powered by a custom Swift solver engine (hand evaluator, Monte Carlo equity engine, CFR/DCFR solvers and Metal GPU kernels) that computes Nash equilibria on device in real time.",
+      "Wrote a hand evaluator running 216M evaluations/s on a single core (4,000x faster than brute force), verified against textbook counts on all 133M seven-card hands.",
+      "Cut push/fold Nash solves from 2.3 s to 79 ms (29.6x) with SIMD and Metal compute kernels, with GPU and CPU strategies agreeing within 0.01%.",
+      "Solves full-range rivers in under 0.3 s (46–279 ms) using under 7 MB of memory; showed DCFR reaches equilibrium in 4.5x fewer iterations than CFR+, backed by 124 engine and 12 UI tests.",
+    ],
+    stack: "Swift · SwiftUI · Metal · SwiftData · CloudKit",
+  },
+  {
     name: "Aster",
     event: "Personal Project",
     link: "https://aster-ruby.vercel.app/",
-    desc: [
-      "A decision record for drug discovery: chooses which compounds to assay next from a few dozen measurements, and records why each was picked so it can be checked against the result later.",
-      "Model-guided selection found 36.0 hits vs 8.7 for random picking on SARS-CoV-2 main protease (about 4x), winning all 10 paired runs; validated across 6,000+ pre-registered, paired retrospective replays on 10 protein targets.",
-      "Showed simple Morgan fingerprints + ridge regression beat the pretrained CheMeleon encoder, frozen and fine-tuned (18.67 vs 15.50 top-decile compounds per 40 picks on held-out targets).",
-      "Ran an evidence study across 9 targets and 864 paired cases: precise external measurements raised discovery by up to +2.80 per 40 picks (about 18%), while literature-grade noise (0.68 log units) reversed the gain, which is why published data stays out of the ranking.",
-      "Docked candidates with AutoDock Vina into the dopamine transporter cryo-EM structure (PDB 8Y2G), with 4 of 5 redocks under 2 Å RMSD.",
+    caseStudy: "aster",
+    image: "/projects/aster-cover.jpg",
+    summary: [
+      "A decision record for drug discovery.",
+      "Chooses which compounds to assay next from a few dozen measurements.",
+      "Records why each was picked, so it can be checked against the result later.",
     ],
-    stack: "Python · RDKit · scikit-learn · FastAPI · SQLite · Next.js · Mol*",
+    desc: [
+      "Goal: a record of experimental decisions for any assay and any endpoint. A campaign declares its endpoint, unit and direction, and every round stores the full ranked slate — including the candidates that were rejected — with the acquisition policy, locks and exclusions in force, so a decisions API can read any pick back joined to its basis at the time and to its result.",
+      "Approach: machine learning and active learning rather than deep learning. Chirality-aware Morgan fingerprints (radius 2, 2,048 bits) with standardized ridge regression, ranked greedily by predicted activity and refit each round from a starting set of 32 to 64 measured compounds.",
+      "Model-guided selection found 36.0 hits vs 8.7 for random picking on SARS-CoV-2 main protease (about 4x on that target), winning all 10 paired runs; backed by 6,000+ pre-registered, paired retrospective replays across 10 protein targets.",
+      "Showed simple Morgan fingerprints + ridge regression beat the pretrained CheMeleon encoder, frozen and fine-tuned (18.67 vs 15.50 top-decile compounds per 40 picks on held-out targets).",
+      "Ran an evidence study across 9 targets and 864 paired cases: precise external measurements raised discovery by up to +2.80 per 40 picks, while literature-grade value noise (0.68 log units) reversed the gain to −0.99, which is why published data stays out of the ranking and sits beside the decision instead.",
+      "Docked candidates with AutoDock Vina into the dopamine transporter cryo-EM structure (PDB 8Y2G), with 4 of 5 redocks under 2 Å RMSD.",
+      "Main finding: five separate attempts to make the model smarter all failed — a pretrained encoder frozen and fine-tuned, uncertainty-driven acquisition, batch diversity, and appending published measurements. The retest explained why: at a few dozen labels what binds is signal per label against the noise that label carries, so anything that adds noise loses. That is the case for recording decisions rather than chasing model sophistication.",
+      "Limits stated alongside it: everything is retrospective on public benchmark data with no prospective lab result, the headline evidence result was null, its noise analysis was decided after the main result was seen, the exact-value gains are an upper bound, and there is no temporal holdout yet because these datasets carry no measurement dates.",
+    ],
+    stack: "Python · RDKit · scikit-learn · AutoDock Vina · FastAPI · SQLite · Next.js · Mol*",
   },
   {
     name: "CodeMRI",
-    event: "Personal Project",
+    event: "HackMIT 2026",
     link: "https://github.com/nicoleleehy1/CodeMRI",
+    image: "/projects/codemri-cover.jpg",
+    caseStudy: "codemri",
+    summary: [
+      "A static-analysis tool and context compiler for coding agents.",
+      "Maps a repo into architecture and symbol graphs, so an agent only reads the code a change touches.",
+    ],
     desc: [
       "A static-analysis + context compiler for coding agents, parsing repository-wide ASTs into persistent architecture and symbol graphs with call/import dependencies, source navigation, and change-impact analysis.",
-      "Compiles change-scoped context, reducing repository-reading tokens by 83% and enabling graph-guided code modifications.",
+      "Compiles change-scoped context packs sized to a real token budget, listing what was left out, and enabling graph-guided code modifications.",
     ],
     stack: "Python · TypeScript · Tree-sitter · FastAPI",
+  },
+  {
+    name: "After You",
+    event: "LA Hacks",
+    link: "https://github.com/nicoleleehy1/Baymax-Cafe",
+    image: "/projects/after-you-cover.jpg",
+    summary: [
+      "A 3D café where a Baymax-inspired robot delivers drinks around people.",
+      "When the polite choice is unclear, he asks you, and your answer changes how he moves later.",
+    ],
+    desc: [
+      "Built a robot planner that rejects unsafe paths first, then ranks the safe ones with a preference model learned from your answers.",
+    ],
+    images: ["/projects/after-you/considering.jpg", "/projects/after-you/building.jpg"],
+    stack: "TypeScript · React · Three.js · React Three Fiber · Zustand · Web Workers",
   },
   {
     name: "Flusk",
     event: "Personal Project",
     link: "https://web-production-5c042.up.railway.app/",
+    image: "/projects/flusk-cover.jpg",
+    images: ["/projects/flusk/stats.jpg", "/projects/flusk/table.jpg", "/projects/flusk/operations.jpg"],
+    summary: [
+      "A key-value storage engine in Java, built on an LSM tree.",
+      "Served over a small REST API.",
+    ],
+    // TODO(nicole): add detail on what you did (design choices, compaction strategy, any benchmarks).
     desc: [
       "A Java LSM-tree storage engine with a full write path (WAL, MemTable, SSTable, 4-tier compaction with tombstone GC, Bloom filters and sparse indexing), exposed through 7 REST endpoints for low-latency reads/writes.",
     ],
@@ -502,6 +584,13 @@ export const projects: Project[] = [
     name: "Stoich",
     event: "Personal Project",
     link: "https://stoich.vercel.app/",
+    image: "/projects/stoich-cover.jpg",
+    images: ["/projects/stoich/home.jpg", "/projects/stoich/lab.jpg"],
+    summary: [
+      "A research tool for reading chemistry papers.",
+      "Shows each reaction as a linked graph, equation, mechanism and 3D structure.",
+    ],
+    // TODO(nicole): add detail on what you did (the LLM pipeline, how hallucinations were measured).
     desc: [
       "A chemistry research tool built on a multi-LLM pipeline and cross-paper vector search, reducing atom-index hallucinations from 67% to under 15%; renders synchronized reaction graphs, equation and mechanism views, annotations, and 3D molecular structures.",
     ],
@@ -511,6 +600,12 @@ export const projects: Project[] = [
     name: "Synapse AI",
     event: "HackMIT 2025",
     link: "https://github.com/nicoleleehy1/synapse",
+    image: "/projects/synapse-cover.jpg",
+    images: ["/projects/synapse/graph.jpg", "/projects/synapse/table.jpg"],
+    summary: [
+      "A study tool that turns PDFs into interactive knowledge graphs.",
+      "Built at HackMIT 2025.",
+    ],
     desc: [
       "Built an NLP pipeline parsing PDFs into structured knowledge graphs, extracting 200+ concept nodes and typed relationships per document into a Neo4j graph database.",
       "Engineered a React + D3.js frontend rendering 8 synchronized visualization modes (force-directed graph, kanban, timeline, mind map, etc.) with real-time bidirectional edits across all views.",
@@ -521,28 +616,44 @@ export const projects: Project[] = [
   {
     name: "ASL Live Translator",
     event: "TreeHacks 2025",
+    ascii: "field",
+    summary: [
+      "Reads ASL letters from a webcam and turns them into speech and captions.",
+      "Built at TreeHacks 2025 for nonverbal users.",
+    ],
+    // TODO(nicole): replace with what you built (model, how letters become words, your part of the team).
     desc: [
       "Real-time ASL letter recognition converting sign language to speech and live captions for nonverbal users.",
     ],
     stack: "Python · React · OpenCV · MediaPipe · TensorFlow.js",
   },
-  {
-    name: "Insurmate",
-    event: "Bolt Hacks 2025",
-    desc: [
-      "AI insurance agent — document parsing, policy comparison, and natural language Q&A over coverage details.",
-    ],
-    stack: "React · TensorFlow.js · LangChain",
-  },
-  {
-    name: "Webinet",
-    event: "Young Founders' Summit Asia 2020",
-    award: "Semi-Finalist · YFS Asia",
-    desc: [
-      "An app that surfaces university webinars and courses so students can grow through e-learning, in support of accessible quality education for all (SDG 4).",
-    ],
-    stack: "Mobile App · EdTech · SDG 4",
-  },
+  // {
+  //   name: "Insurmate",
+  //   event: "Bolt Hacks 2025",
+  //   summary: [
+  //     "An AI insurance agent that reads policy documents and answers questions about coverage.",
+  //     "Built at Bolt Hacks 2025.",
+  //   ],
+  //   // TODO(nicole): replace with what you built.
+  //   desc: [
+  //     "AI insurance agent — document parsing, policy comparison, and natural language Q&A over coverage details.",
+  //   ],
+  //   stack: "React · TensorFlow.js · LangChain",
+  // },
+  // {
+  //   name: "Webinet",
+  //   event: "Young Founders' Summit Asia 2020",
+  //   award: "Semi-Finalist · YFS Asia",
+  //   summary: [
+  //     "An app that collects university webinars and courses for students.",
+  //     "Semi-finalist at Young Founders' Summit Asia 2020.",
+  //   ],
+  //   // TODO(nicole): replace with what you did.
+  //   desc: [
+  //     "An app that surfaces university webinars and courses so students can grow through e-learning, in support of accessible quality education for all (SDG 4).",
+  //   ],
+  //   stack: "Mobile App · EdTech · SDG 4",
+  // },
 ];
 
 // Archived essays converted from Google Docs; each body is src/content/writings/<slug>.html.

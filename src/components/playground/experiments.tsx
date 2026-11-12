@@ -1,4 +1,5 @@
 import type { ComponentType, ReactNode } from "react";
+import Link from "next/link";
 import { GameOfLife } from "./game-of-life";
 import { labNotes } from "./lab-notes";
 import { LABS } from "./lab-stages";
@@ -56,6 +57,11 @@ export const experiments: Experiment[] = [
           block. next i want to see what happens if a cell is also born with six neighbors (the highlife rule, which has
           a pattern that copies itself), and whether only checking cells near something alive makes it faster.
         </p>
+        <p className="pg-more">
+          <Link href="/blog/playground-thoughts#game-of-life" className="link">
+            keep reading in playground thoughts →
+          </Link>
+        </p>
       </>
     ),
   },
@@ -84,6 +90,11 @@ export const experiments: Experiment[] = [
         {n.thoughts.map(t => (
           <p key={t}>{t}</p>
         ))}
+        <p className="pg-more">
+          <Link href={`/blog/playground-thoughts#${n.slug}`} className="link">
+            keep reading in playground thoughts →
+          </Link>
+        </p>
         {n.cite && (
           <p className="pg-cite">
             based on{" "}

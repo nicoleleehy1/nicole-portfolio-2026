@@ -52,7 +52,7 @@ export function initCellField(container, options = {}){
   const glc = mkLayer('gl'), orc = mkLayer('org'), hdc = mkLayer('hud');
   const co = orc.getContext('2d'), ch = hdc.getContext('2d');
   const S = {light:false, cell:6, speed:1, glow:1, glitch:1, boxMax:110, track:true, hover:true, ascii:true, plexus:false, burst:true, coral:true, protein:true, half:true, paused:false,
-    maxTrackers:7, edgeBoxes:false, scale:1, density:1};
+    maxTrackers:7, edgeBoxes:false, scale:1, density:1, confetti:true};
   const reduced = win.matchMedia('(prefers-reduced-motion: reduce)').matches;
   // reduced motion: slow speed, low glitch, no line boil, whatever setOptions asks for
   const capMotion = () => { if (reduced){ S.speed = Math.min(S.speed, .3); S.glitch = Math.min(S.glitch, .35); } };
@@ -495,6 +495,8 @@ export function initCellField(container, options = {}){
     clusters = []; trackers = [];
     // small screens get roughly half of every structure
     const m = (W < 600 ? .5 : 1)*S.density, n = k => Math.max(1, Math.round(k*m));
+    // the small scatter (dust, stars, clumps, particles, bubbles); confetti: false leaves only the larger structures
+    const c = k => S.confetti ? n(k) : 0;
     placed = [];
     // mostly soft membranes and bead chains; only a couple of blocky voxel aggregates
     const types = [0,2,1,0,2,0,2,1,0,2,0,2,0].slice(0, n(13));
@@ -509,22 +511,22 @@ export function initCellField(container, options = {}){
         barrel ? {r:[8,15], mouth:.55, rings:10} : {r:[4,10]});
     });
     foams = Array.from({length:n(6)}, () => { const [x, y] = sidePos(); return makeFoam(x, y); });
-    dust = Array.from({length:n(7)}, () => { const [x, y] = edgePos();
+    dust = Array.from({length:c(7)}, () => { const [x, y] = edgePos();
       const cols = 5 + (Math.random()*10|0), rows = 1 + (Math.random()*4|0);
       return {bx:x, by:y, x, y, ph: rnd(TAU), cols, rows, next:0, grid: Array.from({length:rows}, () => dustRow(cols)), hex: Math.random() < .35}; });
     proteins = Array.from({length:n(8)}, () => { const [x, y] = Math.random() < .35 ? edgePos(false) : sidePos(); return makeProtein(x, y, 20 + Math.pow(Math.random(), 1.2)*75); });
-    stars = Array.from({length:n(7)}, () => { const [x, y] = edgePos(); return makeStar(x, y); });
+    stars = Array.from({length:c(7)}, () => { const [x, y] = edgePos(); return makeStar(x, y); });
     rods = Array.from({length:n(3)}, () => { const [x, y] = sidePos(); return makeRod(x, y); });
     bursts = Array.from({length:n(10)}, () => { const [x, y] = Math.random() < .35 ? edgePos(false) : sidePos(); return makeBurst(x, y); });
     dots = Array.from({length:n(7)}, () => { const [x, y] = edgePos();
       return {kind:'NUCLEOLUS', id: nid(), bx:x, by:y, x, y, r: rnd(9,22), ph: rnd(TAU), pal: pick(HT_PAL),
         lobes: Array.from({length: 1 + (Math.random()*3|0)}, (_, i) => ({dx: i ? rnd(-1,1) : 0, dy: i ? rnd(-1,1) : 0, r: i ? rnd(.5,.9) : 1, ph: rnd(TAU)})), cx:x, cy:y, cr:15}; });
-    clumps = Array.from({length:n(7)}, () => { const [x, y] = edgePos(); return {x, y, pts: Array.from({length: 10 + (Math.random()*16|0)}, () => [rnd(-22,22), rnd(-16,16), rnd(1,3.2), pick(['#3d8bff','#7ff3ea','#2a5bd8'])])}; });
-    parts = Array.from({length:n(160)}, () => ({x: rnd(W), y: rnd(H), vx: rnd(-6,6), vy: rnd(-6,6), s: rnd(.6,2.2),
+    clumps = Array.from({length:c(7)}, () => { const [x, y] = edgePos(); return {x, y, pts: Array.from({length: 10 + (Math.random()*16|0)}, () => [rnd(-22,22), rnd(-16,16), rnd(1,3.2), pick(['#3d8bff','#7ff3ea','#2a5bd8'])])}; });
+    parts = Array.from({length:c(160)}, () => ({x: rnd(W), y: rnd(H), vx: rnd(-6,6), vy: rnd(-6,6), s: rnd(.6,2.2),
       c: Math.random() < .8 ? '#7ff3ea' : (Math.random() < .5 ? '#ff7fd1' : '#ffd36b'), a: rnd(.25,.8)}));
     // small blue bubbles: some loose, some in little clusters, all slowly rising
     bubbles = [];
-    for (let i = 0, nb = n(14); i < nb; i++){
+    for (let i = 0, nb = c(14); i < nb; i++){
       const [cx, cy] = edgePos(), n = Math.random() < .5 ? 1 : 3 + (Math.random()*7|0);
       for (let j = 0; j < n; j++) bubbles.push({x: cx + (n > 1 ? rnd(-18,18) : 0), y: cy + (n > 1 ? rnd(-14,14) : 0), r: rnd(1.5,6)*(n > 1 ? .8 : 1),
         vy: -rnd(2,7), ph: rnd(TAU), c: pick(['#5aa8ff','#8fd0ff','#3d7bff','#7fc8ff'])});

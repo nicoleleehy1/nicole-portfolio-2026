@@ -1,0 +1,254 @@
+---
+title: "playground thoughts"
+date: 2026-11-08
+summary: "ongoing notes and research that pick up where each playground experiment's initial thoughts leave off."
+kind: "notes"
+draft: true
+---
+
+these are my running notes on the experiments in the [playground](/playground). each section picks up where that experiment's initial thoughts end, with the papers i've been reading, patterns i've noticed while playing with them, and questions i haven't answered yet.
+
+<h2 id="game-of-life">conway's game of life</h2>
+
+the turing completeness proof was first sketched in berlekamp, conway and guy's *winning ways* in 1982, using glider streams as wires and collisions as logic gates. it took until 2000 for paul rendell to actually build a working turing machine inside life. people have gone further since: the otca metapixel (2006) is a huge block of life that acts like a single life cell, so you can tile them and run the game of life inside the game of life.
+
+leaving a random soup running, it almost always settles into the same few leftovers: blocks, beehives, loaves and blinkers. the life community calls this "ash", and catalogues of billions of soups show the same objects showing up in roughly the same proportions every time. it makes the rare stuff feel even rarer.
+
+on highlife: the pattern that copies itself there is the replicator, found by nathan thompson in 1994. life itself didn't get a self-replicating pattern until andrew wade's "gemini" in 2010, which is enormous by comparison. and on making it faster, my "only check cells near something alive" idea is the simple version of what bill gosper did with hashlife (1984). it stores repeating chunks of the grid in a tree and remembers how they evolve, so it can skip ahead billions of generations on patterns like the gun.
+
+<figure>
+  <img src="/writings/playground-thoughts/gol-ash.png" alt="game of life grid after a random start, mostly small still lifes and blinkers" />
+  <figcaption>a random soup after a couple thousand generations: mostly blocks, beehives and blinkers, with one patch still burning.</figcaption>
+</figure>
+
+**references**
+
+- martin gardner, "mathematical games: the fantastic combinations of john conway's new solitaire game 'life'", scientific american, 1970
+- berlekamp, conway & guy, *winning ways for your mathematical plays*, 1982
+- paul rendell, [a turing machine in conway's game of life](http://rendell-attic.org/gol/tm.htm), 2000
+- bill gosper, "exploiting regularities in large cellular spaces", physica d, 1984
+- [lifewiki](https://conwaylife.com/wiki/) for patterns and history
+
+<h2 id="cellular-automata">elementary cellular automata</h2>
+
+wolfram sorted cellular automata into four classes in the early 80s: ones that die out, ones that settle into repeating stripes, ones that look chaotic (rule 30), and ones that build complex moving structures (rule 110). there are 256 elementary rules, but once you count mirror images and swapped colors as the same, only 88 are really different, and most of them land in the first two classes.
+
+rule 30 shows up in nature, sort of. the shell of the cone snail *conus textile* has a triangle pattern that looks a lot like it, because the shell grows one edge at a time and pigment cells along that edge switch on and off based on their neighbors, which is exactly a one-dimensional automaton. there are still open questions about rule 30 itself: in 2019 wolfram put up three $10,000 prizes, including whether its center column ever becomes periodic. nobody has claimed them.
+
+cook's proof for rule 110 needs a repeating background pattern (the "ether") and then sends gliders through it to carry and combine signals, the same idea as life's glider logic squeezed down into one dimension.
+
+<figure>
+  <img src="/writings/playground-thoughts/eca-rule-90.png" alt="rule 90 drawing nested sierpiński triangles" />
+  <img src="/writings/playground-thoughts/eca-rule-30.png" alt="rule 30 drawing an irregular field of triangles" />
+  <figcaption>rule 90 (top) and rule 30 (bottom), both started from a single cell. the rows wrap around the edges, so rule 90's triangles start overlapping, while rule 30 turns to noise.</figcaption>
+</figure>
+
+**references**
+
+- stephen wolfram, "statistical mechanics of cellular automata", reviews of modern physics, 1983
+- stephen wolfram, *a new kind of science*, 2002
+- matthew cook, "universality in elementary cellular automata", complex systems, 2004
+- [the rule 30 prizes](https://www.rule30prize.org/), 2019
+
+<h2 id="neural-ca">growing neural cellular automata</h2>
+
+the same team kept going after the original article. in "self-classifying mnist digits" the cells sit on a handwritten digit and have to agree, using only local messages, which number they're part of. in "self-organising textures" the rule learns to grow a texture instead of a shape, and it keeps working on grids it never saw in training. both answer part of my question about one rule growing different things: the rule stays the same, and what changes is what it's given.
+
+closer to what i asked, sudhakaran and colleagues trained neural cellular automata in 3d in 2021 to grow minecraft buildings and even working machines, and later work has steered one rule toward different targets with a signal added to the cells.
+
+the biology side is just as wild. levin's lab has made planarian flatworms grow two heads by changing the electrical signals between their cells, without touching their genes, and some of those worms keep regrowing two heads after being cut again. it's the closest real thing i've found to a "rule" that stores the target shape somewhere other than in each cell.
+
+<figure>
+  <img src="/writings/playground-thoughts/nca-cut-healed.png" alt="a green lizard emoji grown by the neural cellular automaton" />
+  <figcaption>the regenerating lizard, grown from a single seed cell.</figcaption>
+</figure>
+
+**references**
+
+- mordvintsev, randazzo, niklasson & levin, ["growing neural cellular automata"](https://distill.pub/2020/growing-ca/), distill, 2020
+- randazzo, mordvintsev, niklasson, levin & greydanus, ["self-classifying mnist digits"](https://distill.pub/2020/selforg/mnist/), distill, 2020
+- niklasson, mordvintsev, randazzo & levin, ["self-organising textures"](https://distill.pub/selforg/2021/textures/), distill, 2021
+- sudhakaran et al., "growing 3d artefacts and functional machines with neural cellular automata", alife, 2021
+- durant et al., "long-term, stochastic editing of regenerative anatomy via targeting endogenous bioelectric gradients", biophysical journal, 2017
+
+<h2 id="boids">boids / flocking</h2>
+
+there's a simpler cousin of boids called the vicsek model (1995), where particles only align with their neighbors plus a bit of random noise. turn the noise down past a certain point and the whole group suddenly snaps from milling around into moving together, like water freezing. it's one of the cleanest examples of a phase transition in something alive-looking.
+
+couzin and colleagues (2002) gave each animal separate zones for repulsion, alignment and attraction, and found the same group could form a loose swarm, a rotating doughnut (a "mill"), or a group travelling in parallel, depending only on how far the alignment zone reached. the milling i see when alignment is turned down looks a lot like their swarm state, and the doughnut is something fish schools actually do.
+
+the starling research goes further than the six-or-seven-neighbor finding. cavagna's group showed in 2010 that a change in direction at one edge of a murmuration spreads across the whole flock almost instantly, no matter how big it is. that kind of correlation is usually a sign a system is sitting right at a tipping point, which might be why flocks react so fast to a falcon.
+
+<figure>
+  <img src="/writings/playground-thoughts/boids-no-alignment.png" alt="boids with alignment at zero, clumped in loose knots" />
+  <figcaption>alignment at zero: the birds still clump, but they mill around in loose knots instead of travelling.</figcaption>
+</figure>
+
+**references**
+
+- craig reynolds, "flocks, herds, and schools: a distributed behavioral model", siggraph, 1987
+- vicsek et al., "novel type of phase transition in a system of self-driven particles", physical review letters, 1995
+- couzin et al., "collective memory and spatial sorting in animal groups", journal of theoretical biology, 2002
+- ballerini et al., "interaction ruling animal collective behavior depends on topological rather than metric distance", pnas, 2008
+- cavagna et al., "scale-free correlations in starling flocks", pnas, 2010
+
+<h2 id="reaction-diffusion">reaction–diffusion</h2>
+
+pearson's 1993 paper labelled the regions of the feed/kill map with greek letters, and robert munafo later turned it into an interactive map (xmorphia) you can explore one tile at a time. the strangest region has spots that grow, split in two and keep dividing, which looks a lot like cells dividing, even though it's just two chemicals.
+
+the strongest evidence for turing patterns in animals came from kondo and asai in 1995. the stripes on a *pomacanthus* angelfish don't just stretch as the fish grows: new stripes appear in the gaps and old ones split, exactly the way a turing model predicts. in 2014 another group showed a turing-style network of three signals helps space out the fingers in a developing mouse paw.
+
+murray's tail idea is my favorite: on a long thin tail there's only room for the pattern to wrap around as bands, so spots on the body turn into rings on the tail. cheetahs and jaguars both have this.
+
+<figure>
+  <img src="/writings/playground-thoughts/rd-line-to-dots.png" alt="a painted line breaking into a grid of dots, some mid-split" />
+  <figcaption>a line painted on the spots preset, breaking into dots. a few of them are caught mid-split.</figcaption>
+</figure>
+
+**references**
+
+- alan turing, "the chemical basis of morphogenesis", philosophical transactions of the royal society b, 1952
+- john pearson, "complex patterns in a simple system", science, 1993
+- robert munafo, [xmorphia](https://mrob.com/pub/comp/xmorphia/)
+- kondo & asai, "a reaction–diffusion wave on the skin of the marine angelfish pomacanthus", nature, 1995
+- raspopovic et al., "digit patterning is controlled by a bmp-sox9-wnt turing network modulated by morphogen gradients", science, 2014
+- james murray, "how the leopard gets its spots", scientific american, 1988
+
+<h2 id="falling-sand">sand simulation</h2>
+
+piles of sand were the example that started the idea of self-organized criticality. bak, tang and wiesenfeld (1987) dropped grains one at a time onto a simple grid model and found that the pile tunes itself to a critical slope, where most new grains do nothing and a few set off avalanches of every size.
+
+real grains do things this model can't. the "brazil nut effect" is when shaking a mix makes the big pieces rise to the top, which is why the brazil nuts end up on top of a can of mixed nuts. here every grain is the same size, so nothing sorts.
+
+falling sand games go back to small java applets in the mid 2000s and then the powder toy. petri purho's gdc talk on noita explains how they keep it fast: the world is split into chunks, and only chunks with something moving in them get updated, which is the same trick as my game of life speed-up idea.
+
+<figure>
+  <img src="/writings/playground-thoughts/sand-pile-and-basin.png" alt="a sand pile and a stone basin full of level water" />
+  <figcaption>a sand pile at its 45° slope, and water levelled out in a stone basin.</figcaption>
+</figure>
+
+**references**
+
+- bak, tang & wiesenfeld, "self-organized criticality: an explanation of 1/f noise", physical review letters, 1987
+- petri purho, "exploring the tech and art of noita", gdc, 2019
+- the powder toy, [powdertoy.co.uk](https://powdertoy.co.uk/)
+
+<h2 id="maze-generation">maze generation</h2>
+
+wilson's algorithm comes from a 1996 paper by david wilson about sampling random spanning trees faster. it's one of only a couple of algorithms that make every maze equally likely (aldous–broder is the other well-known one, but it's much slower). the reason the start looks so slow is that the first random walk has to wander until it hits the single starting cell, and after that every walk has a growing target to hit.
+
+jamis buck's *mazes for programmers* compares these algorithms by their "texture": how many dead ends they leave, how long the corridors run, and how biased they are toward certain directions. reading it made me notice that you can describe a maze's personality with a few numbers, the same way you can for the reaction–diffusion patterns.
+
+because every maze here is a tree, the hand-on-the-wall trick always works: keep one hand on a wall and you'll eventually reach any cell. it only fails on mazes with loops, which these never have.
+
+<figure>
+  <img src="/writings/playground-thoughts/maze-backtracker.png" alt="a maze made by the recursive backtracker, with long winding corridors" />
+  <img src="/writings/playground-thoughts/maze-prim.png" alt="a maze made by prim's algorithm, with many short dead ends" />
+  <figcaption>the recursive backtracker (top) and prim's (bottom) on the same grid.</figcaption>
+</figure>
+
+**references**
+
+- david wilson, "generating random spanning trees more quickly than the cover time", stoc, 1996
+- jamis buck, *mazes for programmers*, 2015, and his [maze algorithm posts](https://weblog.jamisbuck.org/2011/2/7/maze-generation-algorithm-recap)
+
+<h2 id="pathfinding">pathfinding</h2>
+
+dijkstra said he designed his algorithm in about twenty minutes while sitting at a café in amsterdam in 1956, without pencil and paper, and only published it three years later. a* came out of trying to make shakey smarter: hart, nilsson and raphael showed that adding an estimate of the distance left keeps the answer optimal as long as the estimate never overshoots.
+
+for my diagonal question, the usual answer is octile distance: take as many diagonal steps as you can, then go straight for the rest. it's exactly right on an empty grid, so a* wastes far less time than with plain straight-line distance. on big open grids there's also jump point search (2011), which skips over runs of identical cells instead of looking at each one.
+
+on open ground a* can still explore a wide wedge even when the path is obvious, because lots of cells tie on cost. amit patel's red blob games pages explain that breaking ties toward the goal fixes most of it.
+
+<figure>
+  <img src="/writings/playground-thoughts/path-greedy-cup.png" alt="greedy best-first search walking into a cup-shaped wall" />
+  <img src="/writings/playground-thoughts/path-astar-cup.png" alt="a* partway through exploring around the same wall" />
+  <figcaption>greedy walking straight into a cup-shaped wall before going around it (top), and a* partway through on the same wall, spreading out around the cup (bottom).</figcaption>
+</figure>
+
+**references**
+
+- edsger dijkstra, "a note on two problems in connexion with graphs", numerische mathematik, 1959
+- hart, nilsson & raphael, "a formal basis for the heuristic determination of minimum cost paths", ieee transactions on systems science and cybernetics, 1968
+- harabor & grastien, "online graph pruning for pathfinding on grid maps", aaai, 2011
+- amit patel, [introduction to a*](https://www.redblobgames.com/pathfinding/a-star/introduction.html), red blob games
+
+<h2 id="flow-fields">flow fields</h2>
+
+perlin's original 1985 paper, "an image synthesizer", was about making computer graphics look less perfect: marble, fire, clouds. he later made simplex noise (2001), which is faster and has fewer visible grid artifacts.
+
+curl noise is from bridson and colleagues (2007). the trick is that taking the curl of any smooth field gives you a flow with no sources or sinks, which is the same rule real incompressible fluids follow. that's why it reads as smoke instead of something that drains away.
+
+on the art side, tyler hobbs' fidenza is built almost entirely on flow fields, with the interesting part being how curves avoid overlapping each other. watching mine, the particles tend to bunch into rivers where the field converges, and those rivers are what make it look painted instead of random.
+
+<figure>
+  <img src="/writings/playground-thoughts/flow-rivers.png" alt="particle trails following perlin noise and bunching into rivers" />
+  <figcaption>long trails at low speed. the bright bands are rivers where the field converges.</figcaption>
+</figure>
+
+**references**
+
+- ken perlin, "an image synthesizer", siggraph, 1985
+- ken perlin, "improving noise", siggraph, 2002
+- bridson, hourihan & nordenstam, "curl-noise for procedural fluid flow", siggraph, 2007
+- tyler hobbs, ["flow fields"](https://www.tylerxhobbs.com/essays/2020/flow-fields), 2020
+
+<h2 id="spring-systems">spring systems</h2>
+
+verlet integration is older than games: loup verlet used it in 1967 to simulate argon atoms. jakobsen's 2001 talk "advanced character physics" is what brought it into games, and it's still one of the most readable physics papers i've found.
+
+the bigger version of this idea is position based dynamics (müller and colleagues, 2007), which treats everything, cloth, ropes, soft bodies, even fluids, as points with constraints you nudge them back toward. one problem shows up here too: how stiff something feels depends on how many passes you do and how long each frame is, so the same rope feels different at different frame rates. xpbd (2016) fixes that by giving each constraint a real stiffness value.
+
+when i tear the cloth, it almost always rips along a line, not a random hole, because once one link breaks its neighbors suddenly have to hold more and snap next. it's a tiny version of how cracks spread in real materials.
+
+<figure>
+  <img src="/writings/playground-thoughts/springs-tear.png" alt="a cloth grid tearing down the middle while being pulled" />
+  <figcaption>pulling the cloth with tearable on. the orange links are the most stretched, and the tear runs straight up from where i grabbed it.</figcaption>
+</figure>
+
+**references**
+
+- loup verlet, "computer 'experiments' on classical fluids", physical review, 1967
+- thomas jakobsen, "advanced character physics", gdc, 2001
+- müller et al., "position based dynamics", journal of visual communication and image representation, 2007
+- macklin, müller & chentanez, "xpbd: position-based simulation of compliant constrained dynamics", 2016
+
+<h2 id="fractals">fractals</h2>
+
+the mandelbrot set's edge is about as wiggly as a curve can get: in 1998 mitsuhiro shishikura proved its boundary has dimension 2, the same as a filled-in area, even though it's a line. that's a nice way to put a number on "the edge never ends".
+
+the precision wall i hit isn't a hard limit. people making deep zoom videos use perturbation theory: they calculate one point very precisely and then work out every other pixel as a small difference from it, which lets normal numbers go far past where they'd usually break.
+
+for the trees, the classic reference is lindenmayer's l-systems (1968), which grow plants by rewriting strings like "a branch becomes a branch with two branches". prusinkiewicz and lindenmayer's *the algorithmic beauty of plants* is free online and full of plants made from just a few rules.
+
+<figure>
+  <img src="/writings/playground-thoughts/fractal-seahorse.png" alt="a zoom into seahorse valley on the mandelbrot set" />
+  <img src="/writings/playground-thoughts/fractal-h-tree.png" alt="a branching tree at 90 degrees forming an h-tree" />
+  <figcaption>seahorse valley on the mandelbrot set (top), and the branching tree at 90° and 70% shrink, which makes an h-tree (bottom).</figcaption>
+</figure>
+
+**references**
+
+- benoit mandelbrot, "how long is the coast of britain? statistical self-similarity and fractional dimension", science, 1967
+- benoit mandelbrot, *the fractal geometry of nature*, 1982
+- mitsuhiro shishikura, "the hausdorff dimension of the boundary of the mandelbrot set and julia sets", annals of mathematics, 1998
+- prusinkiewicz & lindenmayer, [*the algorithmic beauty of plants*](http://algorithmicbotany.org/papers/#abop), 1990
+
+<h2 id="wave-interference">wave interference</h2>
+
+huygens' principle says every point on a wave front acts like a new source of ripples, which is basically what this canvas does with a handful of points. young's experiment is that idea with only two points, and it's why the spacing of the quiet lines tells you the wavelength.
+
+phased arrays go back to karl ferdinand braun, who arranged three antennas in 1905 to send a radio signal more strongly in one direction. modern versions have thousands of tiny antennas and steer the beam just by delaying each one a little, which you can see here by putting sources in a line.
+
+beats are how musicians tune by ear: play two notes that are almost the same and you hear a slow wobble, which disappears when they match. amar bose came up with the idea for noise-cancelling headphones on a flight in 1978 when the engine noise drowned out his music.
+
+<figure>
+  <img src="/writings/playground-thoughts/waves-beam.png" alt="six wave sources in a line sending a beam to the right" />
+  <figcaption>six sources in a line, in loudness view. they send a narrow beam off to the right.</figcaption>
+</figure>
+
+**references**
+
+- thomas young, "on the theory of light and colours", philosophical transactions of the royal society, 1802
+- karl ferdinand braun, nobel lecture, "electrical oscillations and wireless telegraphy", 1909
+- [the feynman lectures on physics, vol. 1, ch. 29: interference](https://www.feynmanlectures.caltech.edu/I_29.html)

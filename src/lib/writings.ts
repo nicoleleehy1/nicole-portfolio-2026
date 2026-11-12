@@ -2,6 +2,7 @@ import { readdir, readFile } from "node:fs/promises";
 import path from "node:path";
 import type { ComponentType } from "react";
 import { essays } from "@/app/metadata";
+import { coverKind, type CoverKind } from "@/lib/ascii-covers";
 
 const DIR = path.join(process.cwd(), "src/content/writings");
 
@@ -12,6 +13,12 @@ type PostMeta = {
   summary?: string;
   kind?: string;
   draft?: boolean;
+  // hidden posts are left out everywhere, including `npm run dev`
+  hidden?: boolean;
+  // pinned posts sit at the top of the blog's front page, above the newest story
+  pinned?: boolean;
+  // optional ASCII cover motif (see COVER_KINDS in src/lib/ascii-covers.ts); picked from the topic if left out
+  cover?: string;
 };
 
 export type Writing = {
@@ -22,7 +29,22 @@ export type Writing = {
   question?: string;
   date?: Date;
   format: "mdx" | "html";
+  cover: CoverKind;
+  minutes: number;
+  pinned?: boolean;
 };
+
+// "{updated}" in a title becomes the post's date as "nov 2026", so a running post's title
+// tracks when it was last updated: bump `date` and the title follows.
+const monthYear = new Intl.DateTimeFormat("en-US", { month: "short", year: "numeric", timeZone: "UTC" });
+const fillTitle = (title: string, date?: Date) => title.replace("{updated}", date ? monthYear.format(date).toLowerCase() : "");
+
+// Rough reading time at ~230 words a minute.
+async function readingMinutes(file: string) {
+  const raw = await readFile(path.join(DIR, file), "utf8");
+  const words = raw.replace(/^---[\s\S]*?---/, "").replace(/<[^>]+>/g, " ").split(/\s+/).filter(Boolean).length;
+  return Math.max(1, Math.round(words / 230));
+}
 
 // Drafts are visible in `npm run dev` so you can preview them, and hidden in production.
 const showDrafts = process.env.NODE_ENV !== "production";
@@ -40,19 +62,30 @@ export async function getWritings(): Promise<Writing[]> {
       .map(async f => {
         const slug = f.replace(/\.mdx$/, "");
         const { metadata: m } = await loadPost(slug);
-        if (m.draft && !showDrafts) return null;
+        if (m.hidden || (m.draft && !showDrafts)) return null;
+        const date = m.date ? new Date(m.date) : undefined;
         const w: Writing = {
           slug,
-          title: m.title,
+          title: fillTitle(m.title, date),
           kind: m.draft ? `Draft${m.kind ? ` · ${m.kind}` : ""}` : m.kind,
           summary: m.summary,
-          date: m.date ? new Date(m.date) : undefined,
+          date,
           format: "mdx",
+          cover: coverKind(`${slug} ${m.title} ${m.kind ?? ""}`, m.cover),
+          minutes: await readingMinutes(f),
+          pinned: m.pinned,
         };
         return w;
       }),
   );
-  const archived: Writing[] = essays.map(e => ({ ...e, format: "html" }));
+  const archived: Writing[] = await Promise.all(
+    essays.map(async e => ({
+      ...e,
+      format: "html" as const,
+      cover: coverKind(`${e.slug} ${e.title} ${e.kind}`),
+      minutes: await readingMinutes(`${e.slug}.html`),
+    })),
+  );
   // Newest first; undated pieces (the archived essays) go last in their listed order.
   const dated = posts.filter((p): p is Writing => p !== null).sort((a, b) => (b.date?.getTime() ?? 0) - (a.date?.getTime() ?? 0));
   return [...dated, ...archived];

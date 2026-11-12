@@ -27,6 +27,8 @@ export type CellFieldOptions = {
   scale?: number;
   // Keep random glitch boxes in the outer bands of the page.
   edgeBoxes?: boolean;
+  // false skips the small scatter (dust, stars, clumps, particles, bubbles); read when the field is created
+  confetti?: boolean;
   // Current page path; when it changes, structures hold their positions instead of moving out of the new text.
   route?: string;
   // Viewport rects (e.g. the content column) that structures are pushed out of.

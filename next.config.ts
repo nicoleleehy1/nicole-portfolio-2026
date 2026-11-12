@@ -4,6 +4,13 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   reactCompiler: true,
   pageExtensions: ["js", "jsx", "md", "mdx", "ts", "tsx"],
+  // "writings" was renamed to "blog"; keep old links (and their #anchors) working.
+  async redirects() {
+    return [
+      { source: "/writings", destination: "/blog", permanent: false },
+      { source: "/writings/:slug", destination: "/blog/:slug", permanent: false },
+    ];
+  },
   // Stable resume URL; point the destination at whichever PDF is current.
   async rewrites() {
     return [
