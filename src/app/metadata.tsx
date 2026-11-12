@@ -485,6 +485,7 @@ export const projects: Project[] = [
     link: "https://aster-ruby.vercel.app/",
     desc: [
       "A decision record for drug discovery: chooses which compounds to assay next from a few dozen measurements, and records why each was picked so it can be checked against the result later.",
+      "Each round stores the full ranked slate including the rejected candidates, the acquisition policy and the constraints in force, against a declared endpoint, unit and direction; a decisions API reads any pick back joined to its basis at the time and to its result.",
       "Model-guided selection found 36.0 hits vs 8.7 for random picking on SARS-CoV-2 main protease (about 4x), winning all 10 paired runs; validated across 6,000+ pre-registered, paired retrospective replays on 10 protein targets.",
       "Showed simple Morgan fingerprints + ridge regression beat the pretrained CheMeleon encoder, frozen and fine-tuned (18.67 vs 15.50 top-decile compounds per 40 picks on held-out targets).",
       "Ran an evidence study across 9 targets and 864 paired cases: precise external measurements raised discovery by up to +2.80 per 40 picks (about 18%), while literature-grade noise (0.68 log units) reversed the gain, which is why published data stays out of the ranking.",
