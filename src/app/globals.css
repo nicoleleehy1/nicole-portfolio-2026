@@ -47,6 +47,28 @@
    screening, with its dark fills dropped and its lines warmed toward honey and rose. The HUD draws nothing in light mode. */
 :root[data-theme="light"] .cell-field .cf-org { mix-blend-mode: normal; filter: url(#cf-pastel) sepia(0.35) saturate(1.5) hue-rotate(-10deg) brightness(0.88); }
 :root[data-theme="light"] .hero-text::after { filter: invert(1); }
+/* light mode: the cloud behind the intro becomes a soft sunset glow (peach core, rose, lilac) that keeps fading
+   out into the page toward the sides, with no hard rim */
+:root[data-theme="light"] .hero-text::before {
+  inset: -9rem -14rem;
+  background: radial-gradient(
+    ellipse 50% 50% at 50% 48%,
+    rgba(246, 196, 150, 0.55) 0%,
+    rgba(246, 198, 178, 0.45) 22%,
+    rgba(242, 198, 218, 0.32) 45%,
+    rgba(236, 214, 236, 0.18) 68%,
+    rgba(253, 248, 242, 0.06) 86%,
+    rgba(253, 248, 242, 0) 100%
+  );
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  /* one smooth falloff instead of the lumpy cloud edge */
+  -webkit-mask-image: radial-gradient(ellipse 50% 50% at 50% 50%, #000 40%, transparent 100%);
+  mask-image: radial-gradient(ellipse 50% 50% at 50% 50%, #000 40%, transparent 100%);
+}
+@media (max-width: 600px) {
+  :root[data-theme="light"] .hero-text::before { inset: -5rem -3rem; }
+}
 
 html, body {
   background: var(--bg);
