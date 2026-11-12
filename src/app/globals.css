@@ -398,9 +398,9 @@ ul, ol {
   position: relative;
   isolation: isolate;
   max-width: 38rem;
-  font-family: var(--font-inter), Inter, system-ui, sans-serif;
-  font-size: 1rem;
-  line-height: 1.65;
+  /* same serif as the section pages (Experience etc.) */
+  font-family: var(--serif);
+  font-size: 0.9rem;
   /* a slight cyan glow, over a dark halo that keeps the copy legible near drifting cells */
   text-shadow: 0 0 10px rgba(var(--glow), 0.28), 0 0 6px var(--bg), 0 0 18px var(--bg);
 }
@@ -452,9 +452,9 @@ ul, ol {
 }
 .hero-name {
   font-family: inherit;
-  font-weight: 700;
+  font-weight: 400;
   font-size: clamp(1.9rem, 4.5vw, 2.6rem);
-  letter-spacing: -0.035em;
+  letter-spacing: 0;
   line-height: 1.05;
   color: var(--ink-strong);
   margin-bottom: 1.1rem;

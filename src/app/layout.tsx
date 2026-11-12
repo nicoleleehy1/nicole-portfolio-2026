@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
-import { Fraunces, IBM_Plex_Mono, Inter } from "next/font/google";
+import { Fraunces, IBM_Plex_Mono } from "next/font/google";
 import { Nav } from "../components/nav";
 import { Footer } from "../components/footer";
 import { LiveClock } from "../components/live-clock";
@@ -10,13 +10,6 @@ const fraunces = Fraunces({
   subsets: ["latin"],
   axes: ["opsz", "SOFT"],
   variable: "--font-fraunces",
-});
-
-// The home page copy (was EB Garamond). opsz picks Inter's display cut at heading sizes.
-const inter = Inter({
-  subsets: ["latin"],
-  axes: ["opsz"],
-  variable: "--font-inter",
 });
 
 const plexMono = IBM_Plex_Mono({
@@ -31,7 +24,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${fraunces.variable} ${inter.variable} ${plexMono.variable}`} suppressHydrationWarning>
+    <html lang="en" className={`${fraunces.variable} ${plexMono.variable}`} suppressHydrationWarning>
       <head>
         {/* apply a saved light-mode choice before first paint, so the page never flashes dark */}
         <script dangerouslySetInnerHTML={{ __html: THEME_SCRIPT }} />
