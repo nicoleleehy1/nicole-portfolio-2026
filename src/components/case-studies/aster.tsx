@@ -1,4 +1,4 @@
-import s from "./aster.module.css";
+import s from "./case-study.module.css";
 
 // The Aster case study, rendered inside the project popup in place of "What I did".
 const sections = [

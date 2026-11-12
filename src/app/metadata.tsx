@@ -468,7 +468,7 @@ export type Project = {
   // Optional cover photo in /public; a generated texture is used otherwise.
   image?: string;
   // Optional case study shown in the popup instead of desc (see src/components/case-studies).
-  caseStudy?: "aster";
+  caseStudy?: "aster" | "codemri" | "pokerlab";
   // Optional award shown as a badge on the cover, e.g. "1st Place · HackMIT".
   award?: string;
   // Extra screenshots in /public, shown under "What I did".
@@ -483,6 +483,7 @@ export const projects: Project[] = [
     event: "Personal Project",
     link: "https://github.com/nicoleleehy1/pokerlab",
     image: "/projects/pokerlab.jpg",
+    caseStudy: "pokerlab",
     summary: [
       "An iOS app that teaches game-theory-optimal poker.",
       "Works out the best play on the phone itself, in real time, with a solver engine I wrote in Swift.",
@@ -522,7 +523,8 @@ export const projects: Project[] = [
     name: "CodeMRI",
     event: "Personal Project",
     link: "https://github.com/nicoleleehy1/CodeMRI",
-    image: "/projects/codemri.jpg",
+    image: "/projects/codemri-cover.jpg",
+    caseStudy: "codemri",
     summary: [
       "A static-analysis tool and context compiler for coding agents.",
       "Maps a repo into architecture and symbol graphs, so an agent only reads the code a change touches.",

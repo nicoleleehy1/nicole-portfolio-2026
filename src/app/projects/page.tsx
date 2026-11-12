@@ -2,9 +2,15 @@ import type { Metadata } from "next";
 import { projects } from "../metadata";
 import { Gallery, type GalleryItem } from "../../components/gallery";
 import { AsterCaseStudy } from "../../components/case-studies/aster";
+import { CodeMRICaseStudy } from "../../components/case-studies/codemri";
+import { PokerLabCaseStudy } from "../../components/case-studies/pokerlab";
 
 // Case studies shown in the popup in place of "What I did", keyed by Project.caseStudy.
-const caseStudies = { aster: <AsterCaseStudy /> };
+const caseStudies = {
+  aster: <AsterCaseStudy />,
+  codemri: <CodeMRICaseStudy />,
+  pokerlab: <PokerLabCaseStudy />,
+};
 
 export const metadata: Metadata = { title: "Projects" };
 

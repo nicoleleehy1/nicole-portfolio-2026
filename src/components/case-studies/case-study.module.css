@@ -1,4 +1,4 @@
-/* Document layout for the Aster case study: a reading column with figures, tables and
+/* Document layout shared by the project case studies: a reading column with figures, tables and
    a print stylesheet, so the page saves as a PDF with the same structure it has on screen. */
 
 /* Sits inside the project popup, so it takes the popup's width and padding. */
