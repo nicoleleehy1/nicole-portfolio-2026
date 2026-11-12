@@ -398,5 +398,5 @@
   }
   .figure img { border-color: #ccc; }
   .layer { break-inside: avoid; background: none; }
-  a { text-decoration: none; }
+  .doc a { text-decoration: none; }
 }
