@@ -25,7 +25,8 @@ const listBullet = (
 // Interactive learning journal: the experiment runs on the left, my notes on it read on the right.
 // The intro line sits in the header, with the experiment switcher at its right end.
 export function Playground({ intro }: { intro: ReactNode }) {
-  const [index, setIndex] = useState(experiments.length - 1);
+  // opens on Conway's Game of Life
+  const [index, setIndex] = useState(() => Math.max(0, experiments.findIndex(e => e.slug === "game-of-life")));
   const [listOpen, setListOpen] = useState(false);
   const navRef = useRef<HTMLDivElement>(null);
   const exp = experiments[index];
