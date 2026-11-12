@@ -26,9 +26,9 @@ export const experience = [
     link: "https://www.apple.com/",
     summary: "MCP evaluation & optimization platform",
     desc: [
-      "Built a full MCP evaluation platform across 450+ servers, generating 200+ schema-aware ground truth queries per run and automating live tool calls to cut per-eval time 18x (6+ hrs → 20 mins).",
+      "Built a full MCP evaluation platform across hundreds of MCP servers, generating 200+ schema-aware ground truth queries per run and automating live tool calls to cut per-eval time 18x (6+ hrs → 20 mins).",
       "Architected a fault-tolerant tracing proxy intercepting live MCP traffic with response normalization and persistent PostgreSQL state, collapsing 100+ correlated failures into <10 root causes and cutting triage 40%.",
-      "Engineered hybrid scoring with deterministic tool-call/JSON diffing + LLM-as-judges; extracted Langfuse traces + A/B runs to analyze routing failures and recommend tool description/routing changes optimizing accuracy, latency & cost.",
+      "Engineered hybrid scoring with deterministic tool-call/JSON diffing + LLM-as-judges; extracted traces + A/B runs to analyze routing failures and recommend tool description/routing changes optimizing accuracy, latency & cost.",
     ],
   },
   {

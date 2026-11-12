@@ -16,7 +16,7 @@ const nextConfig: NextConfig = {
     return [
       {
         source: "/Nicole_Lee_Resume",
-        destination: "/Nicole_Lee_Resume_Oct_2026.pdf",
+        destination: "/Nicole_Lee_Resume_Nov_2026.pdf",
       },
     ];
   },
