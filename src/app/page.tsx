@@ -8,7 +8,7 @@ export default function HomePage() {
     <section className="hero">
       {/* No backing box: the text sits in the field, and cells are pushed around it (data-exclude). */}
       <div className="hero-text" data-content data-exclude>
-        <Image src="/headshot.png" alt="nicole shading her eyes and smiling by the bay bridge" width={480} height={480} priority className="hero-photo" />
+        <Image src="/headshot-wide.png" alt="nicole shading her eyes and smiling by the bay bridge" width={480} height={480} priority className="hero-photo" />
         <h1 className="hero-name">hi, i&apos;m nicole! ˙ᵕ˙</h1>
         <p>
           I&apos;m a junior at UC Berkeley studying Electrical Engineering &amp; Computer Science and
