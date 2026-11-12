@@ -9,7 +9,7 @@ export const sections = [
   // { label: "Leadership", href: "/leadership" },
   { label: "Projects", href: "/projects" },
   { label: "Awards", href: "/awards" },
-  { label: "Writings", href: "/writings" },
+  { label: "Blog", href: "/blog" },
   { label: "Playground", href: "/playground" },
 ];
 export const skills = [

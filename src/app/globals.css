@@ -622,31 +622,227 @@ ul, ol {
   z-index: 1;
 }
 
-/* Writings list */
-.writing-item {
+/* Blog: a newspaper front page. Masthead, then a wide main column of mixed story packages beside a ruled rail. */
+.blog.scrim {
+  /* breaks out of the 880px page column so the front page has room for a rail */
+  width: min(1240px, 100vw);
+  margin-inline: 0;
+  left: 50%;
+  translate: -50% 0;
+}
+.blog-masthead { margin-bottom: 1.5rem; }
+.blog-masthead-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: end;
+  gap: 1rem;
+  padding-bottom: 0.8rem;
+}
+.blog-title {
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: clamp(2.75rem, 8vw, 4.75rem);
+  letter-spacing: -0.035em;
+  line-height: 1;
+  color: var(--ink-strong);
+}
+.blog-ear,
+.blog-label,
+.blog-kicker,
+.blog-byline {
+  font-family: var(--mono);
+  font-weight: 500;
+  text-transform: uppercase;
+}
+.blog-ear { font-size: 0.6rem; letter-spacing: 0.1em; color: var(--muted); line-height: 1.5; padding-bottom: 0.4rem; }
+.blog-ear-right { text-align: right; }
+.blog-dateline {
+  padding: 0.45rem 0;
+  border-top: 1px solid var(--edge);
+  border-bottom: 3px double var(--edge);
+  text-align: center;
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 0.82rem;
+  color: var(--muted);
+}
+
+.blog-front {
+  display: grid;
+  grid-template-columns: minmax(0, 2.8fr) minmax(0, 1fr);
+}
+.blog-main { padding-right: 1.5rem; }
+.blog-rail {
   display: flex;
   flex-direction: column;
-  gap: 0.2rem;
-  padding: 1rem 0;
+  padding-left: 1.5rem;
+  border-left: 1px solid var(--rule);
+}
+.blog-rail > * + * { border-top: 1px solid var(--edge); margin-top: 1.25rem; padding-top: 1.25rem; }
+
+/* packages stack down the main column, each split off by a rule and optionally named by a label */
+.blog-pkg { padding: 1.5rem 0; }
+.blog-pkg:first-child { padding-top: 0; }
+.blog-pkg + .blog-pkg { border-top: 1px solid var(--edge); }
+.blog-label {
+  font-size: 0.62rem;
+  letter-spacing: 0.12em;
+  color: var(--ink-strong);
+  margin-bottom: 1rem;
+}
+
+/* a story block: cover, kicker, headline, summary, byline */
+.blog-story {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
   text-decoration: none;
   color: var(--ink);
 }
-.writing-item + .writing-item { border-top: 1px solid var(--rule); }
-.writing-kind {
-  font-size: 0.64rem;
-  color: var(--muted);
-}
-.writing-title {
+.blog-story-text { display: flex; flex-direction: column; gap: 0.35rem; min-width: 0; }
+.blog-kicker { font-size: 0.58rem; letter-spacing: 0.12em; color: var(--warm); }
+.blog-headline {
   font-family: var(--display);
   font-weight: 600;
-  line-height: 1.45;
+  font-size: 0.98rem;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
   color: var(--ink-strong);
   transition: color 0.15s ease;
+  /* long words like "AlphaFold2's" break instead of spilling past the column */
+  overflow-wrap: break-word;
+  hyphens: auto;
 }
-.writing-item:hover .writing-title { color: var(--accent); }
-.writing-summary {
-  font-size: 0.92rem;
-  color: var(--muted);
+.blog-summary { font-size: 0.85rem; line-height: 1.5; color: var(--muted); }
+.blog-byline { font-size: 0.55rem; letter-spacing: 0.1em; color: var(--faint); margin-top: 0.1rem; }
+.blog-story:hover .blog-headline { color: var(--accent); }
+.story-stack .blog-summary,
+.story-feature .blog-summary {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 4;
+  overflow: hidden;
+}
+
+/* top package: rows of headline beside cover (the pinned post, then the newest story) | two stacked headlines */
+.blog-pkg-top {
+  display: grid;
+  grid-template-columns: minmax(0, 3fr) minmax(0, 1fr);
+  gap: 1.25rem;
+  align-items: start;
+}
+.blog-top-rows { display: flex; flex-direction: column; }
+.story-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr);
+  gap: 1.5rem;
+  align-items: start;
+}
+.story-row .ascii-cover { order: 2; }
+/* the sprout is tall and narrow: its row gives the headline most of the width, and the sprout keeps a
+   small box pushed to the right edge */
+.story-row:has(.ascii-cover-sprout) { grid-template-columns: minmax(0, 1.7fr) minmax(0, 1fr); }
+.story-row .ascii-cover-sprout { width: 80%; justify-self: end; }
+.story-row + .story-row { border-top: 1px solid var(--rule); margin-top: 1.25rem; padding-top: 1.25rem; }
+.story-row .blog-headline { font-size: clamp(1.3rem, 2vw, 1.6rem); line-height: 1.12; letter-spacing: -0.02em; }
+.story-row .blog-summary { font-size: 0.92rem; }
+.blog-top-stack {
+  display: flex;
+  flex-direction: column;
+  padding-left: 1.25rem;
+  border-left: 1px solid var(--rule);
+  align-self: stretch;
+}
+.blog-top-stack .blog-story + .blog-story { border-top: 1px solid var(--rule); margin-top: 1.1rem; padding-top: 1.1rem; }
+
+/* long read: text beside a wide cover, set in a lighter, larger headline */
+.story-long {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.55fr);
+  gap: 1.5rem;
+  align-items: start;
+}
+.story-long .ascii-cover { order: 2; }
+.story-long .blog-headline,
+.story-feature .blog-headline { font-weight: 400; font-size: clamp(1.25rem, 1.9vw, 1.5rem); line-height: 1.15; letter-spacing: -0.02em; }
+
+/* more stories: small cover to the left of each headline, two across with rules between */
+.blog-thumbs { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.story-thumb {
+  display: grid;
+  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1fr);
+  gap: 0.9rem;
+  align-items: start;
+  padding: 1rem 1.25rem;
+  border-left: 1px solid var(--rule);
+}
+.story-thumb:nth-child(2n + 1) { border-left: none; padding-left: 0; }
+.story-thumb:nth-child(2n) { padding-right: 0; }
+.story-thumb:nth-child(-n + 2) { padding-top: 0; }
+.story-thumb:nth-child(n + 3) { border-top: 1px solid var(--rule); }
+
+/* rail: a feature with its cover on top, a two-up of small covers, then a list with thumbnails on the right */
+.blog-duo { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.blog-duo .blog-story { padding: 0 0.9rem; border-left: 1px solid var(--rule); }
+.blog-duo .blog-story:first-child { padding-left: 0; border-left: none; }
+.blog-duo .blog-story:last-child { padding-right: 0; }
+.blog-duo .blog-headline { font-size: 0.9rem; }
+.blog-list .blog-story {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 5.5rem;
+  gap: 0.9rem;
+}
+.blog-list .ascii-cover { order: 2; }
+.blog-list .blog-headline { font-size: 0.9rem; }
+.blog-list .blog-story + .blog-story { border-top: 1px solid var(--rule); margin-top: 0.9rem; padding-top: 0.9rem; }
+
+/* ASCII cover art: the type is sized so --cols character cells exactly span the box */
+.ascii-cover {
+  container-type: inline-size;
+  margin: 0;
+  overflow: hidden;
+}
+.ascii-cover pre {
+  margin: 0;
+  font-family: var(--mono);
+  font-weight: 400;
+  /* --cell is a character cell's width in em: 0.6 is Plex Mono's own advance; wider cells add letter-spacing */
+  font-size: calc(100cqw / var(--cols) / var(--cell, 0.6));
+  line-height: 1;
+  letter-spacing: calc((var(--cell, 0.6) - 0.6) * 1em);
+  white-space: pre;
+  color: var(--accent);
+  opacity: 0.85;
+  user-select: none;
+  transition: color 0.2s ease, opacity 0.2s ease;
+}
+.blog-story:hover .ascii-cover pre { color: var(--warm); opacity: 1; }
+.ascii-cover .ascii-light,
+:root[data-theme="light"] .ascii-cover .ascii-dark { display: none; }
+:root[data-theme="light"] .ascii-cover .ascii-light { display: block; }
+
+@media (max-width: 1000px) {
+  .blog-front { grid-template-columns: minmax(0, 1fr); }
+  .blog-main { padding-right: 0; }
+  .blog-rail { padding: 1.5rem 0 0; border-left: none; border-top: 1px solid var(--edge); }
+}
+@media (max-width: 760px) {
+  .story-row { grid-template-columns: minmax(0, 1fr); gap: 1rem; }
+  .story-row .ascii-cover { order: 0; }
+  .story-row:has(.ascii-cover-sprout) { grid-template-columns: minmax(0, 1fr); }
+  .story-row .ascii-cover-sprout { width: 50%; }
+  .blog-pkg-top { grid-template-columns: minmax(0, 1fr); }
+  .blog-top-stack { padding: 1.1rem 0 0; border-left: none; border-top: 1px solid var(--rule); }
+  .story-long { grid-template-columns: minmax(0, 1fr); gap: 1rem; }
+  .story-long .ascii-cover { order: 0; }
+  .blog-thumbs { grid-template-columns: minmax(0, 1fr); }
+  .story-thumb,
+  .story-thumb:nth-child(n) { border-left: none; padding: 1rem 0; border-top: 1px solid var(--rule); }
+  .story-thumb:first-child { border-top: none; padding-top: 0; }
+}
+@media (max-width: 520px) {
+  .blog-masthead-row { grid-template-columns: minmax(0, 1fr); text-align: center; }
+  .blog-ear { display: none; }
 }
 
 /* Single writing */
