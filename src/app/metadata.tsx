@@ -461,6 +461,8 @@ export type Project = {
   link?: string;
   // Optional cover photo in /public; a generated texture is used otherwise.
   image?: string;
+  // Optional long-form case study in the app, e.g. "/projects/aster".
+  writeup?: string;
   // Optional award shown as a badge on the cover, e.g. "1st Place · HackMIT".
   award?: string;
 };
@@ -483,6 +485,7 @@ export const projects: Project[] = [
     name: "Aster",
     event: "Personal Project",
     link: "https://aster-ruby.vercel.app/",
+    writeup: "/projects/aster",
     desc: [
       "Goal: a record of experimental decisions for any assay and any endpoint. A campaign declares its endpoint, unit and direction, and every round stores the full ranked slate — including the candidates that were rejected — with the acquisition policy, locks and exclusions in force, so a decisions API can read any pick back joined to its basis at the time and to its result.",
       "Approach: machine learning and active learning rather than deep learning. Chirality-aware Morgan fingerprints (radius 2, 2,048 bits) with standardized ridge regression, ranked greedily by predicted activity and refit each round from a starting set of 32 to 64 measured compounds.",
