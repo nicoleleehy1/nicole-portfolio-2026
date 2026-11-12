@@ -13,10 +13,8 @@ export default function HomePage() {
           <a href="https://hkses.edb.gov.hk/en/index.html" target="_blank" rel="noreferrer" className="link">
             HKSES Scholar
           </a>
-          . I'm broadly interested in the intersection of computation and social impact. More recently, I&apos;ve been
-          exploring AI mechanistic interpretability, 
-          
-          work on AI mechanistic interpretability, and lately on how models represent biological systems.
+          . I'm broadly interested applying computation to understand complex systems, recently exploring
+          mechanistic interpretability, comp biology, and stochastic modeling in synapses to poker!
         </p>
 
         <p>
@@ -33,7 +31,7 @@ export default function HomePage() {
         </p>
 
         <p>
-          I help organize the world&apos;s{" "}
+          I build tech infrastructure for the world&apos;s{" "}
           <a href="https://www.calhacks.io/" target="_blank" rel="noreferrer" className="link">
             largest collegiate hackathon
           </a>{" "}
