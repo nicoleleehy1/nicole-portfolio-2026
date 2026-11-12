@@ -133,10 +133,12 @@ export default function AsterCaseStudy() {
           </p>
 
           <figure className={s.figure}>
-            <img src="/projects/aster/how-it-works.jpg" alt="The four steps of an Aster campaign: bring measurements, get the next batch, run it and report back, replay any round." />
+            <img src="/projects/aster/campaign-workspace.jpg" alt="The Aster campaign workspace: a predict, prioritize, test, learn header, a candidate landscape plot, the selected compound with its prediction and nearest analogue, the committed batch, the compound library and the decision history." />
             <figcaption className={s.caption}>
-              The campaign loop as the site describes it. The fourth step is the one the rest of this
-              document is about: any round can be replayed from what was stored at the time.
+              The campaign workspace at the end of round 2 of a public replay on the dopamine transporter:
+              48 measured, 112 untested, two completed rounds, Morgan + ridge as the reference model. The
+              candidate landscape plots predicted activity against similarity to the nearest measured
+              compound, and the panel says so in as many words — similarity is proximity, not confidence.
             </figcaption>
           </figure>
 
@@ -150,15 +152,21 @@ export default function AsterCaseStudy() {
             each pick to its basis at the time and to its result, if a result has since arrived.
           </p>
 
-          <div className={`${s.figure} ${s.pair}`}>
-            <img src="/projects/aster/decision-record-panel.jpg" alt="The decision record panel: a timeline of campaign events, and a predicted-versus-measured scatter plot headed Were we right?" />
-            <img src="/projects/aster/pick-detail.jpg" alt="The detail card for one pick: why it was tested, the model, the nearest measured compound, and what came back." />
+          <figure className={s.figure}>
+            <img src="/projects/aster/committed-batch.jpg" alt="The committed batch table: eight compounds with predicted pKi, similarity to the nearest measured compound, and the selection reason for each." />
             <figcaption className={s.caption}>
-              Left: the event timeline and the predicted-versus-measured check for one round. Right: one
-              pick opened up — rank 3 by predicted pKi, fit on 40 measurements, nearest measured analogue
-              at similarity 0.48, predicted 7.20 and measured 9.10.
+              The committed batch as it is stored: a prediction, a similarity and a stated selection reason
+              per pick, saved at decision time rather than recomputed on the way out.
             </figcaption>
-          </div>
+          </figure>
+
+          <figure className={`${s.figure} ${s.figNarrow}`}>
+            <img src="/projects/aster/decision-history.jpg" alt="The decision history panel listing two rounds, each with the number of measurements it was trained on and its results, under the heading Decisions you can trace." />
+            <figcaption className={s.caption}>
+              Each round keeps its own training snapshot, model, original predictions and selection
+              reasons. This is the part that makes the later question answerable.
+            </figcaption>
+          </figure>
 
           <h3 className={s.h3}>“Were we right?” as a computed view</h3>
           <p>
@@ -169,26 +177,30 @@ export default function AsterCaseStudy() {
           </p>
 
           <figure className={s.figure}>
-            <img src="/projects/aster/round-outcomes.jpg" alt="A table of eight picks with predicted value, measured value, signed error, the nearest measured compound at decision time, and an outcome label." />
+            <img src="/projects/aster/decision-replay.jpg" alt="The structure and decision replay view: the experimental protein complex in 3D, nearby residues with distances, the recorded campaign, the committed batch, a decision timeline, and a prediction-to-observation table." />
             <figcaption className={s.caption}>
-              One round’s batch read back with outcomes. Every row carries what was known at decision time,
-              not what is known now.
+              The replay view, which reads saved artefacts and runs nothing: the five steps of round 2,
+              the committed batch, and every pick’s prediction next to the measurement that came back,
+              with a batch mean absolute error of 0.91 log units. Playback does not retrain or change the
+              campaign.
             </figcaption>
           </figure>
 
           <h3 className={s.h3}>Structural context, kept out of the ranking</h3>
           <p>
-            Candidates can be docked into an experimental protein structure with AutoDock Vina, and the
-            binding pocket is viewable in the browser. This is shown for inspection and explicitly not used
-            as a ranking feature — section 7 explains why that restraint is a measured decision rather than
-            a missing feature.
+            Candidates can be docked into an experimental protein structure with AutoDock Vina and overlaid
+            on the reference ligand in the browser, with the nearby residues listed as shared or new
+            contacts. It is shown for inspection and explicitly not used as a ranking feature — section 7
+            explains why that restraint is a measured decision rather than a missing one.
           </p>
 
           <figure className={s.figure}>
-            <img src="/projects/aster/record-section.jpg" alt="The decision record section of the Aster site, showing the stored reasoning for a past round." />
+            <img src="/projects/aster/docking-overlay.jpg" alt="A docked candidate pose overlaid in green on the violet reference ligand inside the dopamine transporter pocket, with a list of geometric contacts marked shared or new." />
             <figcaption className={s.caption}>
-              The product framing: the reasoning is still there six months later, because it was written
-              down as structured data at the moment the choice was made.
+              A docked candidate (green) overlaid on the experimental reference ligand (violet) in the
+              dopamine transporter pocket, with its Vina pose at −8.03 kcal/mol. The panel states its own
+              limits: protein-only rigid docking, ions omitted from scoring, redocking passed but
+              cross-docking untested, and the score is not a potency — recommendations are unchanged by it.
             </figcaption>
           </figure>
         </div>
@@ -448,6 +460,17 @@ export default function AsterCaseStudy() {
             </table>
           </div>
 
+          <figure className={s.figure}>
+            <img src="/projects/aster/discovery-curves.jpg" alt="Two line charts. Left: new hits found against additional assays acquired, with model-guided selection rising to 36 and random selection to under 9. Right: mean absolute error on an untouched test partition, nearly flat for both arms." />
+            <figcaption className={s.caption}>
+              The first milestone, ten paired seeds. Left: model-guided selection finds 36.0 strong
+              compounds over 40 assays against 8.7 for random picking. Right: the same runs scored for
+              predictive accuracy on a partition nobody touched, where the two arms are indistinguishable
+              and the guided one is very slightly worse. Choosing well and predicting well are not the same
+              thing, and only the first is what the system claims.
+            </figcaption>
+          </figure>
+
           <h3 className={s.h3}>The experiment that explained the rest</h3>
           <p>
             The literature result was first reported as a null and attributed to short supply: the corpus
@@ -482,9 +505,13 @@ export default function AsterCaseStudy() {
           </p>
 
           <figure className={s.figure}>
-            <img src="/projects/aster/evidence-section.jpg" alt="The evaluation section of the Aster site, summarising the retrospective studies and what each one concluded." />
+            <img src="/projects/aster/model-comparison.jpg" alt="Grouped bar charts over three Ki targets, two protocols and two starting label counts, comparing Morgan with random forest, random selection, Morgan with ridge, and CheMeleon with ridge." />
             <figcaption className={s.caption}>
-              The evaluation section of the site, which states the negatives alongside the positives.
+              The broader evaluation: three Ki targets, a published and a scaffold-transfer protocol, 32 and
+              64 starting labels, paired seeds. Morgan + ridge (green) is at or above the pretrained
+              CheMeleon encoder (orange) in most panels, and every model arm is far above random (grey).
+              The error bars are one seed standard deviation, and they are wide — which is why the
+              conclusion rests on thousands of paired cases rather than on any single panel.
             </figcaption>
           </figure>
         </div>
@@ -579,10 +606,11 @@ export default function AsterCaseStudy() {
             </li>
           </ul>
           <p className={s.footerNote}>
-            Written up from the project’s own results documents and pre-registered study configs. Figures
-            are screenshots of the running application on its bundled public example (CHEMBL238 Ki,
-            dopamine transporter), where outcomes were already public and were revealed one committed batch
-            at a time.
+            Written up from the project’s own results documents and pre-registered study configs. The
+            interface figures are the repository’s own verification captures of the running application on
+            its bundled public example (MoleculeACE CHEMBL238 Ki, dopamine transporter), where outcomes
+            were already public and were revealed one committed batch at a time. The result figures are the
+            plots the study scripts produced.
           </p>
         </div>
       </article>
