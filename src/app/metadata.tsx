@@ -479,6 +479,20 @@ export type Project = {
 
 export const projects: Project[] = [
   {
+    name: "Hackathons @ Berkeley",
+    event: "Cal Hacks",
+    image: "/projects/hackathons-cover.jpg",
+    summary: [
+      "The iOS app, operations platform and sponsorship pipeline behind Cal Hacks.",
+    ],
+    desc: [
+      "Shipped the official iOS app (React Native, 10K+ installs) with a 3D venue map (React Three Fiber, Gaussian splatting) embedded across 3 surfaces; GPU-profiled it to cut draw calls 74% and triangles 84% via instancing and render-on-demand.",
+      "Built the Hive operations platform (Next.js) for 4,000+ hackers and 652 projects, with hardware checkout (5,000+ orders) and souvenir shop (3,500+ units) on transactional Postgres RPCs with row locking, 1-hr stock holds, and partial fulfillment.",
+      "Built an automated sponsorship outreach pipeline reaching 14,000+ contacts at 2,000+ companies, raising $1,250,000+.",
+    ],
+    stack: "React Native · React Three Fiber · Next.js · Postgres",
+  },
+  {
     name: "PokerLab",
     event: "Personal Project",
     link: "https://github.com/nicoleleehy1/pokerlab",
@@ -501,7 +515,7 @@ export const projects: Project[] = [
     event: "Personal Project",
     link: "https://aster-ruby.vercel.app/",
     caseStudy: "aster",
-    image: "/projects/aster.png",
+    image: "/projects/aster-cover.jpg",
     summary: [
       "A decision record for drug discovery.",
       "Chooses which compounds to assay next from a few dozen measurements.",
@@ -536,9 +550,26 @@ export const projects: Project[] = [
     stack: "Python · TypeScript · Tree-sitter · FastAPI",
   },
   {
+    name: "After You",
+    event: "LA Hacks",
+    link: "https://github.com/nicoleleehy1/Baymax-Cafe",
+    image: "/projects/after-you-cover.jpg",
+    summary: [
+      "A 3D café where a Baymax-inspired robot delivers drinks around people.",
+      "When the polite choice is unclear, he asks you, and your answer changes how he moves later.",
+    ],
+    desc: [
+      "Built a robot planner that rejects unsafe paths first, then ranks the safe ones with a preference model learned from your answers.",
+    ],
+    images: ["/projects/after-you/considering.jpg", "/projects/after-you/building.jpg"],
+    stack: "TypeScript · React · Three.js · React Three Fiber · Zustand · Web Workers",
+  },
+  {
     name: "Flusk",
     event: "Personal Project",
     link: "https://web-production-5c042.up.railway.app/",
+    image: "/projects/flusk-cover.jpg",
+    images: ["/projects/flusk/stats.jpg", "/projects/flusk/table.jpg", "/projects/flusk/operations.jpg"],
     summary: [
       "A key-value storage engine in Java, built on an LSM tree.",
       "Served over a small REST API.",
@@ -553,6 +584,8 @@ export const projects: Project[] = [
     name: "Stoich",
     event: "Personal Project",
     link: "https://stoich.vercel.app/",
+    image: "/projects/stoich-cover.jpg",
+    images: ["/projects/stoich/home.jpg", "/projects/stoich/lab.jpg"],
     summary: [
       "A research tool for reading chemistry papers.",
       "Shows each reaction as a linked graph, equation, mechanism and 3D structure.",
@@ -567,6 +600,8 @@ export const projects: Project[] = [
     name: "Synapse AI",
     event: "HackMIT 2025",
     link: "https://github.com/nicoleleehy1/synapse",
+    image: "/projects/synapse-cover.jpg",
+    images: ["/projects/synapse/graph.jpg", "/projects/synapse/table.jpg"],
     summary: [
       "A study tool that turns PDFs into interactive knowledge graphs.",
       "Built at HackMIT 2025.",
