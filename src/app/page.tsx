@@ -1,3 +1,5 @@
+import Image from "next/image";
+import Link from "next/link";
 import { SocialLinks } from "../components/social-links";
 import { Footer } from "../components/footer";
 
@@ -6,6 +8,7 @@ export default function HomePage() {
     <section className="hero">
       {/* No backing box: the text sits in the field, and cells are pushed around it (data-exclude). */}
       <div className="hero-text" data-content data-exclude>
+        <Image src="/headshot.png" alt="nicole shading her eyes and smiling by the bay bridge" width={480} height={480} priority className="hero-photo" />
         <h1 className="hero-name">hi, i&apos;m nicole! ˙ᵕ˙</h1>
         <p>
           I&apos;m a junior at UC Berkeley studying Electrical Engineering &amp; Computer Science and
@@ -13,7 +16,7 @@ export default function HomePage() {
           <a href="https://hkses.edb.gov.hk/en/index.html" target="_blank" rel="noreferrer" className="link">
             HKSES Scholar
           </a>
-          . I'm broadly interested applying computation to understand complex systems, recently exploring
+          . I&apos;m broadly interested applying computation to understand complex systems, recently exploring
           mechanistic interpretability, comp biology, and stochastic modeling in synapses to poker!
         </p>
 
@@ -47,6 +50,10 @@ export default function HomePage() {
             first global hackathon
           </a>{" "}
           to Hong Kong.
+        </p>
+
+        <p>
+          <Link href="/blog/what-ive-been-up-to" className="hero-button">see what i&apos;ve been up to!</Link>
         </p>
 
         <SocialLinks />
