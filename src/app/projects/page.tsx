@@ -13,6 +13,7 @@ const items: GalleryItem[] = projects.map(p => ({
   subtitle: p.event,
   category: p.event === "Personal Project" ? "Personal" : "Hackathons & Competitions",
   image: p.image,
+  ascii: p.ascii,
   award: p.award,
   props: [
     { label: "Event", value: p.event },

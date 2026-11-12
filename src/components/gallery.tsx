@@ -1,6 +1,8 @@
 "use client";
 import { Fragment, useRef, useState, type ReactNode } from "react";
 import { useCollection } from "./collection";
+import { AsciiCover } from "./ascii-cover";
+import type { CoverKind } from "@/lib/ascii-covers";
 
 export type GalleryItem = {
   title: string;
@@ -24,13 +26,19 @@ export type GalleryItem = {
   body?: ReactNode;
   // Extra screenshots shown under the bullets.
   images?: string[];
+  // ASCII-art cover, used when there's no image.
+  ascii?: CoverKind;
 };
 
 // Photo cover, or a plain light-gray panel when there's no image yet.
 function Cover({ item }: { item: GalleryItem }) {
   return (
     <div className="cover">
-      {item.image && <img src={item.image} alt={item.title} className="cover-media" />}
+      {item.image ? (
+        <img src={item.image} alt={item.title} className="cover-media" />
+      ) : (
+        item.ascii && <AsciiCover slug={item.title} kind={item.ascii} cols={72} rows={26} className="cover-ascii" />
+      )}
     </div>
   );
 }

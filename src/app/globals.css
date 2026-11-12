@@ -597,6 +597,15 @@ ul, ol {
   object-fit: cover;
   display: block;
 }
+/* ASCII-art cover in a gallery card: fills the panel, centered */
+.cover-ascii {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+}
+.cover-ascii pre { width: 100%; }
+.gallery-card:hover .cover-ascii pre { color: var(--warm); opacity: 1; }
 .badge {
   position: absolute;
   top: 0.6rem;

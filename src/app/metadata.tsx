@@ -1,3 +1,5 @@
+import type { CoverKind } from "@/lib/ascii-covers";
+
 export const RESUME_URL = "/Nicole_Lee_Resume";
 
 // Site sections, in nav order.
@@ -471,6 +473,8 @@ export type Project = {
   award?: string;
   // Extra screenshots in /public, shown under "What I did".
   images?: string[];
+  // ASCII-art cover (see src/lib/ascii-covers.ts), used when there's no image.
+  ascii?: CoverKind;
 };
 
 export const projects: Project[] = [
@@ -576,6 +580,7 @@ export const projects: Project[] = [
   {
     name: "ASL Live Translator",
     event: "TreeHacks 2025",
+    ascii: "field",
     summary: [
       "Reads ASL letters from a webcam and turns them into speech and captions.",
       "Built at TreeHacks 2025 for nonverbal users.",
