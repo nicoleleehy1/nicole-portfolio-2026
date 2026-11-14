@@ -16,8 +16,8 @@ export default function HomePage() {
           <a href="https://hkses.edb.gov.hk/en/index.html" target="_blank" rel="noreferrer" className="link">
             HKSES Scholar
           </a>
-          . I&apos;m broadly interested applying computation to understand complex systems, recently exploring
-          mechanistic interpretability, comp biology, and stochastic modeling in synapses to poker!
+          . I&apos;m broadly interested applying computation to understand complex systems, recently exploring topics ranging
+          mechanistic interpretability to stochastic modeling to compbio!
         </p>
 
         <p>
