@@ -359,6 +359,10 @@ ul, ol {
   text-overflow: ellipsis;
   text-shadow: 0 0 4px var(--bg), 0 0 8px var(--bg);
 }
+/* Home: the view count reads as a second line of the date readout, directly beneath it */
+.hud-readout:has(+ .view-count) { margin-bottom: 0; }
+.hud-readout.view-count { margin-top: 0.15rem; }
+.hud-readout.view-count + .hero { min-height: calc(100svh - 10rem); }
 
 /* Big section heading, used on every page */
 .page-title {
