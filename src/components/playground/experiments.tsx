@@ -3,6 +3,7 @@ import Link from "next/link";
 import { GameOfLife } from "./game-of-life";
 import { labNotes } from "./lab-notes";
 import { LABS } from "./lab-stages";
+import { Arrow } from "../arrow";
 
 // Playground experiments, newest last. Each pairs something to play with (left) with notes on what I'm learning (right).
 // To add one: build its component next to game-of-life.tsx and append an entry here.
@@ -59,7 +60,7 @@ export const experiments: Experiment[] = [
         </p>
         <p className="pg-more">
           <Link href="/blog/playground-thoughts#game-of-life" className="link">
-            keep reading in playground thoughts →
+            keep reading in playground thoughts <Arrow />
           </Link>
         </p>
       </>
@@ -92,7 +93,7 @@ export const experiments: Experiment[] = [
         ))}
         <p className="pg-more">
           <Link href={`/blog/playground-thoughts#${n.slug}`} className="link">
-            keep reading in playground thoughts →
+            keep reading in playground thoughts <Arrow />
           </Link>
         </p>
         {n.cite && (

@@ -1,4 +1,5 @@
 import s from "./case-study.module.css";
+import { Arrow } from "../arrow";
 
 // The PokerLab case study, rendered inside the project popup in place of "What I did".
 // Facts come from the PokerLab README and BENCHMARKS.md.
@@ -128,7 +129,7 @@ export function PokerLabCaseStudy() {
             </p>
           </div>
 
-          <p className={s.flow}>↑ AsyncStream ↓</p>
+          <p className={s.flow}><Arrow dir="up" /> AsyncStream <Arrow dir="down" /></p>
 
           <div className={s.layer}>
             <p className={s.layerName}>Engine · Swift package</p>

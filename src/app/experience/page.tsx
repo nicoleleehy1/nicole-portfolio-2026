@@ -6,7 +6,7 @@ export const metadata: Metadata = { title: "Experience" };
 
 export default function ExperiencePage() {
   return (
-    <section className="section scrim" data-content data-exclude>
+    <section className="section scrim xp-page" data-content data-exclude>
       <h1 className="page-title">experience ⋆.ೃ࿔ ˖*</h1>
       <XpList entries={experience} />
     </section>

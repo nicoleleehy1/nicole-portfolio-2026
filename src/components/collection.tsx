@@ -1,5 +1,6 @@
 "use client";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
+import { Arrow } from "./arrow";
 
 // Shared Notion-style collection header (title + filter/sort menus), used by the gallery and list views.
 
@@ -49,9 +50,9 @@ export function useCollection<T extends CollectionItem>(
   const [sort, setSort] = useState<Sort>("default");
 
   const allCategories = [...new Set(items.map(i => i.category))];
-  const sorts: { value: Sort; label: string }[] = [
+  const sorts: { value: Sort; label: ReactNode }[] = [
     { value: "default", label: "Default" },
-    { value: "name", label: "Name (A → Z)" },
+    { value: "name", label: <>Name (A <Arrow /> Z)</> },
     ...(items.some(i => i.date)
       ? [
           { value: "newest" as const, label: "Newest first" },

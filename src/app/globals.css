@@ -124,7 +124,7 @@ ul, ol {
   transition: opacity 0.9s ease;
 }
 /* section pages: the field fades back to a quiet texture behind the text */
-.cell-field[data-calm] { opacity: 0.4; }
+.cell-field[data-calm] { opacity: 0.28; }
 .cell-field canvas {
   position: absolute;
   inset: 0;
@@ -132,7 +132,23 @@ ul, ol {
   height: 100%;
   display: block;
   pointer-events: none;
+  transition: opacity 0.9s ease;
 }
+/* section pages, "texture" mode (SECTION_BACKGROUND in cell-field-host.tsx): the structures fade out and only a
+   faint dot grid stays, strongest at the edges and clear behind the text */
+.cell-field::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 0.9s ease;
+  background: radial-gradient(circle, rgba(var(--glow), 0.28) 1px, transparent 1.6px) 0 0 / 22px 22px;
+  -webkit-mask-image: radial-gradient(ellipse 75% 80% at 50% 50%, transparent 35%, #000 100%);
+  mask-image: radial-gradient(ellipse 75% 80% at 50% 50%, transparent 35%, #000 100%);
+}
+.cell-field[data-calm="texture"] { opacity: 1; }
+.cell-field[data-calm="texture"]::before { opacity: 1; }
+.cell-field[data-calm="texture"] canvas { opacity: 0; }
 .cell-field .cf-org { mix-blend-mode: screen; }
 /* No WebGL 2: a still, dark field */
 .cell-field.cf-static {
@@ -575,8 +591,56 @@ a.hero-button:hover {
   color: var(--ink-strong);
 }
 
+/* The site's arrow (components/arrow.tsx): teal, sitting on the text's baseline */
+.arrow {
+  display: inline-block;
+  vertical-align: -0.04em;
+  color: var(--accent);
+  flex-shrink: 0;
+}
+
 /* Experience (expandable rows) */
-.xp + .xp { border-top: 1px solid var(--rule); }
+/* no dividers between rows; a column of dots to the left of the list follows the scroll instead */
+.xp-wrap { position: relative; }
+.xp-dots {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  /* well clear of the list on wide screens, closing in as the side margins shrink */
+  left: calc(-1 * clamp(3rem, 7vw, 6.5rem));
+  width: 1.25rem;
+}
+.xp-dots-track {
+  position: sticky;
+  top: 40vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+}
+.xp-dot {
+  width: 0.7rem;
+  height: 0.7rem;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: var(--xp-dot);
+  opacity: 0.38;
+  cursor: pointer;
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+.xp-dot:hover { opacity: 0.7; }
+.xp-dot.is-active { opacity: 1; transform: scale(1.35); }
+.xp-dot:focus-visible { outline: 1px solid var(--accent); outline-offset: 3px; }
+/* soft green on paper, the accent teal on the dark page */
+:root { --xp-dot: var(--accent); }
+:root[data-theme="light"] { --xp-dot: #8ab89a; }
+/* on narrow screens the dots tuck into the gutter beside the text */
+@media (max-width: 760px) {
+  .xp-dots { left: calc(var(--pad) * -0.8); width: 0.6rem; }
+  .xp-dots-track { gap: 1.1rem; }
+  .xp-dot { width: 0.45rem; height: 0.45rem; }
+}
 .xp-summary {
   list-style: none;
   cursor: pointer;
@@ -600,15 +664,15 @@ a.hero-button:hover {
 .xp-title .xp-co {
   font-family: var(--serif);
 }
-.xp-arrow {
-  display: inline-flex;
-  vertical-align: baseline;
-  margin-left: 0.35rem;
-  font-size: 0.95rem;
-  color: var(--accent);
-  text-decoration: none;
+/* the company name links to its site: same look as the plain names, with a soft teal underline */
+.xp-co-link {
+  text-decoration: underline;
+  text-decoration-color: var(--edge);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.2em;
+  transition: color 0.2s ease, text-decoration-color 0.2s ease;
 }
-.xp-arrow:hover { color: var(--ink-strong); }
+.xp-co-link:hover { color: var(--accent); text-decoration-color: var(--accent); }
 .xp-date {
   font-size: 0.66rem;
   color: var(--muted);
@@ -618,18 +682,26 @@ a.hero-button:hover {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  font-size: 0.92rem;
+  font-size: 0.9rem;
   margin-top: 0.15rem;
 }
 .xp-chevron {
+  display: inline-flex;
   color: var(--accent);
+  font-size: 0.8em;
   transition: transform 0.2s ease;
 }
 .xp[open] .xp-chevron { transform: rotate(90deg); }
 .xp-desc {
   padding-bottom: 1.25rem;
-  font-size: 0.95rem;
+  font-size: 0.9rem;
 }
+/* the experience page reads in a narrower column, leaving more room between the entries and the side field;
+   everything in the entries but the dates is lowercase */
+.xp-page { max-width: 37rem; margin-inline: auto; }
+.xp-title,
+.xp-blurb,
+.xp-desc { text-transform: lowercase; }
 
 /* Gallery covers: a photo, or a faint voxel-grid panel */
 .cover {

@@ -1,4 +1,5 @@
 import s from "./case-study.module.css";
+import { Arrow } from "../arrow";
 
 // The Aster case study, rendered inside the project popup in place of "What I did".
 const sections = [
@@ -195,7 +196,7 @@ export function AsterCaseStudy() {
             </p>
           </div>
 
-          <p className={s.flow}>↑ HTTP ↓</p>
+          <p className={s.flow}><Arrow dir="up" /> HTTP <Arrow dir="down" /></p>
 
           <div className={s.layer}>
             <p className={s.layerName}>API · FastAPI</p>
@@ -210,7 +211,7 @@ export function AsterCaseStudy() {
             </p>
           </div>
 
-          <p className={s.flow}>↑ ↓</p>
+          <p className={s.flow}><Arrow dir="up" /> <Arrow dir="down" /></p>
 
           <div className={s.layer}>
             <p className={s.layerName}>Core · Python</p>
@@ -227,7 +228,7 @@ export function AsterCaseStudy() {
             </p>
           </div>
 
-          <p className={s.flow}>↑ ↓</p>
+          <p className={s.flow}><Arrow dir="up" /> <Arrow dir="down" /></p>
 
           <div className={s.layer}>
             <p className={s.layerName}>Research harness · Python</p>
@@ -243,7 +244,7 @@ export function AsterCaseStudy() {
             </p>
           </div>
 
-          <p className={s.flow}>↑ ↓</p>
+          <p className={s.flow}><Arrow dir="up" /> <Arrow dir="down" /></p>
 
           <div className={s.layer}>
             <p className={s.layerName}>Storage · SQLite</p>

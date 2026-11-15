@@ -1,0 +1,60 @@
+\def\COURSEWORK{Data Structures, Algorithms, Databases, Human-Centered Interfaces, Machine Learning}
+\def\ACTIVITIES{Notion Campus Leader, Full-Stack Development Head TA (100+ students), Society of Women Engineers}
+\input{preamble}
+\input{common}
+
+\section{Skills}
+ \begin{itemize}[leftmargin=0.15in, label={}]
+    \small{\item{
+     \textbf{Languages}{: Swift, C/C++, Python, Java, TypeScript, JavaScript, SQL, Go, Rust} \\
+     \textbf{Apple Platforms}{: SwiftUI, SwiftData, Swift Concurrency (async/await, task groups, AsyncStream), Metal, SIMD, WidgetKit, Live Activities, Swift Testing, XCUITest, Xcode} \\
+     \textbf{Frontend \& Backend}{: React, React Native, Next.js, Node.js, FastAPI, PostgreSQL, Redis, Docker, AWS (EC2, S3, Lambda)} \\
+     \textbf{AI/ML}{: PyTorch, Hugging Face, MCP, LLM evaluation, RAG, vector search (FAISS)}
+    }}
+ \end{itemize}
+
+\section{Swift \& iOS Projects}
+    \resumeSubHeadingListStart
+      \PokerHead{Swift 6, SwiftUI, SwiftData, WidgetKit, Metal, SIMD, Swift Concurrency}
+          \resumeItemListStart
+            \resumeItem{Built a native iOS \textbf{game-theory-optimal poker tutor} on a custom Swift package engine (hand evaluator, Monte Carlo equity engine, CFR/DCFR solvers, Metal GPU kernels) that computes \textbf{Nash equilibria on device} in real time}
+            \resumeItem{Engineered a lookup-table hand evaluator at \textbf{216M hands/s} on one core (\textbf{4,000x} the reference, verified on all 133M seven-card hands) and cut push/fold Nash solves \textbf{29.6x} (2.3 s $\rightarrow$ 79 ms) with \textbf{Metal compute kernels}, agreeing with CPU within 0.01\%}
+            \resumeItem{Built a full-range river solver that converges in \textbf{46--279 ms} using under 7 MB, with SIMD-vectorized Discounted CFR, suit isomorphism (1,081 $\rightarrow$ 652 hands), and two-pointer showdown sweeps; DCFR needs \textbf{4.5x fewer iterations} than CFR+}
+            \resumeItem{Adopted \textbf{Swift 6 strict concurrency} (Sendable value types, task groups with seeded per-task RNG for reproducible Monte Carlo) and streamed solver progress to SwiftUI via a throttled \textbf{AsyncStream} with cancellation}
+            \resumeItem{Shipped a home-screen widget, Live Activity, Siri Shortcuts, deep links, and VoiceOver/Dynamic Type support, covered by \textbf{124 Swift Testing} engine tests and \textbf{12 XCUITest} flows}
+          \resumeItemListEnd
+      \HABHead{React Native, React Three Fiber, Gaussian splatting}
+          \resumeItemListStart
+            \resumeItem{Shipped the official Cal Hacks iOS app (\textbf{10K+ installs}) with a 3D venue map embedded across 3 surfaces; GPU-profiled it to cut draw calls \textbf{74\%} and triangles \textbf{84\%} via instancing and render-on-demand}
+          \resumeItemListEnd
+    \resumeSubHeadingListEnd
+
+\section{Experience}
+  \resumeSubHeadingListStart
+    \AppleHead
+      \resumeItemListStart
+        \resumeItem{Shipped a full-stack \textbf{MCP benchmarking system} (React, TypeScript, PostgreSQL) that generates 200+ schema-aware queries per run across hundreds of MCP servers, cutting each run \textbf{18x} (6+ hrs $\rightarrow$ 20 min)}
+        \resumeItem{Architected a fault-tolerant \textbf{tracing proxy} (PostgreSQL state) with hybrid scoring (tool-call/JSON diffing + LLM-as-judge), collapsing 100+ correlated failures into $<$10 root causes, cutting debugging time \textbf{40\%}}
+        \resumeItem{Built the run-comparison UI, trace/diff viewers, failure-clustering dashboards, and config builder, with \textbf{virtualized tables} for large traces}
+      \resumeItemListEnd
+    \CalHacksHead
+      \resumeItemListStart
+        \HiveItem
+        \SponsorItem
+      \resumeItemListEnd
+    \WedgeHead
+      \resumeItemListStart
+        \WedgeA
+      \resumeItemListEnd
+    \AnchorHead
+      \resumeItemListStart
+        \AnchorA
+        \AnchorB
+      \resumeItemListEnd
+    \DigPathHead
+      \resumeItemListStart
+        \DigPathA
+      \resumeItemListEnd
+  \resumeSubHeadingListEnd
+
+\end{document}

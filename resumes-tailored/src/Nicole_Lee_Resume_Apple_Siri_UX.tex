@@ -1,0 +1,62 @@
+\def\COURSEWORK{Human-Centered Interfaces, Artificial Intelligence, Machine Learning, Data Structures, Algorithms}
+\def\ACTIVITIES{Full-Stack Development Head TA (100+ students), Notion Campus Leader, Society of Women Engineers}
+\input{preamble}
+\input{common}
+
+\section{Skills}
+ \begin{itemize}[leftmargin=0.15in, label={}]
+    \small{\item{
+     \textbf{Prototyping \& UI}{: SwiftUI, React, React Native, Next.js, React Three Fiber / WebGL, D3.js, Tailwind} \\
+     \textbf{Apple Platforms}{: SwiftUI, SwiftData, WidgetKit, Live Activities, Siri Shortcuts, VoiceOver, Dynamic Type, Reduce Motion} \\
+     \textbf{Conversational AI}{: LLM evaluation (LLM-as-judge), MCP tool calling, RAG, LangGraph, PyTorch, Hugging Face} \\
+     \textbf{Languages}{: Swift, TypeScript, JavaScript, Python, SQL, C/C++, Java}
+    }}
+ \end{itemize}
+
+\section{Experience}
+  \resumeSubHeadingListStart
+    \AppleHead
+      \resumeItemListStart
+        \resumeItem{Shipped a full-stack \textbf{MCP benchmarking system} (React, TypeScript, PostgreSQL) that tests how AI agents call tools, generating 200+ schema-aware queries per run across hundreds of MCP servers and cutting each run \textbf{18x} (6+ hrs $\rightarrow$ 20 min)}
+        \resumeItem{Analyzed traces and A/B runs to diagnose \textbf{agent tool-routing failures}, and recommended tool-description and routing changes weighing accuracy, latency, and cost}
+        \resumeItem{Built the run-comparison UI, trace/diff viewers, failure-clustering dashboards, and config builder, with \textbf{virtualized tables} so engineers could read through large traces}
+        \resumeItem{Architected a fault-tolerant \textbf{tracing proxy} with hybrid scoring (tool-call/JSON diffing + LLM-as-judge), collapsing 100+ correlated failures into $<$10 root causes, cutting debugging time \textbf{40\%}}
+      \resumeItemListEnd
+    \CalHacksHead
+      \resumeItemListStart
+        \HiveItem
+      \resumeItemListEnd
+    \WedgeHead
+      \resumeItemListStart
+        \WedgeA
+      \resumeItemListEnd
+    \AnchorHead
+      \resumeItemListStart
+        \resumeItem{Led 5 engineers to build \textbf{Propriologics}, a 0$\rightarrow$1 telemetry platform (Next.js, TypeScript, Node/Express) that visualizes 3D motion data from IoT sensor vests for \textbf{50+ ALS/Parkinson's patients}, with timeline scrubbers and playback controls}
+      \resumeItemListEnd
+    \UCSFHead
+      \resumeItemListStart
+        \resumeItem{Built a \textbf{RAG assistant} grounding GPT-4 Turbo answers in 2,000+ neurodegenerative-disease papers with full citations (author, year, journal, PMID), deployed as a Gradio app used by clinicians at a Clinical Pathology Conference}
+      \resumeItemListEnd
+  \resumeSubHeadingListEnd
+
+\section{Projects}
+    \resumeSubHeadingListStart
+      \PokerHead{Swift, SwiftUI, SwiftData, WidgetKit, Metal}
+          \resumeItemListStart
+            \resumeItem{Designed and built a native iOS \textbf{poker course that works like a language app} (short lessons, daily goal, streaks), where every question is generated and graded by a custom Swift solver engine running \textbf{on device}}
+            \resumeItem{Graded answers by \textbf{expected value given up} instead of right/wrong (within 1\% of the pot counts as correct, then inaccuracy, mistake, blunder, with the math shown), so close spots are never marked wrong}
+            \resumeItem{Pitched new questions at $\sim$75\% success with a per-concept Elo model and FSRS-4.5 spaced repetition; added a home-screen widget, Live Activity, \textbf{Siri Shortcuts}, and deep links, with \textbf{VoiceOver, Dynamic Type, and Reduce Motion} support}
+            \resumeItem{Kept the UI responsive during heavy solves by streaming progress to SwiftUI ($\sim$30 redraws/s) and dropping stale results; cut Nash solves \textbf{29.6x} (2.3 s $\rightarrow$ 79 ms) with Metal GPU kernels}
+          \resumeItemListEnd
+      \BaymaxHead
+          \resumeItemListStart
+            \resumeItem{Built a socially-aware robot simulator that replans A* routes and 35--55 candidate paths in real time ($<$\textbf{10 ms p95}) around predicted human movement; when the polite choice is unclear, the robot \textbf{asks the user} and learns their preferences}
+          \resumeItemListEnd
+      \HABHead{React Native, React Three Fiber, Gaussian splatting}
+          \resumeItemListStart
+            \resumeItem{Shipped the official Cal Hacks iOS app (\textbf{10K+ installs}) with a 3D venue map embedded across 3 surfaces; GPU-profiled it to cut draw calls \textbf{74\%} and triangles \textbf{84\%}}
+          \resumeItemListEnd
+    \resumeSubHeadingListEnd
+
+\end{document}

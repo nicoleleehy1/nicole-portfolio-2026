@@ -7,7 +7,13 @@ import type { CellField, CellFieldOptions } from "@/lib/cellField";
 // and the field fades back (.cell-field[data-calm] in globals.css), so only the slow cells remain behind the text.
 const FULL: CellFieldOptions = { glitch: 0.45, speed: 0.25, maxTrackers: 6, edgeBoxes: true, track: true, ascii: true };
 const CALM: CellFieldOptions = { glitch: 0.2, speed: 0.2, maxTrackers: 0, edgeBoxes: false, track: false, ascii: false };
-const intensity = (pathname: string) => (pathname === "/" ? FULL : CALM);
+// What section pages show behind the text. "texture": the structures are hidden and paused, leaving only a faint
+// dot grid at the edges (the home page keeps the full field). "calm": the older look, a faded field without the HUD.
+// Flip this one value to switch between the two.
+const SECTION_BACKGROUND: "texture" | "calm" = "calm";
+const TEXTURE = SECTION_BACKGROUND === "texture";
+const intensity = (pathname: string): CellFieldOptions =>
+  pathname === "/" ? { ...FULL, paused: false } : { ...CALM, paused: TEXTURE };
 
 // Text blocks marked data-exclude, clipped to the viewport: cells spawn and wander around them, not under them.
 function readingRects() {
@@ -40,10 +46,10 @@ export default function FieldHost({ onReady }: { onReady: (field: CellField | nu
           ...intensity(window.location.pathname),
           route: window.location.pathname,
           exclusionRects: readingRects(),
-          // smaller structures than the standalone piece, so they frame the text instead of crowding it
-          scale: 0.6,
-          // fewer pieces than the standalone piece so the frame stays airy, with a brighter neon glow
-          density: 0.65,
+          // small structures (about two thirds of the earlier 0.6), so they frame the text instead of crowding it
+          scale: 0.4,
+          // fewer pieces (down from 0.65) so the frame stays airy and the structures keep to the edges, with a brighter neon glow
+          density: 0.45,
           // no small scatter: the larger cells, corals and membranes carry the look on their own
           confetti: false,
           glow: 1.25,
@@ -98,7 +104,7 @@ export default function FieldHost({ onReady }: { onReady: (field: CellField | nu
 
   return (
     <>
-      <div ref={ref} className="cell-field" data-calm={pathname === "/" ? undefined : ""} aria-hidden="true" />
+      <div ref={ref} className="cell-field" data-calm={pathname === "/" ? undefined : TEXTURE ? "texture" : ""} aria-hidden="true" />
       {/* light mode: fades the sketch layer's dark fills out by brightness, so only its pastel lines show on white */}
       <svg width="0" height="0" aria-hidden="true" style={{ position: "absolute" }}>
         <filter id="cf-pastel" colorInterpolationFilters="sRGB">

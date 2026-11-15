@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getWriting, getWritings } from "@/lib/writings";
+import { Arrow } from "@/components/arrow";
 
 export const dynamicParams = false;
 
@@ -25,7 +26,7 @@ export default async function WritingPage({ params }: { params: Promise<{ slug: 
 
   return (
     <article className="section scrim" data-content data-exclude>
-      <Link href="/blog" className="back-link">← Blog</Link>
+      <Link href="/blog" className="back-link"><Arrow dir="left" /> Blog</Link>
       <p className="writing-kind" style={{ marginTop: "1.5rem" }}>
         {[w.date && dateFormat.format(w.date), w.kind].filter(Boolean).join(" · ")}
       </p>

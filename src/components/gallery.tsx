@@ -3,6 +3,7 @@ import { Fragment, useEffect, useRef, useState, type ReactNode } from "react";
 import { useCollection } from "./collection";
 import { AsciiCover } from "./ascii-cover";
 import type { CoverKind } from "@/lib/ascii-covers";
+import { Arrow } from "./arrow";
 
 export type GalleryItem = {
   title: string;
@@ -146,7 +147,7 @@ export function Gallery({
                     <dd>
                       {p.href ? (
                         <a href={p.href} target="_blank" rel="noreferrer" className="link">
-                          {p.value} ↗
+                          {p.value} <Arrow dir="up-right" />
                         </a>
                       ) : (
                         p.value

@@ -1,0 +1,61 @@
+\def\COURSEWORK{Data Structures, Algorithms, Databases, Human-Centered Interfaces, Machine Learning}
+\def\ACTIVITIES{\textbf{Notion Campus Leader}, Full-Stack Development Head TA (100+ students), Society of Women Engineers}
+\input{preamble}
+\input{common}
+
+\section{Skills}
+ \begin{itemize}[leftmargin=0.15in, label={}]
+    \small{\item{
+     \textbf{Languages}{: Swift, TypeScript, JavaScript, Python, SQL, C/C++, Java, Go, Rust} \\
+     \textbf{iOS}{: SwiftUI, SwiftData, Swift Concurrency, WidgetKit, Metal, Swift Testing, XCUITest, React Native} \\
+     \textbf{Web \& Backend}{: React, Next.js, GraphQL, Node.js, FastAPI, PostgreSQL, Redis, MongoDB, Docker, AWS, CI/CD} \\
+     \textbf{AI/ML}{: PyTorch, Hugging Face, LangGraph, MCP, RAG, vector search (pgvector, FAISS)}
+    }}
+ \end{itemize}
+
+\section{Experience}
+  \resumeSubHeadingListStart
+    \AppleHead
+      \resumeItemListStart
+        \resumeItem{Shipped a full-stack \textbf{MCP benchmarking system} (React, TypeScript, PostgreSQL) that generates 200+ schema-aware queries per run across hundreds of MCP servers, cutting each run \textbf{18x} (6+ hrs $\rightarrow$ 20 min)}
+        \resumeItem{Built the run-comparison UI, trace/diff viewers, failure-clustering dashboards, and config builder, with \textbf{virtualized tables} that keep large traces fast to scroll and inspect}
+        \resumeItem{Architected a fault-tolerant \textbf{tracing proxy} (PostgreSQL state) with hybrid scoring (tool-call/JSON diffing + LLM-as-judge), collapsing 100+ correlated failures into $<$10 root causes, cutting debugging time \textbf{40\%}}
+      \resumeItemListEnd
+    \CalHacksHead
+      \resumeItemListStart
+        \HiveItem
+        \SponsorItem
+      \resumeItemListEnd
+    \WedgeHead
+      \resumeItemListStart
+        \WedgeA
+        \WedgeB
+      \resumeItemListEnd
+    \AnchorHead
+      \resumeItemListStart
+        \AnchorA
+        \AnchorB
+      \resumeItemListEnd
+  \resumeSubHeadingListEnd
+
+\section{Projects}
+    \resumeSubHeadingListStart
+      \PokerHead{Swift, SwiftUI, SwiftData, WidgetKit, Metal, Swift Concurrency}
+          \resumeItemListStart
+            \resumeItem{Built a native iOS \textbf{game-theory-optimal poker course} (10 units, 23 lessons, 19 question generators) where every question is generated and graded by expected value from a custom Swift solver engine running \textbf{on device}}
+            \resumeItem{Kept the UI responsive during heavy solves by streaming progress to SwiftUI through a throttled \textbf{AsyncStream} ($\sim$30 redraws/s), cancelling work when inputs change and dropping stale results, under \textbf{Swift 6 strict concurrency}}
+            \resumeItem{Engineered a lookup-table hand evaluator at \textbf{216M hands/s} on one core (\textbf{4,000x} the reference, verified on all 133M seven-card hands) and cut push/fold Nash solves \textbf{29.6x} (2.3 s $\rightarrow$ 79 ms) with \textbf{Metal} compute kernels}
+            \resumeItem{Added a home-screen widget, Live Activity, Siri Shortcuts, and deep links, with VoiceOver, Dynamic Type, and Reduce Motion support; covered by 124 Swift Testing engine tests and 12 XCUITest flows}
+          \resumeItemListEnd
+      \HABHead{React Native, React Three Fiber, Gaussian splatting}
+          \resumeItemListStart
+            \resumeItem{Shipped the official Cal Hacks iOS app (\textbf{10K+ installs}) with a 3D venue map (React Three Fiber, Gaussian splatting) embedded across 3 surfaces}
+            \resumeItem{GPU-profiled the map to cut draw calls \textbf{74\%} and triangles \textbf{84\%} via instancing and render-on-demand}
+          \resumeItemListEnd
+      \CodeMRIHead
+          \resumeItemListStart
+            \CodeMRIA
+          \resumeItemListEnd
+    \resumeSubHeadingListEnd
+
+\end{document}
