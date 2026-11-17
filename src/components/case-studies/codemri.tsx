@@ -100,7 +100,7 @@ export function CodeMRICaseStudy() {
 
         <div className={s.arch}>
           <div className={s.layer}>
-            <p className={s.layerName}>Extension · VS Code, TypeScript</p>
+            <p className={s.layerName}>Extension, VS Code, TypeScript</p>
             <div className={s.chips}>
               <span className={s.chip}>webview graph</span>
               <span className={s.chip}>ELK layout</span>
@@ -114,7 +114,7 @@ export function CodeMRICaseStudy() {
           <p className={s.flow}><Arrow dir="up" /> local HTTP <Arrow dir="down" /></p>
 
           <div className={s.layer}>
-            <p className={s.layerName}>API · FastAPI</p>
+            <p className={s.layerName}>API, FastAPI</p>
             <div className={s.chips}>
               <span className={s.chip}>/analyze</span>
               <span className={s.chip}>/impact</span>
@@ -127,7 +127,7 @@ export function CodeMRICaseStudy() {
           <p className={s.flow}><Arrow dir="up" /> <Arrow dir="down" /></p>
 
           <div className={s.layer}>
-            <p className={s.layerName}>Engine · Python</p>
+            <p className={s.layerName}>Engine, Python</p>
             <div className={s.chips}>
               <span className={s.chip}>Tree-sitter</span>
               <span className={s.chip}>symbols + edges</span>
@@ -142,7 +142,7 @@ export function CodeMRICaseStudy() {
           <p className={s.flow}><Arrow dir="up" /> <Arrow dir="down" /></p>
 
           <div className={s.layer}>
-            <p className={s.layerName}>Storage · SQLite</p>
+            <p className={s.layerName}>Storage, SQLite</p>
             <div className={s.chips}>
               <span className={s.chip}>working snapshot</span>
               <span className={s.chip}>reviewed baseline</span>

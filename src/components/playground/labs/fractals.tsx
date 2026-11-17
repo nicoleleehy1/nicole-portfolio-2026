@@ -225,7 +225,7 @@ function MandelbrotView({ modes }: { modes: ReactNode }) {
       canvasRef={canvasRef}
       sim={stage}
       hint={supported ? "click to zoom in, shift-click to zoom out, drag to pan, or scroll." : "this view needs webgl, which this browser has turned off."}
-      readout={`${label}× ${zoom.limit ? "· precision limit" : ""}`}
+      readout={`${label}×${zoom.limit ? ", precision limit" : ""}`}
       cursor="zoom-in"
     >
       {modes}

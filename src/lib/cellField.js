@@ -4,7 +4,7 @@
  *
  *   const field = initCellField(container, options);
  *   field.setOptions({glitch: .5, speed: .6, maxTrackers: 3, edgeBoxes: true});
- *   const subject = field.pinNear(x, y, 'PRT-2201 · SUBJECT');  // subject.move(x, y), subject.release()
+ *   const subject = field.pinNear(x, y, 'PRT-2201, SUBJECT');  // subject.move(x, y), subject.release()
  *   field.destroy();
  *
  * A collapsed Tune box sits in the bottom-right corner (T hides it, ?tune opens it).
@@ -273,7 +273,7 @@ export function initCellField(container, options = {}){
     for (const c of [glc, orc, hdc]) c.remove();
     container.classList.add('cf-static');
     const ro = options.readout;
-    if (ro) ro.textContent = ['CELL-TRACK', options.readoutLabel, 'STATIC', 'WEBGL 2 UNAVAILABLE'].filter(Boolean).join(' · ');
+    if (ro) ro.textContent = ['CELL-TRACK', options.readoutLabel, 'STATIC', 'WEBGL 2 UNAVAILABLE'].filter(Boolean).join(', ');
     const noop = () => {};
     return {destroy(){ container.classList.remove('cf-static'); }, setOptions: noop, pinNear: () => ({move: noop, release: noop})};
   }
@@ -400,7 +400,7 @@ export function initCellField(container, options = {}){
   }
   function makeVesicle(x, y, r){
     const spindle = Math.random() < .75;
-    return {kind: spindle ? 'MITOTIC CELL · METAPHASE' : 'EUKARYOTIC CELL', id: nid(), x, y, tx:x, ty:y, next: t + rnd(5,12), r, rr:r, seed: rnd(100), spindle,
+    return {kind: spindle ? 'MITOTIC CELL, METAPHASE' : 'EUKARYOTIC CELL', id: nid(), x, y, tx:x, ty:y, next: t + rnd(5,12), r, rr:r, seed: rnd(100), spindle,
       sa: rnd(TAU), grow:1, dying:false, cx:x, cy:y, cr:r,
       daughters: Array.from({length: 2 + (Math.random()*3|0)}, () => ({ang: rnd(TAU), sp: rnd(-.25,.25), r: rnd(7,15), d: rnd(.95,1.15), seed: rnd(100), x, y, rr:0})),
       rays: Array.from({length:22}, () => [rnd(TAU), rnd(.4,1)])};
@@ -467,7 +467,7 @@ export function initCellField(container, options = {}){
       if (!(i % 2)) tips.push([px, py]);
     }
     path.closePath();
-    return {kind:'VIRION · CAPSID', id: nid(), bx:x, by:y, x, y, R, path, tips, rot: rnd(TAU), rs: rnd(-.25,.25), ph: rnd(TAU), cx:x, cy:y, cr:R};
+    return {kind:'VIRION, CAPSID', id: nid(), bx:x, by:y, x, y, R, path, tips, rot: rnd(TAU), rs: rnd(-.25,.25), ph: rnd(TAU), cx:x, cy:y, cr:R};
   }
   function makeRod(x, y){
     return {kind:'BACILLUS', id: nid(), bx:x, by:y, x, y, len: rnd(50,90), w: rnd(14,20), ang: rnd(TAU), as: rnd(-.08,.08), ph: rnd(TAU),
@@ -1419,7 +1419,7 @@ export function initCellField(container, options = {}){
     ch.strokeStyle = '#fff'; ch.strokeRect(x, y, w, h); brackets(x - 6, y - 6, w + 12, h + 12, 12);
     const locking = now - hov.since < 420;
     const l1 = `${locking ? 'ACQUIRING' : 'LOCK'} PRT-${locking ? scramble(s.id) : s.id}`;
-    const l2 = `${s.kind} · Ø${(s.cr*.2).toFixed(1)}µm · CONF ${(.82 + (s.id % 17)/100).toFixed(2)}`;
+    const l2 = `${s.kind}, Ø${(s.cr*.2).toFixed(1)}µm, CONF ${(.82 + (s.id % 17)/100).toFixed(2)}`;
     ch.font = FONT; const tw = Math.max(ch.measureText(l1).width, ch.measureText(l2).width) + 10;
     const ly = y - 34 < 4 ? y + h + 6 : y - 34;
     ch.fillStyle = 'rgba(255,255,255,.94)'; ch.fillRect(x - .5, ly, tw, 15);
@@ -1513,7 +1513,7 @@ export function initCellField(container, options = {}){
     fpsS += ((rdt > 0 ? 1/rdt : 60) - fpsS)*.05;
     if (readout && now > hudNext){
       hudNext = now + 250;
-      readout.textContent = ['CELL-TRACK', readoutLabel, `T+${fmt(t)}`, `${Math.round(fpsS)} FPS`, S.paused && 'PAUSED'].filter(Boolean).join(' · ');
+      readout.textContent = ['CELL-TRACK', readoutLabel, `T+${fmt(t)}`, `${Math.round(fpsS)} FPS`, S.paused && 'PAUSED'].filter(Boolean).join(', ');
     }
     raf = win.requestAnimationFrame(frame);
   }

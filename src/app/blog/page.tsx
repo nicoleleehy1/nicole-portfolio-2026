@@ -11,7 +11,7 @@ const longDate = new Intl.DateTimeFormat("en-US", { weekday: "long", month: "lon
 function Byline({ w }: { w: Writing }) {
   return (
     <p className="blog-byline">
-      {[w.date && dateFormat.format(w.date), `${w.minutes} min read`].filter(Boolean).join(" · ")}
+      {[w.date && dateFormat.format(w.date), `${w.minutes} min read`].filter(Boolean).join(", ")}
     </p>
   );
 }

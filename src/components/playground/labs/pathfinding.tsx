@@ -80,7 +80,7 @@ const neighbors = (i: number) => {
 const manhattan = (a: number, b: number) => Math.abs((a % COLS) - (b % COLS)) + Math.abs(((a / COLS) | 0) - ((b / COLS) | 0));
 
 // One generator covers all four: they differ only in how they rank the frontier.
-//   BFS: by steps taken (ignores mud) · Dijkstra: by true cost so far · A*: cost so far + distance left · Greedy: distance left only
+//   BFS: by steps taken (ignores mud), Dijkstra: by true cost so far, A*: cost so far + distance left, Greedy: distance left only
 function* search(cells: Uint8Array, start: number, goal: number, algorithm: Algorithm, s: Search) {
   const cost = new Float64Array(COLS * ROWS).fill(Infinity);
   const steps = new Int32Array(COLS * ROWS);

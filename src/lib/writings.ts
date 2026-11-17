@@ -67,7 +67,7 @@ export async function getWritings(): Promise<Writing[]> {
         const w: Writing = {
           slug,
           title: fillTitle(m.title, date),
-          kind: m.draft ? `Draft${m.kind ? ` · ${m.kind}` : ""}` : m.kind,
+          kind: m.draft ? `Draft${m.kind ? `, ${m.kind}` : ""}` : m.kind,
           summary: m.summary,
           date,
           format: "mdx",

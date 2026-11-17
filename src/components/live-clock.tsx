@@ -12,7 +12,7 @@ const format = () => {
   const d = new Date();
   const date = d.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "2-digit", year: "numeric" });
   const time = d.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false });
-  return `${date} · ${time}`.toUpperCase().replace(/,/g, "");
+  return `${date.replace(/,/g, "")}, ${time}`.toUpperCase();
 };
 
 export function LiveClock() {

@@ -24,7 +24,7 @@ export function AsterCaseStudy() {
         <dt>Status</dt>
         <dd>Working system, evaluated retrospectively on public data. No prospective lab result yet.</dd>
         <dt>Scale</dt>
-        <dd>10 protein targets · 6,000+ paired retrospective replays · 9 milestones</dd>
+        <dd>10 protein targets, 6,000+ paired retrospective replays, 9 milestones</dd>
       </dl>
 
       <nav className={s.contents} aria-label="Contents">
@@ -184,11 +184,11 @@ export function AsterCaseStudy() {
 
         <div className={s.arch}>
           <div className={s.layer}>
-            <p className={s.layerName}>Interface · Next.js, React, TypeScript</p>
+            <p className={s.layerName}>Interface, Next.js, React, TypeScript</p>
             <div className={s.chips}>
               <span className={s.chip}>/dashboard</span>
               <span className={s.chip}>/replay</span>
-              <span className={s.chip}>Mol* · 3Dmol</span>
+              <span className={s.chip}>Mol*, 3Dmol</span>
             </div>
             <p className={s.layerNote}>
               A local dashboard for running a campaign round by round, and a 3D replay of a past round
@@ -199,7 +199,7 @@ export function AsterCaseStudy() {
           <p className={s.flow}><Arrow dir="up" /> HTTP <Arrow dir="down" /></p>
 
           <div className={s.layer}>
-            <p className={s.layerName}>API · FastAPI</p>
+            <p className={s.layerName}>API, FastAPI</p>
             <div className={s.chips}>
               <span className={s.chip}>aster/api.py</span>
               <span className={s.chip}>/campaigns/…/decisions</span>
@@ -214,7 +214,7 @@ export function AsterCaseStudy() {
           <p className={s.flow}><Arrow dir="up" /> <Arrow dir="down" /></p>
 
           <div className={s.layer}>
-            <p className={s.layerName}>Core · Python</p>
+            <p className={s.layerName}>Core, Python</p>
             <div className={s.chips}>
               <span className={s.chip}>campaign.py</span>
               <span className={s.chip}>acquisition.py</span>
@@ -231,7 +231,7 @@ export function AsterCaseStudy() {
           <p className={s.flow}><Arrow dir="up" /> <Arrow dir="down" /></p>
 
           <div className={s.layer}>
-            <p className={s.layerName}>Research harness · Python</p>
+            <p className={s.layerName}>Research harness, Python</p>
             <div className={s.chips}>
               <span className={s.chip}>benchmark.py</span>
               <span className={s.chip}>experiment.py</span>
@@ -247,7 +247,7 @@ export function AsterCaseStudy() {
           <p className={s.flow}><Arrow dir="up" /> <Arrow dir="down" /></p>
 
           <div className={s.layer}>
-            <p className={s.layerName}>Storage · SQLite</p>
+            <p className={s.layerName}>Storage, SQLite</p>
             <div className={s.chips}>
               <span className={s.chip}>one file per campaign</span>
               <span className={s.chip}>append-only events</span>

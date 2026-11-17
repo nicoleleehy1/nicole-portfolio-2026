@@ -217,7 +217,7 @@ export function GameOfLife() {
       <div className="pg-readout">
         <span>GEN {String(generation).padStart(5, "0")}</span>
         <span>POP {String(population).padStart(4, "0")}</span>
-        <span>{COLS}×{ROWS} · WRAPPING</span>
+        <span>{COLS}×{ROWS}, WRAPPING</span>
       </div>
 
       <div className="pg-controls">

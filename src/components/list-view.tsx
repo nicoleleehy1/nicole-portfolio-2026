@@ -12,7 +12,8 @@ export type ListItem = {
   date?: string;
 };
 
-// Notion-style list view: one row per item with its title and a right-aligned date.
+// List view in the experience page's style: one row per item (title | subtitle, a note under it) and a right-aligned date,
+// lowercase and with no dividers.
 export function ListView({
   title,
   items,
@@ -33,7 +34,12 @@ export function ListView({
             <div className="list-main">
               <div className="list-title">
                 {item.title}
-                {item.subtitle && <span className="list-subtitle">{item.subtitle}</span>}
+                {item.subtitle && (
+                  <>
+                    <span className="list-sep"> | </span>
+                    <span className="list-subtitle">{item.subtitle}</span>
+                  </>
+                )}
               </div>
               {item.note && <div className="list-note">{item.note}</div>}
             </div>

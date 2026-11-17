@@ -28,10 +28,10 @@ export default async function WritingPage({ params }: { params: Promise<{ slug: 
     <article className="section scrim" data-content data-exclude>
       <Link href="/blog" className="back-link"><Arrow dir="left" /> Blog</Link>
       <p className="writing-kind" style={{ marginTop: "1.5rem" }}>
-        {[w.date && dateFormat.format(w.date), w.kind].filter(Boolean).join(" · ")}
+        {[w.date && dateFormat.format(w.date), w.kind].filter(Boolean).join(", ")}
       </p>
       <h1 className="writing-heading">{w.title}</h1>
-      <p className="blog-byline">By Nicole Lee · {w.minutes} min read</p>
+      <p className="blog-byline">By Nicole Lee, {w.minutes} min read</p>
       {w.question && (
         <p className="writing-question">
           <strong>Research question:</strong> {w.question}

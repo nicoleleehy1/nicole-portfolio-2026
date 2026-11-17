@@ -14,7 +14,7 @@ export type GalleryItem = {
   // e.g. "Jan '21 – Present"; enables date sorting when present.
   date?: string;
   image?: string;
-  // Badge on the card cover, e.g. "1st Place · HackMIT".
+  // Badge on the card cover, e.g. "1st Place, HackMIT".
   award?: string;
   // Property rows at the top of the popup.
   props: { label: string; value: string; href?: string }[];

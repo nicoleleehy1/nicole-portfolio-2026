@@ -51,7 +51,7 @@ const THEME_SCRIPT = `try{if(localStorage.getItem("theme")==="light")document.do
 export const metadata: Metadata = {
   title: {
     default: "Nicole Lee",
-    template: "%s · Nicole Lee",
+    template: "%s, Nicole Lee",
   },
   description: "Nicole Lee 2026 Portfolio",
 };

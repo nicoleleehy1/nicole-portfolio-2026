@@ -130,7 +130,7 @@ export default function Automata() {
         onChange={setRule}
       />
       <div className="lab-choice">
-        <span className="lab-label">Rule table · click an outcome to flip it</span>
+        <span className="lab-label">Rule table, click an outcome to flip it</span>
         <div className="lab-rule-bits">
           {PATTERNS.map(p => {
             const on = (rule >> p) & 1;

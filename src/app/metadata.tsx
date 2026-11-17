@@ -90,7 +90,7 @@ export const experience = [
   {
     date: "Nov '25 – Present",
     role: "Teaching Assistant",
-    co: "UC Berkeley · Full Stack Development",
+    co: "UC Berkeley, Full Stack Development",
     link: "https://fullstackdecal.com/",
     summary: "Teaching full stack web development to 100+ students",
     desc: [
@@ -367,24 +367,25 @@ export const awards: Award[] = [
     note: "$155,000 merit scholarship awarded to top 0.2% students in Hong Kong for overseas higher education",
   },
   {
-    title: "Student of the Year · Grand Prize Finalist",
+    title: "Student of the Year, Grand Prize Finalist",
     issuer: "South China Morning Post",
     // date: "May '23",
     category: "Social Service",
-    note: "Top 12 students in Hong Kong for social service and community impact",
+    note: "hong kong's most prestigious student award: one of 12 finalists chosen citywide for grand prize",
   },
   {
-    title: "Hong Kong Outstanding Students' Award 2020–21 · Finalist",
+    title: "Hong Kong Outstanding Students' Award 2020–21, Finalist",
     issuer: "Youth Arch Foundation",
     // date: "Jan '22",
     category: "Social Service",
+    note: "hong kong's highest honors, recognizing leadership, service and academic excellence",
   },
   {
     title: "Young Entrepreneurs Project Award",
     issuer: "Kids4Kids HK",
     // date: "Jan '23",
     category: "Social Service",
-    note: "Won $3,000 funding from Tsang's Group",
+    note: "awarded $3,000 seed funding for startup",
   },
   // {
   //   title: "SDG Champion",
@@ -393,18 +394,18 @@ export const awards: Award[] = [
   //   category: "Social Service",
   // },
   // {
-  //   title: "ESF Inter-School Psychology Competition · Gold Award",
+  //   title: "ESF Inter-School Psychology Competition, Gold Award",
   //   date: "Oct '22",
   //   category: "Medicine",
   // },
   {
-    title: "Canadian Computing Competition · Gold Certificate of Distinction",
+    title: "Canadian Computing Competition, Gold Certificate of Distinction",
     issuer: "University of Waterloo",
     // date: "Feb '22",
     category: "Technology",
   },
   // {
-  //   title: "UK Biology Challenge · Bronze Award",
+  //   title: "UK Biology Challenge, Bronze Award",
   //   date: "Jun '21",
   //   category: "Medicine",
   // },
@@ -415,30 +416,30 @@ export const awards: Award[] = [
   //   category: "Medicine",
   // },
   {
-    title: "Young Founders' Summit Asia · Finalist",
+    title: "Young Founders' Summit Asia, Finalist",
     issuer: "Smarter Me SG",
     // date: "Oct '20",
     category: "Technology",
   },
   {
-    title: "Technovation Girls Challenge · Semi-Finalist",
+    title: "Technovation Girls Challenge, Semi-Finalist",
     // date: "Jun '20",
     category: "Technology",
   },
   // {
-  //   title: "Entrepreneurship Day · Semi-Finalist",
+  //   title: "Entrepreneurship Day, Semi-Finalist",
   //   issuer: "HKTDC",
   //   date: "'20",
   //   category: "Technology",
   // },
   // {
-  //   title: "Global Goals Competition · Semi-Finalist",
+  //   title: "Global Goals Competition, Semi-Finalist",
   //   issuer: "Global Social Leaders",
   //   date: "'20",
   //   category: "Start-up",
   // },
   // {
-  //   title: "Tiger Global Case Competition · Renesas Project",
+  //   title: "Tiger Global Case Competition, Renesas Project",
   //   date: "'20",
   //   category: "Start-up",
   // },
@@ -469,7 +470,7 @@ export type Project = {
   image?: string;
   // Optional case study shown in the popup instead of desc (see src/components/case-studies).
   caseStudy?: "aster" | "codemri" | "pokerlab";
-  // Optional award shown as a badge on the cover, e.g. "1st Place · HackMIT".
+  // Optional award shown as a badge on the cover, e.g. "1st Place, HackMIT".
   award?: string;
   // Extra screenshots in /public, shown under "What I did".
   images?: string[];
@@ -490,7 +491,7 @@ export const projects: Project[] = [
       "Built the Hive operations platform (Next.js) for 4,000+ hackers and 652 projects, with hardware checkout (5,000+ orders) and souvenir shop (3,500+ units) on transactional Postgres RPCs with row locking, 1-hr stock holds, and partial fulfillment.",
       "Built an automated sponsorship outreach pipeline reaching 14,000+ contacts at 2,000+ companies, raising $1,250,000+.",
     ],
-    stack: "React Native · React Three Fiber · Next.js · Postgres",
+    stack: "React Native, React Three Fiber, Next.js, Postgres",
   },
   {
     name: "PokerLab",
@@ -508,7 +509,7 @@ export const projects: Project[] = [
       "Cut push/fold Nash solves from 2.3 s to 79 ms (29.6x) with SIMD and Metal compute kernels, with GPU and CPU strategies agreeing within 0.01%.",
       "Solves full-range rivers in under 0.3 s (46–279 ms) using under 7 MB of memory; showed DCFR reaches equilibrium in 4.5x fewer iterations than CFR+, backed by 124 engine and 12 UI tests.",
     ],
-    stack: "Swift · SwiftUI · Metal · SwiftData · CloudKit",
+    stack: "Swift, SwiftUI, Metal, SwiftData, CloudKit",
   },
   {
     name: "Aster",
@@ -531,7 +532,7 @@ export const projects: Project[] = [
       "Main finding: five separate attempts to make the model smarter all failed — a pretrained encoder frozen and fine-tuned, uncertainty-driven acquisition, batch diversity, and appending published measurements. The retest explained why: at a few dozen labels what binds is signal per label against the noise that label carries, so anything that adds noise loses. That is the case for recording decisions rather than chasing model sophistication.",
       "Limits stated alongside it: everything is retrospective on public benchmark data with no prospective lab result, the headline evidence result was null, its noise analysis was decided after the main result was seen, the exact-value gains are an upper bound, and there is no temporal holdout yet because these datasets carry no measurement dates.",
     ],
-    stack: "Python · RDKit · scikit-learn · AutoDock Vina · FastAPI · SQLite · Next.js · Mol*",
+    stack: "Python, RDKit, scikit-learn, AutoDock Vina, FastAPI, SQLite, Next.js, Mol*",
   },
   {
     name: "CodeMRI",
@@ -547,7 +548,7 @@ export const projects: Project[] = [
       "A static-analysis + context compiler for coding agents, parsing repository-wide ASTs into persistent architecture and symbol graphs with call/import dependencies, source navigation, and change-impact analysis.",
       "Compiles change-scoped context packs sized to a real token budget, listing what was left out, and enabling graph-guided code modifications.",
     ],
-    stack: "Python · TypeScript · Tree-sitter · FastAPI",
+    stack: "Python, TypeScript, Tree-sitter, FastAPI",
   },
   {
     name: "After You",
@@ -562,7 +563,7 @@ export const projects: Project[] = [
       "Built a robot planner that rejects unsafe paths first, then ranks the safe ones with a preference model learned from your answers.",
     ],
     images: ["/projects/after-you/considering.jpg", "/projects/after-you/building.jpg"],
-    stack: "TypeScript · React · Three.js · React Three Fiber · Zustand · Web Workers",
+    stack: "TypeScript, React, Three.js, React Three Fiber, Zustand, Web Workers",
   },
   {
     name: "Flusk",
@@ -578,7 +579,7 @@ export const projects: Project[] = [
     desc: [
       "A Java LSM-tree storage engine with a full write path (WAL, MemTable, SSTable, 4-tier compaction with tombstone GC, Bloom filters and sparse indexing), exposed through 7 REST endpoints for low-latency reads/writes.",
     ],
-    stack: "Java 17 · Maven · Guava · Snappy · JUnit 5 · Railway",
+    stack: "Java 17, Maven, Guava, Snappy, JUnit 5, Railway",
   },
   {
     name: "Stoich",
@@ -594,7 +595,7 @@ export const projects: Project[] = [
     desc: [
       "A chemistry research tool built on a multi-LLM pipeline and cross-paper vector search, reducing atom-index hallucinations from 67% to under 15%; renders synchronized reaction graphs, equation and mechanism views, annotations, and 3D molecular structures.",
     ],
-    stack: "Next.js · TypeScript · MongoDB Atlas · RDKit-JS · 3Dmol.js · D3.js",
+    stack: "Next.js, TypeScript, MongoDB Atlas, RDKit-JS, 3Dmol.js, D3.js",
   },
   {
     name: "Synapse AI",
@@ -611,7 +612,7 @@ export const projects: Project[] = [
       "Engineered a React + D3.js frontend rendering 8 synchronized visualization modes (force-directed graph, kanban, timeline, mind map, etc.) with real-time bidirectional edits across all views.",
       "Integrated SM-2 spaced repetition scheduling with LLM-generated flashcards and cloze deletions via Anthropic API, and Exa.ai for semantic web search enrichment.",
     ],
-    stack: "Python · TypeScript · React · Neo4j · Anthropic API · spaCy · D3.js",
+    stack: "Python, TypeScript, React, Neo4j, Anthropic API, spaCy, D3.js",
   },
   {
     name: "ASL Live Translator",
@@ -625,7 +626,7 @@ export const projects: Project[] = [
     desc: [
       "Real-time ASL letter recognition converting sign language to speech and live captions for nonverbal users.",
     ],
-    stack: "Python · React · OpenCV · MediaPipe · TensorFlow.js",
+    stack: "Python, React, OpenCV, MediaPipe, TensorFlow.js",
   },
   // {
   //   name: "Insurmate",
@@ -638,12 +639,12 @@ export const projects: Project[] = [
   //   desc: [
   //     "AI insurance agent — document parsing, policy comparison, and natural language Q&A over coverage details.",
   //   ],
-  //   stack: "React · TensorFlow.js · LangChain",
+  //   stack: "React, TensorFlow.js, LangChain",
   // },
   // {
   //   name: "Webinet",
   //   event: "Young Founders' Summit Asia 2020",
-  //   award: "Semi-Finalist · YFS Asia",
+  //   award: "Semi-Finalist, YFS Asia",
   //   summary: [
   //     "An app that collects university webinars and courses for students.",
   //     "Semi-finalist at Young Founders' Summit Asia 2020.",
@@ -652,7 +653,7 @@ export const projects: Project[] = [
   //   desc: [
   //     "An app that surfaces university webinars and courses so students can grow through e-learning, in support of accessible quality education for all (SDG 4).",
   //   ],
-  //   stack: "Mobile App · EdTech · SDG 4",
+  //   stack: "Mobile App, EdTech, SDG 4",
   // },
 ];
 
@@ -668,7 +669,7 @@ export const essays = [
   {
     slug: "burnout-epigenetics",
     title: "The interaction between environmental stressors and predisposed genes in explaining the etiology of Burnout Stress Syndrome",
-    kind: "Extended Essay · World Studies (Biology & Psychology)",
+    kind: "Extended Essay, World Studies (Biology & Psychology)",
     question: "How do environmental stressors affect the epigenetic mechanisms acting on the Serotonin Transporter Gene and Glucocorticoid Receptor Gene on the etiology of Burnout Stress Syndrome in Scandinavian physicians?",
   },
 ];

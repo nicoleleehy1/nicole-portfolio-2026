@@ -600,14 +600,14 @@ a.hero-button:hover {
 }
 
 /* Experience (expandable rows) */
-/* no dividers between rows; a column of dots to the left of the list follows the scroll instead */
-.xp-wrap { position: relative; }
+/* no dividers between rows; a column of dots to the left of the list follows the scroll instead. The dots sit where the other pages' text starts (the awards list's left edge) and the entries are indented
+   past them, so dots-to-dates spans the same width as the awards list */
+.xp-wrap { position: relative; margin-left: var(--xp-dot-gap); }
 .xp-dots {
   position: absolute;
   top: 0;
   bottom: 0;
-  /* well clear of the list on wide screens, closing in as the side margins shrink */
-  left: calc(-1 * clamp(3rem, 7vw, 6.5rem));
+  left: calc(-1 * var(--xp-dot-gap));
   width: 1.25rem;
 }
 .xp-dots-track {
@@ -637,6 +637,7 @@ a.hero-button:hover {
 :root[data-theme="light"] { --xp-dot: #8ab89a; }
 /* on narrow screens the dots tuck into the gutter beside the text */
 @media (max-width: 760px) {
+  .xp-page .xp-wrap { margin-left: 0; }
   .xp-dots { left: calc(var(--pad) * -0.8); width: 0.6rem; }
   .xp-dots-track { gap: 1.1rem; }
   .xp-dot { width: 0.45rem; height: 0.45rem; }
@@ -698,7 +699,9 @@ a.hero-button:hover {
 }
 /* the experience page reads in a narrower column, leaving more room between the entries and the side field;
    everything in the entries but the dates is lowercase */
-.xp-page { max-width: 37rem; margin-inline: auto; }
+.xp-page { --xp-dot-gap: clamp(2.5rem, 6vw, 5rem); }
+/* the title starts where the entries do, past the dots */
+@media (min-width: 761px) { .xp-page .page-title { margin-left: var(--xp-dot-gap); } }
 .xp-title,
 .xp-blurb,
 .xp-desc { text-transform: lowercase; }
@@ -1339,39 +1342,45 @@ html:has(.peek[open]) { overflow: hidden; }
 }
 .peek-shots img { display: block; width: 100%; height: auto; border: 1px solid var(--rule); }
 
-/* List view (awards) */
-.list { border-top: 1px solid var(--rule); }
+/* List view (awards): styled like the experience rows, lowercase and with no dividers */
 .list-row {
   display: flex;
-  align-items: flex-start;
+  align-items: baseline;
   gap: 1rem;
-  padding: 0.65rem 0.5rem;
-  border-bottom: 1px solid var(--rule);
-  transition: background 0.12s ease;
+  padding: 1.1rem 0;
+  text-transform: lowercase;
 }
-.list-row:hover { background: rgba(var(--glow), 0.04); }
 .list-main { flex: 1; min-width: 0; }
-.list-title { font-size: 0.97rem; font-weight: 500; line-height: 1.45; color: var(--ink-strong); }
+.list-title {
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: 1.05rem;
+  line-height: 1.45;
+  color: var(--ink-strong);
+}
+.list-sep,
 .list-subtitle {
-  margin-left: 0.5rem;
+  font-family: var(--serif);
   font-weight: 400;
-  font-size: 0.87rem;
+  font-size: 0.95rem;
   color: var(--muted);
 }
-.list-note { font-size: 0.87rem; color: var(--muted); margin-top: 0.1rem; }
+.list-note { font-size: 0.9rem; margin-top: 0.15rem; }
 .list-date {
   flex-shrink: 0;
-  padding-top: 0.3rem;
   text-align: right;
-  font-size: 0.64rem;
+  font-size: 0.66rem;
   color: var(--muted);
   white-space: nowrap;
+  /* dates keep their capitals, like the experience dates */
+  text-transform: uppercase;
 }
 
 /* Mobile */
 @media (max-width: 600px) {
   .gallery { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.6rem; }
-  .list-subtitle { display: block; margin-left: 0; }
+  .list-sep { display: none; }
+  .list-subtitle { display: block; }
   .peek-content { padding: 1.5rem 1.25rem 2rem; }
   .peek-props { grid-template-columns: 5.5rem 1fr; }
   .xp-head { flex-direction: column; gap: 0; }

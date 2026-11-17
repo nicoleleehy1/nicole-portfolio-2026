@@ -22,7 +22,7 @@ export function PokerLabCaseStudy() {
         <dt>Status</dt>
         <dd>Runs in the simulator. Not yet on the App Store; iPhone benchmarks still to measure.</dd>
         <dt>Scale</dt>
-        <dd>10 units · 23 lessons · 19 question generators · 124 engine tests + 12 UI tests</dd>
+        <dd>10 units, 23 lessons, 19 question generators, 124 engine tests + 12 UI tests</dd>
       </dl>
 
       <nav className={s.contents} aria-label="Contents">
@@ -116,7 +116,7 @@ export function PokerLabCaseStudy() {
 
         <div className={s.arch}>
           <div className={s.layer}>
-            <p className={s.layerName}>App · SwiftUI, SwiftData, WidgetKit</p>
+            <p className={s.layerName}>App, SwiftUI, SwiftData, WidgetKit</p>
             <div className={s.chips}>
               <span className={s.chip}>Learn</span>
               <span className={s.chip}>Lab</span>
@@ -132,7 +132,7 @@ export function PokerLabCaseStudy() {
           <p className={s.flow}><Arrow dir="up" /> AsyncStream <Arrow dir="down" /></p>
 
           <div className={s.layer}>
-            <p className={s.layerName}>Engine · Swift package</p>
+            <p className={s.layerName}>Engine, Swift package</p>
             <div className={s.chips}>
               <span className={s.chip}>PokerCore</span>
               <span className={s.chip}>PokerSolver</span>
@@ -230,7 +230,7 @@ export function PokerLabCaseStudy() {
               </tr>
               <tr>
                 <td>Kuhn poker to within 1e-4 of −1/18</td>
-                <td className={s.num}>CFR+ 1.31 ms · CFR 34.75 ms</td>
+                <td className={s.num}>CFR+ 1.31 ms, CFR 34.75 ms</td>
               </tr>
             </tbody>
           </table>
