@@ -10,7 +10,7 @@ const CALM: CellFieldOptions = { glitch: 0.2, speed: 0.2, maxTrackers: 0, edgeBo
 // What section pages show behind the text. "texture": the structures are hidden and paused, leaving only a faint
 // dot grid at the edges (the home page keeps the full field). "calm": the older look, a faded field without the HUD.
 // Flip this one value to switch between the two.
-const SECTION_BACKGROUND: "texture" | "calm" = "calm";
+const SECTION_BACKGROUND = "calm" as "texture" | "calm";
 const TEXTURE = SECTION_BACKGROUND === "texture";
 const intensity = (pathname: string): CellFieldOptions =>
   pathname === "/" ? { ...FULL, paused: false } : { ...CALM, paused: TEXTURE };
