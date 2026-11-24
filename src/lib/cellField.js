@@ -82,6 +82,7 @@ export function initCellField(container, options = {}){
   uniform vec4 uB[24]; uniform int uBN;
   uniform vec4 uC[20]; uniform int uCN;
   uniform vec4 uX[4]; uniform int uXN;
+  uniform vec4 uN[12]; uniform int uNN;
 
   float h(vec2 p){ p=fract(p*vec2(123.34,456.21)); p+=dot(p,p+45.32); return fract(p.x*p.y); }
   float n2(vec2 p){ vec2 i=floor(p), f=fract(p); f=f*f*(3.-2.*f);
@@ -137,22 +138,35 @@ export function initCellField(container, options = {}){
     float ge = max(max(step(gf.x,gw), step(1.-gw,gf.x)), max(step(gf.y,gw), step(1.-gw,gf.y)));
     col += gOn*(vec3(.1,.34,.62)*ge*.2 + vec3(.004,.015,.035))*(1. - .9*cm);
 
-    // smooth membranes: clear, round bubbles. A thin rim, a soft glow just inside it and a faint highlight
-    // toward the upper left; no inner texture. The field (fS) uses a squared falloff so blobs stay round and
-    // merge through short, soft necks, like soap bubbles touching
+    // amoeboid cells: one smooth membrane around a body and its pseudopodia. A thin rim, a soft glow just inside
+    // it and a faint highlight toward the upper left. The glow follows the outline (screen distance to the rim),
+    // not each blob's centre, so the merged blobs read as one cell with no inner circles
     float fs = fS(p);
     float fwc = max(fwidth(fs)*uScale, 1e-5);
     float d1 = abs(fs-1.)/fwc;
     float inside = smoothstep(.9,1.1,fs);
     float a = fbm(p*.012 + vec2(t*.04,0.));
     vec3 fill = mix(vec3(.004,.025,.045), vec3(.015,.08,.12), smoothstep(.35,.75,a));
-    float rimZone = smoothstep(3.,1.05,fs);
+    float rimZone = inside*exp(-d1*.14);
     fill += vec3(.3,.85,.9)*rimZone*.16;
     vec2 gs = vec2(dFdx(fs), dFdy(fs));
     float lit = clamp(dot(normalize(gs + 1e-6), vec2(.6,.8)), 0., 1.);
     fill += vec3(.75,.95,1.)*lit*rimZone*.12;
     col = mix(col, fill, inside*.68);
     col += vec3(.45,1.,.95)*(smoothstep(1.3,.1,d1)*.85 + exp(-d1*.55)*.16*uGlow);
+
+    // one nucleus per amoeboid cell, sitting in the cell body: a soft chromatin disc with a thin envelope
+    for (int i=0;i<12;i++){
+      if (i>=uNN) break;
+      vec4 nv = uN[i];
+      vec2 dn = p - nv.xy; float Ln = length(dn), rn = nv.z;
+      if (Ln > rn + 6.) continue;
+      vec2 un = dn/rn;
+      float ch = fbm(un*4. + nv.w + t*.04);
+      vec3 nc = mix(vec3(.03,.12,.3), vec3(.1,.3,.6), smoothstep(.35,.75,ch));
+      col = mix(col, nc, smoothstep(1.,.88,Ln/rn)*.8);
+      col += vec3(.55,.85,1.)*smoothstep(1.2,.2,abs(Ln-rn))*.55;
+    }
 
     // voxel aggregates
     float c = uCell;
@@ -183,11 +197,11 @@ export function initCellField(container, options = {}){
       col += lc*edge*1.15 + lc*inset*.45 + vec3(.2,.75,.8)*grid*.1;
     }
 
-    // hollow bead chains
+    // vacuoles and lipid droplets: hollow bead chains, lit only along the outline so merged beads show no inner circles
     float fb = fB(p);
     float db = abs(fb-1.)/max(fwidth(fb)*uScale, 1e-5);
     float inB = smoothstep(.9,1.1,fb);
-    col = mix(col, vec3(.0,.02,.05) + vec3(.0,.10,.14)*exp(-(fb-1.)*1.5), inB*.88);
+    col = mix(col, vec3(.0,.02,.05) + vec3(.0,.10,.14)*exp(-db*.16), inB*.88);
     col += vec3(.45,.95,1.)*(smoothstep(1.4,.2,db)*.85 + exp(-db*.3)*.25*uGlow);
 
     // vesicles with nuclei, rims and buds
@@ -251,7 +265,7 @@ export function initCellField(container, options = {}){
 
   const gl = glc.getContext('webgl2', {antialias:false, alpha:false, preserveDrawingBuffer:true, powerPreference:'high-performance'});
   let prog = null; const U = {};
-  const sArr = new Float32Array(96), vArr = new Float32Array(96), bArr = new Float32Array(96), cArr = new Float32Array(80), xArr = new Float32Array(16);
+  const nArr = new Float32Array(48), sArr = new Float32Array(96), vArr = new Float32Array(96), bArr = new Float32Array(96), cArr = new Float32Array(80), xArr = new Float32Array(16);
   function mk(type, src){ const s = gl.createShader(type); gl.shaderSource(s, src); gl.compileShader(s);
     if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) { console.error(gl.getShaderInfoLog(s)); return null; } return s; }
   if (gl) {
@@ -262,8 +276,8 @@ export function initCellField(container, options = {}){
     }
     if (prog) {
       gl.useProgram(prog); gl.bindVertexArray(gl.createVertexArray());
-      for (const n of ['uRes','uScale','uTime','uReal','uCell','uGlow','uLight','uHov','uSN','uVN','uBN','uCN','uXN']) U[n] = gl.getUniformLocation(prog, n);
-      for (const n of ['uS','uV','uB','uC','uX']) U[n] = gl.getUniformLocation(prog, n + '[0]');
+      for (const n of ['uRes','uScale','uTime','uReal','uCell','uGlow','uLight','uHov','uSN','uVN','uBN','uCN','uXN','uNN']) U[n] = gl.getUniformLocation(prog, n);
+      for (const n of ['uS','uV','uB','uC','uX','uN']) U[n] = gl.getUniformLocation(prog, n + '[0]');
     }
   }
 
@@ -307,7 +321,7 @@ export function initCellField(container, options = {}){
   // mt: a separate clock for cell morphing that keeps a minimum pace even when the field speed is turned down
   let t = 0, mt = 0, nextAcq = 0, spawnI = 0;
   const cur = {x:-999, y:-999, r:0};
-  const KIND = [['AMOEBOID CELL','PSEUDOPODIUM','PLASMA MEMBRANE'], ['EPITHELIAL CLUSTER','CELL COLONY'], ['LIPID DROPLETS','VACUOLE']];
+  const KIND = [['AMOEBOID CELL'], ['EPITHELIAL CLUSTER','CELL COLONY'], ['LIPID DROPLETS','VACUOLE']];
 
   /* calm reading area: spawn points and wander targets inside an exclusion rect get pushed out into the free gutter */
   const PAD = 70; // roughly a structure's radius, so edges don't graze the text
@@ -391,8 +405,15 @@ export function initCellField(container, options = {}){
 
   function makeCluster(type, x, y){
     let n, mkB;
-    if (type === 0){ n = 2 + (Math.random()*2|0); mkB = () => ({r: rnd(18,38), orbit: rnd(14,50)}); }
-    else if (type === 1){ n = 3 + (Math.random()*2|0); mkB = () => ({r: rnd(26,44), orbit: rnd(22,58)}); }
+    if (type === 0){
+      // amoeboid cell: a body blob (which holds the nucleus) and 2 or 3 pseudopodia that reach out and pull back
+      // from it, always staying joined to the body, so the cell never splits into nucleus-less pieces
+      const a0 = rnd(TAU), np = 2 + (Math.random()*2|0);
+      const blobs = [{r: rnd(26,38), fx: rnd(.1,.25), fy: rnd(.1,.25), ph: rnd(TAU), ph2: rnd(TAU), x, y, rr:0}];
+      for (let i = 0; i < np; i++) blobs.push({r: rnd(12,22), a0: a0 + i*TAU/np + rnd(-.5,.5), fx: rnd(.12,.3), fy: rnd(.15,.35), ph: rnd(TAU), ph2: rnd(TAU), x, y, rr:0});
+      return {kind: KIND[0][0], id: nid(), type, x, y, tx:x, ty:y, next: t + rnd(4,12), blobs, grow:1, dying:false, cx:x, cy:y, cr:40};
+    }
+    if (type === 1){ n = 3 + (Math.random()*2|0); mkB = () => ({r: rnd(26,44), orbit: rnd(22,58)}); }
     else { const big = Math.random() < .35; n = big ? 2 + (Math.random()*3|0) : 3 + (Math.random()*4|0);
       mkB = big ? () => ({r: rnd(22,36), orbit: rnd(14,34)}) : () => ({r: rnd(8,15), orbit: rnd(6,22)}); }
     const blobs = Array.from({length:n}, () => Object.assign(mkB(), {fx: rnd(.12,.42), fy: rnd(.12,.42), ph: rnd(TAU), ph2: rnd(TAU), x, y, rr:0}));
@@ -499,7 +520,7 @@ export function initCellField(container, options = {}){
     const c = k => S.confetti ? n(k) : 0;
     placed = [];
     // mostly soft membranes and bead chains; only a couple of blocky voxel aggregates
-    const types = [0,2,1,0,2,0,2,1,0,2,0,2,0].slice(0, n(13));
+    const types = [0,2,1,0,2,2,0,2,1,0,2].slice(0, n(11));
     types.forEach((ty, i) => { const [x, y] = sidePos(i % 2); clusters.push(makeCluster(ty, x, y)); });
     vesicles = Array.from({length:n(3)}, (_, i) => { const [x, y] = sidePos(i % 2); return makeVesicle(x, y, rnd(42,68)); });
     donuts = Array.from({length:n(6)}, () => { const [x, y] = edgePos(); return {kind:'LYSOSOME', id: nid(), bx:x, by:y, x, y, r: rnd(6,13), seed: rnd(100), ph: rnd(TAU), cx:x, cy:y, cr:10}; });
@@ -724,7 +745,19 @@ export function initCellField(container, options = {}){
       const ge = wander(c, ease, rdt);
       c.s = (c.s ?? 1) + ((c.sc ?? 1) - (c.s ?? 1))*Math.min(1, rdt*.4);
       let sx = 0, sy = 0;
+      if (c.type === 0){
+        const body = c.blobs[0];
+        body.x = c.x + Math.cos(mt*body.fx + body.ph)*4*K*c.s;
+        body.y = c.y + Math.sin(mt*body.fy + body.ph2)*4*K*c.s;
+        body.rr = body.r*K*(1 + .06*Math.sin(mt*.8 + body.ph))*ge*c.s;
+        for (let i = 1; i < c.blobs.length; i++){
+          const b = c.blobs[i], a = b.a0 + Math.sin(mt*b.fx + b.ph)*.9, ext = .35 + .55*(.5 + .5*Math.sin(mt*b.fy + b.ph2));
+          b.x = body.x + Math.cos(a)*body.rr*ext; b.y = body.y + Math.sin(a)*body.rr*ext;
+          b.rr = b.r*K*(1 + .15*Math.sin(mt*.7 + b.ph))*ge*c.s;
+        }
+      }
       for (const b of c.blobs){
+        if (c.type === 0){ sx += b.x; sy += b.y; continue; }
         // a deep, slow swing in orbit pulls blobs apart (dividing) and back together (merging)
         const sw = 1 + .6*Math.sin(mt*.3 + b.ph2);
         b.x = c.x + Math.cos(mt*b.fx + b.ph)*b.orbit*K*sw*c.s;
@@ -736,6 +769,15 @@ export function initCellField(container, options = {}){
       c.cr = Math.max(12, ...c.blobs.map(b => Math.hypot(b.x - c.cx, b.y - c.cy) + b.rr*.9));
     }
     clusters = clusters.filter(c => !(c.dying && c.grow <= 0));
+    // amoeboid cells keep a little space between them: two membranes touching would merge into one cell with two nuclei
+    const am = clusters.filter(c => c.type === 0);
+    for (let i = 0; i < am.length; i++) for (let j = i + 1; j < am.length; j++){
+      const a = am[i], b = am[j], dx = b.cx - a.cx, dy = b.cy - a.cy, d = Math.hypot(dx, dy) || 1, gap = a.cr + b.cr + 16*K;
+      if (d >= gap) continue;
+      const k = Math.min(1, rdt*2)*(gap - d)/2, ux = dx/d, uy = dy/d;
+      a.x -= ux*k; a.y -= uy*k; a.tx -= ux*k; a.ty -= uy*k;
+      b.x += ux*k; b.y += uy*k; b.tx += ux*k; b.ty += uy*k;
+    }
 
     for (const v of vesicles){
       const ge = wander(v, ease, rdt);
@@ -1469,11 +1511,12 @@ export function initCellField(container, options = {}){
   function renderGL(now){
     if (!prog) return 0;
     let sn = 0, vn = 0, bn = 0, cn = 0;
-    if (cur.r > .5){ sArr[0] = cur.x; sArr[1] = cur.y; sArr[2] = cur.r; sArr[3] = 0; sn = 1; }
+    let nn = 0;
     const order = clusters.filter(c => !c.dying).concat(clusters.filter(c => c.dying));
     for (const c of order) for (const b of c.blobs){
       if (b.rr < .5) continue;
-      if (c.type === 0){ if (sn < 24){ const o = sn*4; sArr[o] = b.x; sArr[o+1] = b.y; sArr[o+2] = b.rr; sn++; } }
+      if (c.type === 0){ if (sn < 24){ const o = sn*4; sArr[o] = b.x; sArr[o+1] = b.y; sArr[o+2] = b.rr; sn++;
+        if (b === c.blobs[0] && nn < 12){ const q = nn*4; nArr[q] = b.x; nArr[q+1] = b.y; nArr[q+2] = b.rr*.42; nArr[q+3] = c.id % 97; nn++; } } }
       else if (c.type === 1){ if (vn < 24){ const o = vn*4; vArr[o] = b.x; vArr[o+1] = b.y; vArr[o+2] = b.rr; vn++; } }
       else if (bn < 24){ const o = bn*4; bArr[o] = b.x; bArr[o+1] = b.y; bArr[o+2] = b.rr; bn++; }
     }
@@ -1490,6 +1533,7 @@ export function initCellField(container, options = {}){
     const xn = Math.min(4, exclusion.length);
     exclusion.slice(0, 4).forEach((r, i) => xArr.set([r.l, r.t, r.r, r.b], i*4));
     gl.uniform4fv(U.uX, xArr); gl.uniform1i(U.uXN, xn);
+    gl.uniform4fv(U.uN, nArr); gl.uniform1i(U.uNN, nn);
     gl.uniform1i(U.uSN, sn); gl.uniform1i(U.uVN, vn); gl.uniform1i(U.uBN, bn); gl.uniform1i(U.uCN, cn);
     gl.drawArrays(gl.TRIANGLES, 0, 3);
     return sn + vn + bn + cn;
