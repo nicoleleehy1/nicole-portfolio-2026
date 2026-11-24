@@ -1,12 +1,13 @@
 import { WAVE_ART } from "./ascii-wave";
 import { ALPHAFOLD_ART, ALPHAFOLD_SHADE } from "./ascii-alphafold";
 import { SPROUT_ART } from "./ascii-sprout";
+import { BURNOUT_ART, BURNOUT_SHADE } from "./ascii-burnout";
 
 // Procedural ASCII-art cover images for blog posts. Each post gets a motif picked from its topic
 // (or named with `cover:` in its front matter), drawn deterministically from its slug so it never
 // changes between builds.
 
-export const COVER_KINDS = ["helix", "alignment", "molecule", "bits", "scatter", "pulse", "automaton", "wave", "alphafold", "sprout", "field"] as const;
+export const COVER_KINDS = ["helix", "alignment", "molecule", "bits", "scatter", "pulse", "automaton", "wave", "alphafold", "sprout", "burnout", "field"] as const;
 export type CoverKind = (typeof COVER_KINDS)[number];
 
 type Grid = string[][];
@@ -252,10 +253,11 @@ export function coverKind(topic: string, override?: string): CoverKind {
 // `cell` is the width of one character cell in em, matching the source image's character grid;
 // `shade`, if present, gives each character a brightness digit 0-9 in the same layout as `art`
 type Fixed = { art: string; cell: number; shade?: string };
-const FIXED: Record<"wave" | "alphafold" | "sprout", Fixed> = {
+const FIXED: Record<"wave" | "alphafold" | "sprout" | "burnout", Fixed> = {
   sprout: { art: SPROUT_ART, cell: 2 / 3 },
   wave: { art: WAVE_ART, cell: 1 },
   alphafold: { art: ALPHAFOLD_ART, cell: 0.6, shade: ALPHAFOLD_SHADE },
+  burnout: { art: BURNOUT_ART, cell: 0.6, shade: BURNOUT_SHADE },
 };
 export function fixedCover(kind: CoverKind): Fixed | undefined {
   return kind in FIXED ? FIXED[kind as keyof typeof FIXED] : undefined;

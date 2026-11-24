@@ -102,7 +102,7 @@ export async function getWritings(): Promise<Writing[]> {
     essays.map(async e => ({
       ...e,
       format: "html" as const,
-      cover: coverKind(`${e.slug} ${e.title} ${e.kind}`),
+      cover: coverKind(`${e.slug} ${e.title} ${e.kind}`, e.cover),
       minutes: await readingMinutes(`${e.slug}.html`),
     })),
   );

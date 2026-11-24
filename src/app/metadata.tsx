@@ -671,5 +671,7 @@ export const essays = [
     title: "the interaction between environmental stressors and predisposed genes in explaining the etiology of burnout stress syndrome",
     kind: "Extended Essay, World Studies (Biology & Psychology)",
     question: "How do environmental stressors affect the epigenetic mechanisms acting on the Serotonin Transporter Gene and Glucocorticoid Receptor Gene on the etiology of Burnout Stress Syndrome in Scandinavian physicians?",
+    // ASCII version of Nicole's DNA / synapse / cortisol illustration (src/lib/ascii-burnout.ts)
+    cover: "burnout",
   },
 ];
