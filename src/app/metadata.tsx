@@ -662,13 +662,13 @@ export const projects: Project[] = [
 export const essays = [
   // {
   //   slug: "puer-tea-lipase",
-  //   title: "How does the change in concentrations (0.00%, 3.00%, 9.00%, 12.00%, 15.00%, 18.00%) of Pu’er tea affect the mean rate of lipase-catalysed triglyceride hydrolysis (min⁻¹) at 37°C as determined by the rate of decrease in pH of milk (sourced by Bos taurus) before and after incubation with lipase (sourced by Sus domesticus) and Pu’er tea for 90 minutes?",
+  //   title: "how does the change in concentrations (0.00%, 3.00%, 9.00%, 12.00%, 15.00%, 18.00%) of pu’er tea affect the mean rate of lipase-catalysed triglyceride hydrolysis (min⁻¹) at 37°c as determined by the rate of decrease in ph of milk (sourced by bos taurus) before and after incubation with lipase (sourced by sus domesticus) and pu’er tea for 90 minutes?",
   //   kind: "Biology Internal Assessment",
   //   question: undefined,
   // },
   {
     slug: "burnout-epigenetics",
-    title: "The interaction between environmental stressors and predisposed genes in explaining the etiology of Burnout Stress Syndrome",
+    title: "the interaction between environmental stressors and predisposed genes in explaining the etiology of burnout stress syndrome",
     kind: "Extended Essay, World Studies (Biology & Psychology)",
     question: "How do environmental stressors affect the epigenetic mechanisms acting on the Serotonin Transporter Gene and Glucocorticoid Receptor Gene on the etiology of Burnout Stress Syndrome in Scandinavian physicians?",
   },
