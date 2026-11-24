@@ -25,22 +25,23 @@
   color-scheme: dark;
 }
 
-/* Light mode: white page, deep teal ink, and the field inverted so its neon reads as ink on paper */
+/* Light mode: cream paper with warm, high-contrast ink. Text is a deep brown-black, secondary text a warm
+   walnut, links and ASCII a deep forest green, highlights a burnt rust, so everything reads clearly on the page. */
 :root[data-theme="light"] {
   --bg: #fdf8f2;
-  --ink: rgba(6, 26, 32, 0.88);
-  --ink-strong: #04161b;
-  --muted: #4b7076;
-  --faint: rgba(75, 112, 118, 0.6);
-  --accent: #0b7f78;
-  --warm: #c8551f;
-  --rule: rgba(11, 127, 120, 0.18);
-  --edge: rgba(11, 127, 120, 0.32);
-  --panel: rgba(250, 253, 253, 0.95);
-  --panel-solid: #f7fbfb;
+  --ink: rgba(34, 20, 14, 0.9);
+  --ink-strong: #22140e;
+  --muted: #5e4a3f;
+  --faint: rgba(94, 74, 63, 0.78);
+  --accent: #2a5e47;
+  --warm: #a3421b;
+  --rule: rgba(94, 74, 63, 0.24);
+  --edge: rgba(42, 94, 71, 0.5);
+  --panel: rgba(253, 248, 242, 0.97);
+  --panel-solid: #fbf4ea;
   --veil: 253, 248, 242;
-  --hi: 4, 22, 27;
-  --glow: 11, 127, 120;
+  --hi: 34, 20, 14;
+  --glow: 42, 94, 71;
   color-scheme: light;
 }
 /* the WebGL layer draws its own warm pastel version on paper; the sketch layer sits on it normally instead of
@@ -69,6 +70,26 @@
 @media (max-width: 600px) {
   :root[data-theme="light"] .hero-text::before { inset: -5rem -3rem; }
 }
+/* light mode contrast: no neon glows around dark ink, solid ASCII, and warm panels instead of the dark-mode blues */
+:root[data-theme="light"] .hero-text { text-shadow: 0 0 6px var(--bg), 0 0 16px var(--bg); }
+:root[data-theme="light"] .hero .icon-link { filter: none; }
+:root[data-theme="light"] .hero .icon-link:hover { filter: none; }
+:root[data-theme="light"] .link:hover,
+:root[data-theme="light"] .prose a:hover { color: var(--warm); text-decoration-color: var(--warm); text-shadow: none; }
+:root[data-theme="light"] .ascii-cover pre { opacity: 1; font-weight: 500; }
+:root[data-theme="light"] .cover {
+  background:
+    linear-gradient(rgba(94, 74, 63, 0.08) 1px, transparent 1px) 0 0 / 12px 12px,
+    linear-gradient(90deg, rgba(94, 74, 63, 0.08) 1px, transparent 1px) 0 0 / 12px 12px,
+    #f3e9dc;
+}
+:root[data-theme="light"] .cell-field.cf-static {
+  background:
+    radial-gradient(60% 50% at 18% 30%, rgba(246, 196, 150, 0.3), transparent 70%),
+    radial-gradient(50% 45% at 85% 75%, rgba(222, 190, 220, 0.3), transparent 70%),
+    var(--bg);
+}
+:root[data-theme="light"] .cf-tune summary:hover { background: #f3e2cf; border-color: var(--warm); color: var(--warm); }
 
 html, body {
   background: var(--bg);
@@ -634,7 +655,7 @@ a.hero-button:hover {
 .xp-dot:focus-visible { outline: 1px solid var(--accent); outline-offset: 3px; }
 /* soft green on paper, the accent teal on the dark page */
 :root { --xp-dot: var(--accent); }
-:root[data-theme="light"] { --xp-dot: #8ab89a; }
+:root[data-theme="light"] { --xp-dot: #4f8a68; }
 /* on narrow screens the dots tuck into the gutter beside the text */
 @media (max-width: 760px) {
   .xp-page .xp-wrap { margin-left: 0; }

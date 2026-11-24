@@ -31,17 +31,18 @@ const DARK: Palette = {
   e: hex("#ffd36e"),
 };
 
-// Light: warm pastels on cream paper (sage, peach, lavender, rose, honey), deep enough to read as thin lines.
+// Light: warm colors on cream paper (sage, terracotta, lavender, rose, honey), kept deep enough that thin lines
+// and small cells read clearly against the page.
 const LIGHT: Palette = {
   light: true,
   bg: hex("#fbf4ea"),
-  ink: hex("#3b2c25"),
-  muted: hex("#a08b7b"),
-  a: hex("#62a897"),
-  b: hex("#e8956a"),
-  c: hex("#9c86c9"),
-  d: hex("#de7f99"),
-  e: hex("#d9a63f"),
+  ink: hex("#2e211b"),
+  muted: hex("#8a7262"),
+  a: hex("#3d8c79"),
+  b: hex("#d0703f"),
+  c: hex("#7b63b5"),
+  d: hex("#c95a7c"),
+  e: hex("#b8851c"),
 };
 
 export const currentPalette = (): Palette => (document.documentElement.dataset.theme === "light" ? LIGHT : DARK);
