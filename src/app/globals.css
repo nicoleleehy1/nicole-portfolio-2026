@@ -966,6 +966,8 @@ a.hero-button:hover {
   transition: color 0.2s ease, opacity 0.2s ease;
 }
 .blog-story:hover .ascii-cover pre { color: var(--warm); opacity: 1; }
+/* a picture cover in place of the ASCII art: fills the slot's width at its own aspect ratio */
+.image-cover img { display: block; width: 100%; height: auto; border-radius: 4px; }
 .ascii-cover .ascii-light,
 :root[data-theme="light"] .ascii-cover .ascii-dark { display: none; }
 :root[data-theme="light"] .ascii-cover .ascii-light { display: block; }
@@ -1018,6 +1020,15 @@ a.hero-button:hover {
   margin-bottom: 1rem;
 }
 .writing-question strong { color: var(--ink); font-weight: 600; }
+.writing-note { font-size: 0.9rem; font-style: italic; color: var(--muted); margin: 0.4rem 0 0; }
+.writing-note a { color: var(--accent); text-decoration: underline; text-underline-offset: 2px; }
+.writing-art { margin: 1.5rem 0 2rem; max-width: 65ch; }
+.writing-art img { display: block; width: 100%; height: auto; border-radius: 4px; }
+.writing-art figcaption { font-size: 0.8rem; color: var(--faint); margin-top: 0.5rem; text-align: center; }
+/* light/dark picture pairs (components/themed-image.tsx) */
+.theme-light-only,
+:root[data-theme="light"] .theme-dark-only { display: none !important; }
+:root[data-theme="light"] .theme-light-only { display: block !important; }
 .prose {
   max-width: 65ch;
   font-size: 1rem;

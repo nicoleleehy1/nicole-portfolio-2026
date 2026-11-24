@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { ThemedImage } from "@/components/themed-image";
 import { getWritings, type Writing } from "@/lib/writings";
 import { AsciiCover } from "@/components/ascii-cover";
 
@@ -27,7 +28,13 @@ type StoryProps = {
 function Story({ w, variant, cover, summary = true }: StoryProps) {
   return (
     <Link href={`/blog/${w.slug}`} className={`blog-story story-${variant}`}>
-      {cover && <AsciiCover slug={w.slug} kind={w.cover} cols={cover[0]} rows={cover[1]} />}
+      {cover && (w.image ? (
+        <figure className="ascii-cover image-cover">
+          <ThemedImage src={w.image} light={w.imageLight} />
+        </figure>
+      ) : (
+        <AsciiCover slug={w.slug} kind={w.cover} cols={cover[0]} rows={cover[1]} />
+      ))}
       <div className="blog-story-text">
         {w.kind && <span className="blog-kicker">{w.kind}</span>}
         <h3 className="blog-headline">{w.title}</h3>

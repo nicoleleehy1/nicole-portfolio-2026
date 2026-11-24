@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getWriting, getWritings } from "@/lib/writings";
 import { Arrow } from "@/components/arrow";
+import { ThemedImage } from "@/components/themed-image";
 
 export const dynamicParams = false;
 
@@ -32,6 +33,18 @@ export default async function WritingPage({ params }: { params: Promise<{ slug: 
       </p>
       <h1 className="writing-heading">{w.title}</h1>
       <p className="blog-byline">By Nicole Lee, {w.minutes} min read</p>
+      {w.note && <p className="writing-note">{w.note}</p>}
+      {w.source && (
+        <p className="writing-note">
+          See full article <a href={w.source} target="_blank" rel="noopener noreferrer">here</a>
+        </p>
+      )}
+      {w.image && w.caption && (
+        <figure className="writing-art">
+          <ThemedImage src={w.image} light={w.imageLight} alt={w.caption} loading="eager" />
+          <figcaption>{w.caption}</figcaption>
+        </figure>
+      )}
       {w.question && (
         <p className="writing-question">
           <strong>Research question:</strong> {w.question}

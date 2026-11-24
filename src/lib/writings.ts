@@ -19,6 +19,16 @@ type PostMeta = {
   pinned?: boolean;
   // optional ASCII cover motif (see COVER_KINDS in src/lib/ascii-covers.ts); picked from the topic if left out
   cover?: string;
+  // optional cover image (a path under public/), shown instead of the ASCII cover
+  image?: string;
+  // optional light mode version of `image`; `image` is then used in dark mode only
+  imageLight?: string;
+  // when set, the cover image is also shown at the top of the post with this caption
+  caption?: string;
+  // short line under the byline, e.g. when the piece was written
+  note?: string;
+  // link to where the full piece was published, shown under the note
+  source?: string;
 };
 
 export type Writing = {
@@ -30,6 +40,11 @@ export type Writing = {
   date?: Date;
   format: "mdx" | "html";
   cover: CoverKind;
+  image?: string;
+  imageLight?: string;
+  caption?: string;
+  note?: string;
+  source?: string;
   minutes: number;
   pinned?: boolean;
 };
@@ -72,6 +87,11 @@ export async function getWritings(): Promise<Writing[]> {
           date,
           format: "mdx",
           cover: coverKind(`${slug} ${m.title} ${m.kind ?? ""}`, m.cover),
+          image: m.image,
+          imageLight: m.imageLight,
+          caption: m.caption,
+          note: m.note,
+          source: m.source,
           minutes: await readingMinutes(f),
           pinned: m.pinned,
         };
