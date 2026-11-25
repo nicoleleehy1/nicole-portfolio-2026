@@ -3,6 +3,7 @@ import path from "node:path";
 import type { ComponentType } from "react";
 import { essays } from "@/app/metadata";
 import { coverKind, type CoverKind } from "@/lib/ascii-covers";
+import { blocksWordCount, getBlocks, getNotionPosts, type NotionBlock } from "@/lib/notion";
 
 const DIR = path.join(process.cwd(), "src/content/writings");
 
@@ -38,7 +39,9 @@ export type Writing = {
   summary?: string;
   question?: string;
   date?: Date;
-  format: "mdx" | "html";
+  // "notion": written in the Notion blog database (src/lib/notion.ts)
+  format: "mdx" | "html" | "notion";
+  notionId?: string;
   cover: CoverKind;
   image?: string;
   imageLight?: string;
@@ -71,9 +74,16 @@ async function loadPost(slug: string) {
 
 export async function getWritings(): Promise<Writing[]> {
   const files = await readdir(DIR);
+  // Posts in the Notion blog database replace the file with the same slug, unless their
+  // "Use site file" box is ticked. If Notion can't be reached, the files are shown instead.
+  const notion = await getNotionPosts().catch(err => {
+    console.error("Could not load Notion posts:", err);
+    return [];
+  });
+  const fromNotionSlugs = new Set(notion.filter(n => !n.useFile).map(n => n.slug));
   const posts = await Promise.all(
     files
-      .filter(f => f.endsWith(".mdx"))
+      .filter(f => f.endsWith(".mdx") && !fromNotionSlugs.has(f.replace(/\.mdx$/, "")))
       .map(async f => {
         const slug = f.replace(/\.mdx$/, "");
         const { metadata: m } = await loadPost(slug);
@@ -99,16 +109,38 @@ export async function getWritings(): Promise<Writing[]> {
       }),
   );
   const archived: Writing[] = await Promise.all(
-    essays.map(async e => ({
+    essays.filter(e => !fromNotionSlugs.has(e.slug)).map(async e => ({
       ...e,
       format: "html" as const,
       cover: coverKind(`${e.slug} ${e.title} ${e.kind}`, e.cover),
       minutes: await readingMinutes(`${e.slug}.html`),
     })),
   );
+  const fromNotion: Writing[] = await Promise.all(
+    notion
+      .filter(n => !n.useFile && (!n.draft || showDrafts))
+      .map(async n => ({
+        slug: n.slug,
+        title: fillTitle(n.title, n.date),
+        kind: n.draft ? `Draft${n.kind ? `, ${n.kind}` : ""}` : n.kind,
+        summary: n.summary,
+        date: n.date,
+        format: "notion" as const,
+        notionId: n.id,
+        cover: coverKind(`${n.slug} ${n.title} ${n.kind ?? ""}`, n.cover),
+        image: n.image,
+        imageLight: n.imageLight,
+        caption: n.caption,
+        note: n.note,
+        source: n.source,
+        minutes: Math.max(1, Math.round(blocksWordCount(await getBlocks(n.id)) / 230)),
+        pinned: n.pinned,
+      })),
+  );
   // Newest first; undated pieces (the archived essays) go last in their listed order.
-  const dated = posts.filter((p): p is Writing => p !== null).sort((a, b) => (b.date?.getTime() ?? 0) - (a.date?.getTime() ?? 0));
-  return [...dated, ...archived];
+  const all = [...posts.filter((p): p is Writing => p !== null), ...fromNotion];
+  const dated = all.filter(w => w.date).sort((a, b) => (b.date?.getTime() ?? 0) - (a.date?.getTime() ?? 0));
+  return [...dated, ...all.filter(w => !w.date), ...archived];
 }
 
 export async function getWriting(slug: string) {
@@ -116,8 +148,12 @@ export async function getWriting(slug: string) {
   if (!w) return null;
   if (w.format === "mdx") {
     const { default: Body } = await loadPost(slug);
-    return { ...w, Body, html: undefined };
+    return { ...w, Body, html: undefined, blocks: undefined };
+  }
+  if (w.format === "notion") {
+    const blocks: NotionBlock[] = await getBlocks(w.notionId!);
+    return { ...w, Body: undefined, html: undefined, blocks };
   }
   const html = await readFile(path.join(DIR, `${slug}.html`), "utf8");
-  return { ...w, Body: undefined, html };
+  return { ...w, Body: undefined, html, blocks: undefined };
 }

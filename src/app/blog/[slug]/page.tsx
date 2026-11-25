@@ -4,8 +4,12 @@ import { notFound } from "next/navigation";
 import { getWriting, getWritings } from "@/lib/writings";
 import { Arrow } from "@/components/arrow";
 import { ThemedImage } from "@/components/themed-image";
+import { NotionBody } from "@/components/notion-body";
 
-export const dynamicParams = false;
+// Posts written in Notion show up without a rebuild: pages are refreshed at most once a minute
+// (keep in sync with NOTION_REVALIDATE), and new slugs are rendered on their first visit.
+export const revalidate = 60;
+export const dynamicParams = true;
 
 export async function generateStaticParams() {
   return (await getWritings()).map(w => ({ slug: w.slug }));
@@ -52,6 +56,8 @@ export default async function WritingPage({ params }: { params: Promise<{ slug: 
       )}
       {Body ? (
         <div className="prose"><Body /></div>
+      ) : w.blocks ? (
+        <div className="prose"><NotionBody blocks={w.blocks} /></div>
       ) : (
         // Converted from the Google Docs export; trusted, checked-in content.
         <div className="prose" dangerouslySetInnerHTML={{ __html: w.html ?? "" }} />

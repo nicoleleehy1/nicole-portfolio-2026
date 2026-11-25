@@ -6,6 +6,9 @@ import { AsciiCover } from "@/components/ascii-cover";
 
 export const metadata: Metadata = { title: "Blog" };
 
+// Picks up new and edited Notion posts at most once a minute (see src/lib/notion.ts).
+export const revalidate = 60;
+
 const dateFormat = new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", year: "numeric", timeZone: "UTC" });
 const longDate = new Intl.DateTimeFormat("en-US", { weekday: "long", month: "long", day: "numeric", year: "numeric", timeZone: "UTC" });
 

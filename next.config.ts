@@ -4,6 +4,12 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   reactCompiler: true,
   pageExtensions: ["js", "jsx", "md", "mdx", "ts", "tsx"],
+  // The blog re-renders on the server when Notion posts change, and still reads the
+  // .mdx/.html files in src/content/writings then, so ship them with those functions.
+  outputFileTracingIncludes: {
+    "/blog": ["./src/content/writings/**"],
+    "/blog/[slug]": ["./src/content/writings/**"],
+  },
   // "writings" was renamed to "blog"; keep old links (and their #anchors) working.
   async redirects() {
     return [
