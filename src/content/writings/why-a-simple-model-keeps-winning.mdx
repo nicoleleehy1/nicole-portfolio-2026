@@ -3,7 +3,7 @@ title: "morgan fingerprints and ridge regression versus a pretrained molecular e
 date: 2026-10-16
 summary: "Across three milestones of paired replays, folded Morgan bits with ridge beat CheMeleon, frozen and fine-tuned, at 32 to 104 labels. A technical look at the comparison, the numerical failure that nearly hid the real answer, and the strongest counter-evidence."
 kind: "Research"
-draft: false
+draft: true
 ---
 
 Aster ranks candidate molecules with about the simplest model in cheminformatics: binary Morgan fingerprints and a linear ridge regression. I didn't start there out of conviction. I started there as a baseline, and then every attempt to replace it with a pretrained neural encoder lost. This piece goes through the comparison at a technical level, including a numerical bug that made the first result look worse than it was, and the published work that says I may still be wrong.
