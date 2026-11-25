@@ -356,11 +356,14 @@ export type Award = {
   // Filter group, from the "Type" column of the activities list.
   category: string;
   note?: string;
+  // Award's website; the title links here in a new tab.
+  href?: string;
 };
 
 export const awards: Award[] = [
   {
     title: "Hong Kong Scholar",
+    href: "https://hkses.edb.gov.hk/en/index.html",
     issuer: "HK Scholarship for Excellence Scheme",
     date: "",
     category: "Scholarship",
@@ -368,6 +371,7 @@ export const awards: Award[] = [
   },
   {
     title: "Student of the Year, Grand Prize Finalist",
+    href: "https://www.scmplearn.com/our-events/the-student-of-the-year-awards",
     issuer: "South China Morning Post",
     // date: "May '23",
     category: "Social Service",
@@ -375,6 +379,7 @@ export const awards: Award[] = [
   },
   {
     title: "Hong Kong Outstanding Students' Award 2020–21, Finalist",
+    href: "https://www.hkosa.org/",
     issuer: "Youth Arch Foundation",
     // date: "Jan '22",
     category: "Social Service",

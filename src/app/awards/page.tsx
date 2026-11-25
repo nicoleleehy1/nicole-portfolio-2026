@@ -10,6 +10,7 @@ const items: ListItem[] = awards.map(a => ({
   note: a.note,
   category: a.category,
   date: a.date,
+  href: a.href,
 }));
 
 export default function AwardsPage() {

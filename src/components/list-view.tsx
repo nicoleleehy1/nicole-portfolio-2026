@@ -10,6 +10,8 @@ export type ListItem = {
   // Used by the filter menu; not displayed.
   category: string;
   date?: string;
+  // Optional external link for the title, opened in a new tab.
+  href?: string;
 };
 
 // List view in the experience page's style: one row per item (title | subtitle, a note under it) and a right-aligned date,
@@ -33,7 +35,13 @@ export function ListView({
           <li key={item.title} className="list-row">
             <div className="list-main">
               <div className="list-title">
-                {item.title}
+                {item.href ? (
+                  <a href={item.href} target="_blank" rel="noreferrer" className="link">
+                    {item.title}
+                  </a>
+                ) : (
+                  item.title
+                )}
                 {item.subtitle && (
                   <>
                     <span className="list-sep"> | </span>
