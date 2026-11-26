@@ -1,0 +1,113 @@
+/* Project popup as a full-screen page: big serif title, italic one-liner, a mono write-up beside a column of
+   "LABEL: value" facts, then the cover and screenshots. Uses the site's own colours in both themes. */
+.peek.peek-full {
+  width: 100vw;
+  max-width: none;
+  height: 100dvh;
+  max-height: none;
+  margin: 0;
+  border: 0;
+  background: var(--bg);
+  overscroll-behavior: contain;
+}
+.peek.peek-full[open] { animation: proj-in 0.22s ease-out; }
+@keyframes proj-in { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+.proj { position: relative; min-height: 100%; }
+.proj-close {
+  position: fixed;
+  top: 1.25rem;
+  right: 1.5rem;
+  z-index: 2;
+  padding: 0.35rem 0.7rem;
+  border: 1px solid var(--edge);
+  background: var(--bg);
+  color: var(--ink-strong);
+  font-family: var(--mono);
+  font-size: 0.8rem;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+}
+.proj-close:hover { border-color: rgb(var(--hi)); }
+.proj-inner {
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: clamp(4rem, 9vh, 6.5rem) clamp(1.25rem, 5vw, 4rem) 5rem;
+}
+.proj-head { margin-bottom: clamp(2rem, 5vh, 3.25rem); }
+.proj-title {
+  font-family: var(--serif);
+  font-size: clamp(2.4rem, 6vw, 4.6rem);
+  font-weight: 600;
+  letter-spacing: -0.035em;
+  line-height: 1;
+  color: var(--ink-strong);
+}
+.proj-sub {
+  margin-top: 0.6rem;
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: clamp(1.15rem, 2.4vw, 1.85rem);
+  letter-spacing: -0.03em;
+  line-height: 1.2;
+  color: var(--muted);
+}
+.proj-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(15rem, 22rem);
+  gap: clamp(2rem, 6vw, 6rem);
+  align-items: start;
+}
+.proj-body {
+  font-family: var(--mono);
+  font-size: 0.92rem;
+  line-height: 1.65;
+  color: var(--ink);
+}
+.proj-lede { margin-bottom: 1.5rem; }
+.proj-label {
+  margin: 0 0 0.6rem;
+  font-family: var(--mono);
+  font-size: 0.78rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ink-strong);
+}
+.proj-desc { list-style: disc; padding-left: 1.2rem; }
+.proj-desc li::marker { color: var(--muted); }
+.proj-desc li + li { margin-top: 0.55rem; }
+.proj-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 1.35rem;
+  padding-top: 0.2rem;
+  font-family: var(--mono);
+  font-size: 0.9rem;
+  line-height: 1.55;
+  color: var(--ink);
+}
+.proj-meta dt,
+.proj-meta dd { display: inline; }
+.proj-meta dt {
+  font-weight: 600;
+  text-transform: uppercase;
+  color: var(--ink-strong);
+}
+.proj-hero {
+  display: block;
+  width: 100%;
+  height: auto;
+  margin-top: clamp(2.5rem, 6vh, 4rem);
+  border: 1px solid var(--rule);
+}
+.proj-shots {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+}
+.proj-shots img { display: block; width: 100%; height: auto; border: 1px solid var(--rule); }
+@media (max-width: 760px) {
+  .proj-grid { grid-template-columns: 1fr; }
+  .proj-meta { order: -1; gap: 0.75rem; padding-bottom: 1.5rem; border-bottom: 1px solid var(--rule); }
+}

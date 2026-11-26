@@ -1,0 +1,69 @@
+/* Projects collage: 1-bit dithered illustrations. An illustration is a block of colour cut out by a dot mask,
+   so it takes the theme's ink: light dots on the dark theme, brown shadow dots on the light theme. */
+.dith {
+  display: block;
+  width: 100%;
+  background: var(--dith, var(--ink-strong));
+  -webkit-mask: var(--light) center / contain no-repeat;
+  mask: var(--light) center / contain no-repeat;
+  transition: background-color 0.2s ease;
+}
+:root[data-theme="light"] .dith {
+  -webkit-mask-image: var(--dark);
+  mask-image: var(--dark);
+}
+
+.sc-collage .sc-collage-piece:hover .dith,
+.sc-collage .sc-collage-piece:focus-visible .dith { --dith: var(--accent); }
+.dith-wrap { position: relative; display: block; width: 100%; }
+.dith-wrap::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--bg);
+  -webkit-mask: var(--shape) center / contain no-repeat;
+  mask: var(--shape) center / contain no-repeat;
+}
+.dith-wrap .dith { position: relative; height: 100%; }
+.sc-collage {
+  position: relative;
+  width: min(1080px, calc(100vw - 2 * var(--pad)));
+  margin-left: 50%;
+  translate: -50% 0;
+  aspect-ratio: 1080 / 652;
+  margin-bottom: 2.5rem;
+}
+.sc-collage-piece {
+  position: absolute;
+  display: block;
+  rotate: var(--r, 0deg);
+  transition: translate 0.3s cubic-bezier(0.2, 0.8, 0.3, 1.2);
+}
+.sc-collage-piece:hover,
+.sc-collage-piece:focus-visible { translate: 0 -10px; outline: none; z-index: 20 !important; }
+.sc-collage-piece:hover .dith,
+.sc-collage-piece:focus-visible .dith { --dith: var(--accent); }
+.sc-collage-tag {
+  position: absolute;
+  left: 50%;
+  top: calc(100% + 0.4rem);
+  translate: -50% 0;
+  rotate: calc(var(--r, 0deg) * -1);
+  padding: 0.2rem 0.55rem;
+  border: 1px solid var(--edge);
+  background: var(--bg);
+  color: var(--ink-strong);
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+  z-index: 1;
+}
+.sc-collage-piece:hover .sc-collage-tag,
+.sc-collage-piece:focus-visible .sc-collage-tag { opacity: 1; }
+
+@media (prefers-reduced-motion: reduce) {
+  .sc-collage-piece { transition: none; }
+}

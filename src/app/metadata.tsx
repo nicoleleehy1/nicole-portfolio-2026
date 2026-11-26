@@ -619,20 +619,20 @@ export const projects: Project[] = [
     ],
     stack: "Python, TypeScript, React, Neo4j, Anthropic API, spaCy, D3.js",
   },
-  {
-    name: "ASL Live Translator",
-    event: "TreeHacks 2025",
-    ascii: "field",
-    summary: [
-      "Reads ASL letters from a webcam and turns them into speech and captions.",
-      "Built at TreeHacks 2025 for nonverbal users.",
-    ],
-    // TODO(nicole): replace with what you built (model, how letters become words, your part of the team).
-    desc: [
-      "Real-time ASL letter recognition converting sign language to speech and live captions for nonverbal users.",
-    ],
-    stack: "Python, React, OpenCV, MediaPipe, TensorFlow.js",
-  },
+  // {
+  //   name: "ASL Live Translator",
+  //   event: "TreeHacks 2025",
+  //   ascii: "field",
+  //   summary: [
+  //     "Reads ASL letters from a webcam and turns them into speech and captions.",
+  //     "Built at TreeHacks 2025 for nonverbal users.",
+  //   ],
+  //   // TODO(nicole): replace with what you built (model, how letters become words, your part of the team).
+  //   desc: [
+  //     "Real-time ASL letter recognition converting sign language to speech and live captions for nonverbal users.",
+  //   ],
+  //   stack: "Python, React, OpenCV, MediaPipe, TensorFlow.js",
+  // },
   // {
   //   name: "Insurmate",
   //   event: "Bolt Hacks 2025",

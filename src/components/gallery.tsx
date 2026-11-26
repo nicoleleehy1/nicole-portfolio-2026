@@ -53,12 +53,18 @@ export function Gallery({
   items,
   filterLabel = "Category",
   wide = false,
+  intro,
+  hideGrid = false,
 }: {
   title: string;
   items: GalleryItem[];
   filterLabel?: string;
-  // Wider popup that shows the whole cover image instead of a cropped strip.
+  // Shown between the header and the cards, e.g. the projects collage.
+  intro?: ReactNode;
+  // Opens each item as a full-screen page (projects) instead of the small centered popup.
   wide?: boolean;
+  // Leaves out the cards (and their filter/sort menus); items still open from #slug links, e.g. the collage.
+  hideGrid?: boolean;
 }) {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const [active, setActive] = useState<GalleryItem | null>(null);
@@ -94,36 +100,107 @@ export function Gallery({
 
   return (
     <>
-      {header}
+      {hideGrid ? (
+        <div className="gallery-header is-solo">
+          <h1 className="page-title">{title}</h1>
+        </div>
+      ) : (
+        header
+      )}
 
-      <div className="gallery">
-        {shown.map(item => (
-          <button
-            key={item.title}
-            type="button"
-            className="gallery-card"
-            onClick={() => open(item)}
-          >
-            <div className="gallery-cover">
-              <Cover item={item} />
-              {item.award && <span className="badge">{item.award}</span>}
-            </div>
-            <div className="gallery-body">
-              <span className="gallery-title">{item.title}</span>
-              <span className="gallery-role">{item.subtitle}</span>
-            </div>
-          </button>
-        ))}
-      </div>
+      {intro}
+
+      {!hideGrid && (
+        <div className="gallery">
+          {shown.map(item => (
+            <button
+              key={item.title}
+              type="button"
+              className="gallery-card"
+              onClick={() => open(item)}
+            >
+              <div className="gallery-cover">
+                <Cover item={item} />
+                {item.award && <span className="badge">{item.award}</span>}
+              </div>
+              <div className="gallery-body">
+                <span className="gallery-title">{item.title}</span>
+                <span className="gallery-role">{item.subtitle}</span>
+              </div>
+            </button>
+          ))}
+        </div>
+      )}
 
       <dialog
         ref={dialogRef}
-        className={wide ? "peek peek-wide" : "peek"}
+        className={wide ? "peek peek-full" : "peek"}
         onClose={close}
         // A click landing on the dialog element itself is a click on the backdrop.
         onClick={ev => ev.target === dialogRef.current && dialogRef.current.close()}
       >
-        {active && (
+        {active && wide && (
+          // Projects: a full-screen page. Title and one-line pitch, then the write-up beside a column of facts,
+          // then the cover and screenshots.
+          <article className="proj">
+            <button
+              type="button"
+              className="proj-close"
+              aria-label="Close"
+              onClick={() => dialogRef.current?.close()}
+            >
+              close ×
+            </button>
+            <div className="proj-inner">
+              <header className="proj-head">
+                <h2 className="proj-title">{active.title}</h2>
+                {active.summary?.[0] && <p className="proj-sub">{active.summary[0]}</p>}
+              </header>
+              <div className="proj-grid">
+                <div className="proj-body">
+                  {active.summary && active.summary.length > 1 && (
+                    <p className="proj-lede">{active.summary.slice(1).join(" ")}</p>
+                  )}
+                  {active.body ?? (active.bullets.length > 0 && (
+                    <>
+                      {active.bulletsLabel && <h3 className="proj-label">{active.bulletsLabel}</h3>}
+                      <ul className="proj-desc">
+                        {active.bullets.map((line, i) => (
+                          <li key={i}>{line}</li>
+                        ))}
+                      </ul>
+                    </>
+                  ))}
+                </div>
+                <dl className="proj-meta">
+                  {active.props.map(p => (
+                    <div key={p.label}>
+                      <dt>{p.label}:</dt>{" "}
+                      <dd>
+                        {p.href ? (
+                          <a href={p.href} target="_blank" rel="noreferrer" className="link">
+                            {p.value} <Arrow dir="up-right" />
+                          </a>
+                        ) : (
+                          p.value
+                        )}
+                      </dd>
+                    </div>
+                  ))}
+                </dl>
+              </div>
+              {active.image && <img src={active.image} alt={active.title} className="proj-hero" />}
+              {active.images && active.images.length > 0 && (
+                <div className="proj-shots">
+                  {active.images.map(src => (
+                    <img key={src} src={src} alt={active.title} loading="lazy" />
+                  ))}
+                </div>
+              )}
+            </div>
+          </article>
+        )}
+        {active && !wide && (
           <article>
             <button
               type="button"
@@ -133,11 +210,7 @@ export function Gallery({
             >
               ×
             </button>
-            {wide && active.image ? (
-              <img src={active.image} alt={active.title} className="peek-hero" />
-            ) : (
-              <Cover item={active} />
-            )}
+            <Cover item={active} />
             <div className="peek-content">
               <h2 className="peek-title">{active.title}</h2>
               <dl className="peek-props">
